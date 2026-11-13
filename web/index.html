@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>ALHUDA MOBILE</title>
+<meta name="description" content="Aplikasi manajemen administrasi & akademik YPI Dayah Al-Huda Malikussaleh">
+<meta name="theme-color" content="#0f6e4f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ALHUDA">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<style id="boot-css">
+html,body{margin:0;height:100%;background:#f1f1f1;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+.boot{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#0f6e4f;text-align:center;padding:24px;box-sizing:border-box}
+.boot img{width:96px;height:96px;border-radius:24px;background:#fff;box-shadow:0 6px 24px rgba(0,0,0,.08)}
+.boot b{font-size:17px;letter-spacing:.5px}
+.boot .sp{width:26px;height:26px;border:3px solid #cfe9dd;border-top-color:#10b981;border-radius:50%;animation:r .8s linear infinite}
+.boot .er{color:#7a1d1d;background:#fdecec;border:1px solid #f5c2c2;border-radius:12px;padding:12px 14px;font-size:13.5px;max-width:420px;line-height:1.5}
+.boot button{background:#0f6e4f;color:#fff;border:0;border-radius:12px;padding:11px 18px;font:inherit;font-weight:700;cursor:pointer}
+@keyframes r{to{transform:rotate(360deg)}}
+</style>
+<script src="config.js"></script>
+<script src="compat.js"></script>
+</head>
+<body>
+<div class="boot" id="boot">
+  <img src="icons/icon-192.png" alt="">
+  <b>ALHUDA MOBILE</b>
+  <div class="sp" id="bootSp"></div>
+  <div class="small" id="bootMsg" style="font-size:12.5px;color:#6b7280">Memuat aplikasi…</div>
+</div>
+<noscript><div class="boot"><div class="er">JavaScript harus diaktifkan untuk membuka ALHUDA MOBILE.</div></div></noscript>
+<script>
+/*
+ * Pemuat (loader) versi web.
+ * Tampilan diambil dari server Apps Script (?app=html) — sama seperti aplikasi Android —
+ * sehingga versi web selalu cocok dengan Code.gs yang sedang terpasang.
+ * Urutan: tampilan tersimpan di perangkat → server → salinan bawaan (app.html).
+ */
+(function () {
+  var API = String(window.ALHUDA_API_URL || '').trim();
+  var KEY = 'alhuda_web_ui';
+  var started = false;
+
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
+  function valid(h) { return typeof h === 'string' && h.length > 5000 && h.indexOf('name="alhuda-app"') >= 0 && h.indexOf('ALHUDA_API_URL') >= 0; }
+  function versi(h) { var m = /name="alhuda-app" content="([^"]*)"/.exec(h || ''); return m ? m[1] : ''; }
+  function msg(t) { var e = document.getElementById('bootMsg'); if (e) e.textContent = t; }
+
+  function fail(text) {
+    var b = document.getElementById('boot');
+    if (!b) return;
+    var sp = document.getElementById('bootSp'); if (sp) sp.style.display = 'none';
+    msg('');
+    var d = document.createElement('div'); d.className = 'er'; d.textContent = text; b.appendChild(d);
+    var btn = document.createElement('button'); btn.textContent = 'Coba lagi'; btn.onclick = function () { location.reload(); }; b.appendChild(btn);
+  }
+
+  function getText(url, ms) {
+    return new Promise(function (res, rej) {
+      var done = false, ctl = null;
+      try { ctl = new AbortController(); } catch (e) {}
+      var t = setTimeout(function () { if (!done) { done = true; try { ctl && ctl.abort(); } catch (e) {} rej(new Error('timeout')); } }, ms || 15000);
+      fetch(url, { method: 'GET', redirect: 'follow', cache: 'no-store', signal: ctl ? ctl.signal : undefined })
+        .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+        .then(function (x) { if (!done) { done = true; clearTimeout(t); res(x); } })
+        .catch(function (e) { if (!done) { done = true; clearTimeout(t); rej(e); } });
+    });
+  }
+  function fromServer(ms) {
+    if (!API) return Promise.reject(new Error('no api'));
+    return getText(API + (API.indexOf('?') < 0 ? '?' : '&') + 'app=html&_=' + Date.now(), ms)
+      .then(function (h) { if (!valid(h)) throw new Error('invalid'); return h; });
+  }
+  function fromBundle() {
+    return getText('app.html', 15000).then(function (h) { if (!valid(h)) throw new Error('invalid bundle'); return h; });
+  }
+
+  /* Pasang tampilan ke halaman ini tanpa document.write (aman untuk Chrome, Safari, Firefox, Edge). */
+  function render(html) {
+    if (started) return; started = true;
+    var doc = new DOMParser().parseFromString(html, 'text/html');
+    var root = document.documentElement;
+    Array.prototype.forEach.call(doc.documentElement.attributes, function (a) { root.setAttribute(a.name, a.value); });
+    // head: gaya & meta dari tampilan (viewport milik pemuat tetap dipakai)
+    var bootCss = document.getElementById('boot-css'); if (bootCss) bootCss.remove();
+    Array.prototype.forEach.call(doc.head.children, function (n) {
+      var tag = n.tagName.toLowerCase();
+      if (tag === 'script') return;
+      if (tag === 'meta' && /^(viewport|charset)$/i.test(n.getAttribute('name') || (n.hasAttribute('charset') ? 'charset' : ''))) return;
+      if (tag === 'title') { document.title = n.textContent || document.title; return; }
+      if (tag === 'base') return; // tidak diperlukan di luar iframe Google
+      document.head.appendChild(document.importNode(n, true));
+    });
+    // body: elemen tanpa skrip, lalu skrip dijalankan berurutan
+    var scripts = [];
+    document.body.innerHTML = '';
+    Array.prototype.forEach.call(doc.body.attributes, function (a) { document.body.setAttribute(a.name, a.value); });
+    Array.prototype.slice.call(doc.body.childNodes).forEach(function (n) {
+      if (n.nodeType === 1 && n.tagName.toLowerCase() === 'script') { scripts.push(n); return; }
+      if (n.nodeType === 1) n.querySelectorAll('script').forEach(function (s) { scripts.push(s); s.remove(); });
+      document.body.appendChild(document.importNode(n, true));
+    });
+    Array.prototype.forEach.call(doc.head.querySelectorAll('script'), function (s) { scripts.unshift(s); });
+    scripts.forEach(function (s) {
+      var x = document.createElement('script');
+      if (s.src) { x.src = s.getAttribute('src'); x.async = false; } else x.text = s.textContent;
+      document.body.appendChild(x);
+    });
+    if (window.__alhudaAfterApp) { try { window.__alhudaAfterApp(); } catch (e) {} }
+  }
+
+  function updateLater(currentVersion) {
+    // Ambil tampilan terbaru di latar belakang → dipakai saat aplikasi dibuka berikutnya.
+    fromServer(30000).then(function (h) {
+      if (h !== lsGet(KEY)) {
+        lsSet(KEY, h);
+        if (versi(h) && versi(h) !== currentVersion && window.toast) {
+          try { window.toast('Versi baru ' + versi(h) + ' siap. Tutup & buka kembali aplikasi untuk memakainya.', 'ok'); } catch (e) {}
+        }
+      }
+    }).catch(function () {});
+  }
+
+  function start() {
+    if (!API || /GANTI_DENGAN/i.test(API)) {
+      return fail('URL server belum diatur. Isi URL Web App Apps Script (berakhiran /exec) di file config.js.');
+    }
+    var cached = lsGet(KEY);
+    if (valid(cached)) {
+      render(cached);
+      setTimeout(function () { updateLater(versi(cached)); }, 3000);
+      return;
+    }
+    msg('Menghubungkan ke server…');
+    fromServer(20000)
+      .then(function (h) { lsSet(KEY, h); render(h); })
+      .catch(function () {
+        msg('Memuat salinan aplikasi…');
+        return fromBundle().then(function (h) { render(h); setTimeout(function () { updateLater(versi(h)); }, 5000); });
+      })
+      .catch(function () {
+        fail(navigator.onLine === false
+          ? 'Tidak ada koneksi internet. Sambungkan perangkat ke internet lalu coba lagi.'
+          : 'Aplikasi tidak dapat dimuat. Periksa koneksi internet, lalu coba lagi.');
+      });
+  }
+
+  if ('serviceWorker' in navigator && /^https:|^http:\/\/(localhost|127\.0\.0\.1)/.test(location.href)) {
+    window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
+  }
+  start();
+})();
+</script>
+</body>
+</html>
