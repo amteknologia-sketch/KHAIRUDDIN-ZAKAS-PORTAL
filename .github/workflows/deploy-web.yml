@@ -1,0 +1,46 @@
+name: Terbitkan Versi Web ALHUDA MOBILE
+
+# Menerbitkan folder web/ ke GitHub Pages → https://<akun>.github.io/<repo>/
+on:
+  push:
+    branches: [ main, master ]
+    paths: [ 'web/**', 'apps-script/Index.html', '.github/workflows/deploy-web.yml' ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cek URL server sudah diisi
+        run: |
+          if grep -q "GANTI_DENGAN" web/config.js; then
+            echo "::error::URL Web App belum diisi di web/config.js"
+            exit 1
+          fi
+
+      - name: Salin tampilan terbaru sebagai cadangan (app.html)
+        run: cp apps-script/Index.html web/app.html
+
+      - name: Perbarui versi cache Service Worker
+        run: sed -i "s/alhuda-web-v[0-9a-z]*/alhuda-web-${GITHUB_SHA::8}/" web/sw.js
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+      - id: deployment
+        uses: actions/deploy-pages@v4
