@@ -17,11 +17,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  # 1) Siapkan & unggah file web/ sebagai artefak "github-pages"
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -39,8 +37,19 @@ jobs:
         run: sed -i "s/alhuda-web-v[0-9a-z]*/alhuda-web-${GITHUB_SHA::8}/" web/sw.js
 
       - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+
+      - name: Unggah artefak GitHub Pages
+        uses: actions/upload-pages-artifact@v4
         with:
           path: web
+
+  # 2) Terbitkan artefak ke GitHub Pages
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - id: deployment
         uses: actions/deploy-pages@v4
