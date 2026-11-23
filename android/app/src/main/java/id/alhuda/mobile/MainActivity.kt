@@ -200,6 +200,34 @@ class MainActivity : AppCompatActivity() {
             main.post { try { window.statusBarColor = Color.parseColor(hex.trim()) } catch (_: Exception) {} }
         }
 
+        /** v2.8: bagikan gambar (Story Instagram, Status WhatsApp, TikTok, dll.). target: ig_story | wa | tiktok | lainnya */
+        @JavascriptInterface fun shareImage(base64: String, name: String, target: String, text: String) {
+            try {
+                val dir = File(cacheDir, "share").apply { mkdirs() }
+                val file = File(dir, name.replace(Regex("[^A-Za-z0-9._-]"), "_"))
+                file.writeBytes(Base64.decode(base64, Base64.DEFAULT))
+                val uri = FileProvider.getUriForFile(this@MainActivity, "$packageName.files", file)
+                val kirim = Intent(Intent.ACTION_SEND).setType("image/jpeg").putExtra(Intent.EXTRA_STREAM, uri)
+                    .putExtra(Intent.EXTRA_TEXT, text).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                val coba = mutableListOf<Intent>()
+                when (target) {
+                    "ig_story" -> {
+                        grantUriPermission("com.instagram.android", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        coba.add(Intent("com.instagram.share.ADD_TO_STORY").setDataAndType(uri, "image/jpeg")
+                            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION).setPackage("com.instagram.android"))
+                    }
+                    "wa" -> { coba.add(Intent(kirim).setPackage("com.whatsapp")); coba.add(Intent(kirim).setPackage("com.whatsapp.w4b")) }
+                    "tiktok" -> { coba.add(Intent(kirim).setPackage("com.zhiliaoapp.musically")); coba.add(Intent(kirim).setPackage("com.ss.android.ugc.trill")) }
+                }
+                main.post {
+                    for (i in coba) { try { startActivity(i); return@post } catch (e: Exception) {} }
+                    try { startActivity(Intent.createChooser(kirim, "Bagikan")) }
+                    catch (e: Exception) { Toast.makeText(this@MainActivity, "Tidak ada aplikasi untuk berbagi", Toast.LENGTH_SHORT).show() }
+                }
+            } catch (e: Exception) {
+                main.post { Toast.makeText(this@MainActivity, "Gagal membagikan: ${e.message}", Toast.LENGTH_LONG).show() }
+            }
+        }
         @JavascriptInterface fun savePdf(base64: String, name: String) {
             try {
                 val dir = File(getExternalFilesDir(null), "Documents").apply { mkdirs() }
