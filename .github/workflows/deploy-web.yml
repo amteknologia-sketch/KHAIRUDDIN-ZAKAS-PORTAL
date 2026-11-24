@@ -33,6 +33,10 @@ jobs:
       - name: Salin tampilan terbaru sebagai cadangan (app.html)
         run: cp apps-script/Index.html web/app.html
 
+      - name: Salin halaman Home (folder home/) ke situs
+        run: |
+          if [ -d home ]; then cp home/home.html web/home.html; mkdir -p web/img; cp -r home/img/. web/img/; fi
+
       - name: Perbarui versi cache Service Worker
         run: sed -i "s/alhuda-web-v[0-9a-z]*/alhuda-web-${GITHUB_SHA::8}/" web/sw.js
 
