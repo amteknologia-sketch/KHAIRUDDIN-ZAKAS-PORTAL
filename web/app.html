@@ -3,7 +3,7 @@
 <head>
 <base target="_top">
 <meta charset="utf-8">
-<meta name="alhuda-app" content="2.12.0">
+<meta name="alhuda-app" content="2.13.0">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>ALHUDA MOBILE</title>
 <style>
@@ -511,6 +511,10 @@ html.desk .login .lmain>.muted:last-child{display:none}
 .ghrow .btn{height:40px;margin:0;flex:1 1 0}
 .tag.gk,.pillx.gk{background:#fef3c7;color:#92400e;display:inline-flex;align-items:center;gap:4px}.tag.gk .i,.pillx.gk .i{width:13px;height:13px}
 .gkc .gkb{display:inline-flex;align-items:center;gap:6px;background:#fef3c7;color:#92400e;border-radius:10px;padding:6px 10px;font-weight:700;font-size:13px;margin:0 6px 6px 0}
+.syncic.kirim{border:0;cursor:pointer;font:inherit;color:#fff}.syncic.kirim svg{animation:none}
+.syncic.kirim.jalan .ar{animation:naik 1s ease-in-out infinite}.syncic.kirim.tunda{opacity:.7}.syncic.kirim.tunda .ar{animation:none}
+.syncic.kirim.gagal{background:#ef4444}.syncic.kirim.ok{background:rgba(255,255,255,.28)}
+@keyframes naik{0%{transform:translateY(3px);opacity:0}40%{opacity:1}100%{transform:translateY(-4px);opacity:0}}
 </style>
 </head>
 <body>
@@ -577,6 +581,8 @@ const IC = {
   share:'<circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.6-4.4M8.2 13.2l7.6 4.4"/>',
   archive:'<rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8M10 12h4"/>',
   ban:'<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>',
+  cloudup:'<path d="M7 18.5a4.5 4.5 0 0 1-.8-8.93A6 6 0 0 1 17.7 9a4.5 4.5 0 0 1-.7 9.5"/><g class="ar"><path d="M12 20v-8"/><path d="M9 15l3-3 3 3"/></g>',
+  cloudok:'<path d="M7 18.5a4.5 4.5 0 0 1-.8-8.93A6 6 0 0 1 17.7 9a4.5 4.5 0 0 1-.7 9.5H7z"/><path d="M9 14l2 2 4-4"/>',
   more:'<circle cx="12" cy="5" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="12" cy="19" r="1.3"/>',
   wa:'<path d="M4 20l1.3-4A8 8 0 1 1 8.6 19z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-1.8-1.8l.8-1-1-2z"/>',
   wifioff:'<path d="M3 3l18 18M8.5 16.4a5 5 0 0 1 7 0M5 12.9a10 10 0 0 1 4.2-2.6M14.8 10.3A10 10 0 0 1 19 12.9M2 9.3a15 15 0 0 1 4.5-2.8M12 5a15 15 0 0 1 10 4.3"/><circle cx="12" cy="20" r=".8"/>'
@@ -800,10 +806,43 @@ function softRefresh() {
 }
 function withTimeout(p, ms) { return Promise.race([p, new Promise((_, rej) => setTimeout(() => { const e = new Error('timeout'); e.timeout = true; rej(e); }, ms))]); }
 const INSTANT = { 'chat.send': 1 };
+/** Aksi online yang hasilnya tidak ditunggu tampilan → langsung selesai di layar, dikirim di latar belakang. */
+const LATAR = { 'haris.save': 1, 'haris.delete': 1, 'kabilah.save': 1, 'kabilah.delete': 1, 'asrama.delete': 1, 'asrama.dokAdd': 1, 'asrama.dokDelete': 1,
+  'post.fotoTambah': 1, 'post.delete': 1, 'profil.galeriDelete': 1, 'settings.save': 1, 'pengajuan.tolak': 1, 'publik.putuskan': 1,
+  'publik.komentarPutuskan': 1, 'admin.aktif': 1, 'grup.keluar': 1 };
+/** Setelah selesai di server, data dasar (boot) perlu diperbarui. */
+const SEGAR_BOOT = { 'settings.save': 1, 'users.save': 1, 'users.delete': 1, 'roster.save': 1, 'roster.delete': 1, 'profil.save': 1 };
+/** Jalankan pekerjaan (simpan / unggah) di latar belakang; progres tampil di ikon unggah header. */
+function latar(label, fn, onOk, onFail) {
+  const job = { id: cid(), label: label, mulai: Date.now(), info: '' };
+  S.kerja = (S.kerja || []).concat([job]); updKirim();
+  const p = Promise.resolve().then(() => fn(job)).then(d => {
+    S.fetchedAt = {}; S.kirimOk = Date.now();
+    try { onOk && onOk(d); } catch (e) {}
+    softRefresh(); return d;
+  }).catch(e => {
+    if (e.net) setOnline(false);
+    S.kerjaGagal = (S.kerjaGagal || []).concat([Object.assign(job, { err: e.message })]).slice(-20);
+    toast(label + ' gagal: ' + e.message, 'err');
+    try { onFail && onFail(e); } catch (z) {}
+  }).finally(() => { S.kerja = (S.kerja || []).filter(x => x.id !== job.id); updKirim(); });
+  p.catch(() => {});
+  return job;
+}
+function kerjaLatar(action, params) {
+  latar(qLabel({ action: action, params: params }), () => rawApi(action, params, true), d => {
+    afterWrite(action, params, d);
+    if (SEGAR_BOOT[action]) segarkanBoot().then(() => { try { topBar(); } catch (e) {} });
+  });
+  return { _latar: true };
+}
+function wajibOnline(apa) { if (!isOnline()) { toast(apa + ' memerlukan koneksi internet.', 'err'); return false; } return true; }
 async function writeApi(action, params, silent) {
   if (ONLINE_ONLY[action]) {
     if (!isOnline()) throw new Error(ONLINE_ONLY[action] + ' memerlukan koneksi internet.');
-    return rawApi(action, params, silent);
+    if (LATAR[action]) return kerjaLatar(action, params, silent);
+    S.kerjaTunggu = (S.kerjaTunggu || 0) + 1; updKirim();
+    try { return await rawApi(action, params, silent); } finally { S.kerjaTunggu--; updKirim(); }
   }
   params = Object.assign({}, params, { _cid: params._cid || cid() });
   const queued = () => {
@@ -812,15 +851,7 @@ async function writeApi(action, params, silent) {
     if (isOnline()) setTimeout(() => flush(), 30);
     return Object.assign({ _queued: true }, opt || {});
   };
-  if (INSTANT[action] || !isOnline() || hasPending()) return queued();
-  try {
-    const d = await withTimeout(rawApi(action, params, silent), 12000);
-    setOnline(true); afterWrite(action, params, d); patchLocal(action, params, true); S.fetchedAt = {};
-    return d;
-  } catch (e) {
-    if (e.net || e.timeout) { if (e.net) setOnline(false); return queued(); } // koneksi lemah → simpan di HP, kirim otomatis
-    throw e;
-  }
+  return queued();   // langsung tersimpan di perangkat & tampil; dikirim ke server di latar belakang (ikon unggah di header)
 }
 function afterWrite(action, params, d) {
   if (action === 'profil.save' && d && d.token) { setToken(d.token); if (S.B) S.B.user = d.user; store.set('alhuda_uname', d.user.username); }
@@ -830,24 +861,25 @@ async function flush(quiet) {
   const items = Q.mine().filter(x => !x.err);
   if (!items.length || !isOnline()) return;
   S.flushing = true; netBar();
-  let sent = 0, fail = 0, chats = 0;
+  let sent = 0, fail = 0, chats = 0, boot = false, gagal = [];
   try {
     for (const it of items) {
       try {
         const d = await rawApi(it.action, it.params, true);
-        afterWrite(it.action, it.params, d); Q.remove(it.id); setOnline(true);
+        afterWrite(it.action, it.params, d); Q.remove(it.id); setOnline(true); if (SEGAR_BOOT[it.action]) boot = true;
         if (it.action === 'chat.send') { chatSent(it.id, d); chats++; } else sent++;
       }
       catch (e) {
         if (e.net) { setOnline(false); break; } if (!S.token) break;
-        Q.mark(it.id, e.message); fail++;
+        Q.mark(it.id, e.message); fail++; gagal.push(qLabel(it) + ': ' + e.message);
         if (it.action === 'chat.send') chatFailed(it.id);
       }
     }
   } finally { S.flushing = false; netBar(); }
-  if (sent || chats) S.fetchedAt = {};
-  if (sent) { toast(sent + ' perubahan berhasil dikirim ke server.', 'ok'); if (!quiet) softRefresh(); }
-  if (fail) toast(fail + ' perubahan ditolak server. Buka "Antrean Offline" untuk melihat.', 'err');
+  if (sent || chats) { S.fetchedAt = {}; S.kirimOk = Date.now(); updKirim(); }
+  if (boot) segarkanBoot().then(() => { try { topBar(); } catch (e) {} });
+  if (sent && !quiet) softRefresh();
+  if (fail) toast(fail === 1 ? 'Gagal disimpan — ' + gagal[0] : fail + ' perubahan gagal disimpan. Ketuk ikon merah di atas untuk melihat.', 'err');
   if (Q.mine().some(x => !x.err) && isOnline()) setTimeout(() => flush(quiet), 500); // ada kiriman baru selama proses
 }
 
@@ -929,12 +961,29 @@ function netBar() {
   const ok = pend.filter(x => !x.err && (!S.online || x.action !== 'chat.send')).length, bad = pend.filter(x => x.err).length; // chat cukup ditandai ikon loading
   let html = '', cls = '';
   if (!S.online) { cls = 'off'; html = ic('wifioff') + '<span class="grow"><b>Anda sedang offline.</b> ' + (ok ? ok + ' perubahan menunggu dikirim.' : 'Data ditampilkan dari penyimpanan perangkat.') + '</span>'; }
-  else if (S.flushing) { cls = 'sync'; html = ic('repeat') + '<span class="grow">Mengirim ' + ok + ' perubahan ke server…</span>'; }
-  else if (ok) { cls = 'sync'; html = ic('repeat') + '<span class="grow">' + ok + ' perubahan menunggu dikirim.</span><b>Kirim</b>'; }
   else if (bad) { cls = 'err'; html = ic('info') + '<span class="grow">' + bad + ' perubahan ditolak server.</span><b>Lihat</b>'; }
   el.className = 'net ' + cls; el.classList.toggle('hide', !html); el.innerHTML = html;
+  updKirim();
 }
-function openQueue() { push('Antrean Offline', pQueue, { sub: 'Perubahan yang belum terkirim' }); }
+/* ---------- ikon unggah di header: sedang menyimpan / tersimpan / gagal ---------- */
+function jmlKirim() { const q = S.B ? Q.mine() : []; return { jalan: q.filter(x => !x.err).length + (S.kerja || []).length + (S.kerjaTunggu || 0), gagal: q.filter(x => x.err).length + (S.kerjaGagal || []).length }; }
+function kirimHtml() { return '<button class="syncic kirim hide" id="kirimIc" onclick="openQueue()" aria-label="Status penyimpanan"></button>'; }
+function updKirim() {
+  const e = $('#kirimIc'); if (!e) return;
+  const n = jmlKirim(), baruOk = S.kirimOk && Date.now() - S.kirimOk < 1800;
+  clearTimeout(S.kirimTm);
+  if (n.jalan) {
+    e.className = 'syncic kirim jalan'; e.title = (S.online === false ? 'Menunggu internet — ' : 'Menyimpan ') + n.jalan + ' perubahan…';
+    e.innerHTML = ic('cloudup') + '<b>' + (n.jalan > 1 ? n.jalan : '') + '</b>';
+    if (S.online === false) e.classList.add('tunda');
+  } else if (n.gagal) {
+    e.className = 'syncic kirim gagal'; e.title = n.gagal + ' perubahan gagal disimpan'; e.innerHTML = ic('cloudup') + '<b>!' + (n.gagal > 1 ? n.gagal : '') + '</b>';
+  } else if (baruOk) {
+    e.className = 'syncic kirim ok'; e.title = 'Semua perubahan tersimpan'; e.innerHTML = ic('cloudok');
+    S.kirimTm = setTimeout(updKirim, 1900);
+  } else e.className = 'syncic kirim hide';
+}
+function openQueue() { push('Status Penyimpanan', pQueue, { sub: 'Perubahan yang sedang / belum terkirim' }); }
 function qLabel(it) {
   const p = it.params || {}, n = un => userName(un || '');
   const L = {
@@ -950,18 +999,24 @@ function qLabel(it) {
     'izinKeluar.kembali': () => 'Tandai kembali (izin keluar)', 'izinPulang.kembali': () => 'Tandai kembali (izin pulang)',
     'roster.save': () => 'Roster ' + p.mapel + ' • ' + p.kelas, 'roster.delete': () => 'Hapus roster',
     'mengulang.save': () => 'Daftar mengulang malam', 'pengumuman.save': () => 'Pengumuman: ' + (p.judul || ''),
-    'users.save': () => 'Data pengguna: ' + p.nama, 'pengganti.save': () => 'Guru pengganti • ' + p.kelas + ' • ' + n(p.guru_pengganti), 'pengganti.delete': () => 'Batalkan guru pengganti', 'pelanggaran.save': () => 'Pelanggaran • ' + n(p.username), 'pelanggaran.delete': () => 'Hapus pelanggaran', 'profil.save': () => 'Biodata saya', 'raport.naik': () => 'Status naik kelas • ' + n(p.username)
+    'users.save': () => 'Data pengguna: ' + p.nama, 'pengganti.save': () => 'Guru pengganti • ' + p.kelas + ' • ' + n(p.guru_pengganti), 'pengganti.delete': () => 'Batalkan guru pengganti', 'pelanggaran.save': () => 'Pelanggaran • ' + n(p.username), 'pelanggaran.delete': () => 'Hapus pelanggaran', 'profil.save': () => 'Biodata saya', 'raport.naik': () => 'Status naik kelas • ' + n(p.username),
+    'settings.save': () => 'Pengaturan aplikasi', 'post.fotoTambah': () => 'Foto postingan', 'post.delete': () => 'Hapus postingan', 'asrama.dokAdd': () => 'Dokumentasi asrama',
+    'asrama.dokDelete': () => 'Hapus dokumentasi', 'asrama.delete': () => 'Hapus asrama', 'haris.save': () => 'Kelompok haris', 'haris.delete': () => 'Hapus kelompok haris',
+    'kabilah.save': () => 'Kabilah', 'kabilah.delete': () => 'Hapus kabilah', 'profil.galeriDelete': () => 'Hapus foto galeri', 'pengajuan.tolak': () => 'Tolak pengajuan',
+    'publik.putuskan': () => 'Verifikasi layar utama', 'publik.komentarPutuskan': () => 'Verifikasi komentar', 'admin.aktif': () => (p.aktif ? 'Buka' : 'Kunci') + ' akun • ' + n(p.username), 'grup.keluar': () => 'Keluar dari grup',
+    'jamaah.save': () => 'Absen jamaah', 'izin.delete': () => 'Hapus catatan izin', 'users.delete': () => 'Hapus akun', 'mengulang.delete': () => 'Hapus daftar mengulang', 'pengumuman.delete': () => 'Hapus pengumuman'
   };
   return (L[it.action] || (() => it.action))();
 }
 async function pQueue() {
-  const l = Q.mine();
-  view('<div class="card row" style="background:var(--soft)">' + ic(S.online ? 'repeat' : 'wifioff') + '<div class="grow small">' + (S.online ? 'Perubahan dikirim otomatis berurutan.' : 'Anda sedang offline. Perubahan akan dikirim otomatis saat internet tersambung.') + '</div>' +
+  const l = Q.mine(), K = S.kerja || [], G = S.kerjaGagal || [];
+  view((K.length ? '<div class="sec"><h3>Sedang dikirim</h3></div><div class="card"><div class="list">' + K.map(k => '<div class="it" style="cursor:default"><div class="av sm" style="background:var(--soft);color:var(--pri2)"><span class="spin"></span></div><div class="grow"><div class="t">' + esc(k.label) + '</div><div class="s">' + esc(k.info || 'Mengunggah di latar belakang…') + '</div></div></div>').join('') + '</div></div>' : '') +
+    (G.length ? '<div class="sec"><h3>Gagal disimpan</h3><button class="link" onclick="S.kerjaGagal=[];updKirim();refresh()">Bersihkan</button></div><div class="card"><div class="list">' + G.map(k => '<div class="it" style="cursor:default"><div class="grow"><div class="t">' + esc(k.label) + '</div><div class="s"><b style="color:#b91c1c">' + esc(k.err) + '</b> • ulangi dari menunya</div></div></div>').join('') + '</div></div>' : '') +'<div class="card row" style="background:var(--soft)">' + ic(S.online ? 'repeat' : 'wifioff') + '<div class="grow small">' + (S.online ? 'Perubahan dikirim otomatis berurutan.' : 'Anda sedang offline. Perubahan akan dikirim otomatis saat internet tersambung.') + '</div>' +
     (S.online && l.some(x => !x.err) ? '<button class="btn sm" onclick="flush().then(refresh)">Kirim sekarang</button>' : '') + '</div>' +
     (l.length ? '<div class="card"><div class="list">' + l.map(it => '<div class="it" style="cursor:default"><div class="grow"><div class="t">' + esc(qLabel(it)) + '</div><div class="s">' + tgl(it.waktu) + ' ' + jam(it.waktu) +
       (it.err ? ' • <b style="color:#b91c1c">Ditolak: ' + esc(it.err) + '</b>' : ' • menunggu') + '</div></div>' +
       '<button class="ibtn" onclick="hapusAntrean(\'' + it.id + '\')">' + ic('trash') + '</button></div>').join('') + '</div></div>'
-      : empty('Semua perubahan sudah terkirim.', 'check')));
+      : (K.length || G.length ? '' : empty('Semua perubahan sudah tersimpan di server.', 'check'))));
 }
 async function hapusAntrean(id) { if (await ask('Batalkan perubahan ini? Perubahan tidak akan dikirim ke server.', 'Batalkan')) { Q.remove(id); refresh(); } }
 window.addEventListener('online', () => { setOnline(isOnline()); });
@@ -972,7 +1027,7 @@ function toast(msg, type) {
   document.body.appendChild(t); setTimeout(() => t.remove(), 3200);
 }
 async function run(fn, okMsg) {
-  try { const r = await fn(); if (r && r._queued) toast('Tersimpan di perangkat. Akan dikirim otomatis saat online.', 'ok'); else if (okMsg) toast(okMsg, 'ok'); return r; } catch (e) { toast(e.message, 'err'); throw e; }
+  try { const r = await fn(); if (r && r._queued && !isOnline()) toast('Tersimpan di perangkat. Akan dikirim otomatis saat online.', 'ok'); else if (okMsg) toast(okMsg, 'ok'); return r; } catch (e) { toast(e.message, 'err'); throw e; }
 }
 function busy(btn, on) { if (!btn) return; btn.disabled = on; if (on) { btn.dataset.t = btn.innerHTML; btn.innerHTML = 'Memproses...'; } else if (btn.dataset.t) btn.innerHTML = btn.dataset.t; }
 
@@ -1281,9 +1336,10 @@ function topBar() {
   const chatBtn = '<button class="ib" onclick="openPemberitahuan()" aria-label="Pemberitahuan Hari Ini">' + ic('bell') + '<span class="badge' + (jmlLonceng() ? '' : ' hide') + '" id="nfBadge">' + (jmlLonceng() > 99 ? '99+' : (jmlLonceng() || '')) + '</span></button>' +
     '<button class="ib" onclick="openChat()" aria-label="Room Chat">' + ic('chat') + (S.unread ? '<span class="badge">' + (S.unread > 99 ? '99+' : S.unread) + '</span>' : '') + '</button>';
   $('#top').innerHTML = top
-    ? '<button class="ib" onclick="back()">' + ic('back') + '</button><div class="tt"' + (top.onTitle ? ' onclick="' + top.onTitle + '" style="cursor:pointer" role="button"' : '') + '><div class="t1">' + esc(top.title) + '</div><div class="t2">' + esc(top.sub || appName()) + '</div></div>' + syncHtml() + (top.aksi || (top.noChat ? '' : chatBtn))
-    : '<div class="tt"><div class="t1">' + esc(appName()) + '</div><div class="t2">' + esc(sub) + '</div></div>' + syncHtml() + chatBtn;
+    ? '<button class="ib" onclick="back()">' + ic('back') + '</button><div class="tt"' + (top.onTitle ? ' onclick="' + top.onTitle + '" style="cursor:pointer" role="button"' : '') + '><div class="t1">' + esc(top.title) + '</div><div class="t2">' + esc(top.sub || appName()) + '</div></div>' + syncHtml() + kirimHtml() + (top.aksi || (top.noChat ? '' : chatBtn))
+    : '<div class="tt"><div class="t1">' + esc(appName()) + '</div><div class="t2">' + esc(sub) + '</div></div>' + syncHtml() + kirimHtml() + chatBtn;
   $$('#nav button').forEach(b => b.classList.toggle('on', b.dataset.t === S.tab));
+  updKirim();
 }
 function show() {
   closeSheet();
@@ -1654,7 +1710,7 @@ async function rosterForm(i) {
     let antre = false;
     try {
       for (const o of ops) { const x = await api(o.a, o.p); if (x && x._queued) antre = true; }
-      toast(antre ? 'Tersimpan di perangkat. Akan dikirim otomatis saat online.' : 'Roster disimpan (' + days.join(', ') + ').', 'ok');
+      toast(antre && !isOnline() ? 'Tersimpan di perangkat. Akan dikirim otomatis saat online.' : 'Roster disimpan (' + days.join(', ') + ').', 'ok');
       S.ui.rosterKelas = val('fk'); closeSheet();
     } catch (x) { toast(x.message, 'err'); }
     busy(e.target, false); S.fetchedAt = {}; refresh();
@@ -2331,7 +2387,7 @@ async function pEditProfil(un) {
 }
 function renderGaleriEdit() {
   const g = S.ui.galeriEdit || [], el = $('#gedit'); if (!el) return;
-  el.innerHTML = g.length ? g.map(x => '<div class="gi"><img src="' + esc(x.url) + '" referrerpolicy="no-referrer" onerror="this.style.opacity=.2"><button onclick="hapusGaleri(\'' + esc(x.id) + '\')" title="Hapus">✕</button></div>').join('') : '<div class="small muted" style="grid-column:1/-1;padding:8px 2px">Belum ada foto.</div>';
+  el.innerHTML = g.length ? g.map(x => '<div class="gi"><img src="' + esc(x.url) + '" referrerpolicy="no-referrer" onerror="this.style.opacity=.2"' + (x.unggah ? ' style="opacity:.55"' : '') + '>' + (x.unggah ? '<span class="spin" style="position:absolute;left:50%;top:50%;margin:-9px 0 0 -9px"></span>' : '<button onclick="hapusGaleri(\'' + esc(x.id) + '\')" title="Hapus">✕</button>') + '</div>').join('') : '<div class="small muted" style="grid-column:1/-1;padding:8px 2px">Belum ada foto.</div>';
 }
 function kompres(file, max, q) {
   return new Promise((res, rej) => {
@@ -2342,14 +2398,16 @@ function kompres(file, max, q) {
 }
 async function tambahGaleri(input) {
   const files = Array.from(input.files || []); input.value = '';
+  if (!files.length || !wajibOnline('Menambah foto galeri')) return;
+  const target = S.ui.editTarget;
   for (const f of files) {
-    try {
-      const data = await kompres(f, 1280, .85);
-      const r = await run(() => api('profil.galeriAdd', { target: S.ui.editTarget, data: data }));
-      S.ui.galeriEdit.push({ id: r.id, url: data }); renderGaleriEdit();
-    } catch (e) { break; }
+    let data; try { data = await kompres(f, 1280, .85); } catch (e) { toast(e.message, 'err'); continue; }
+    const tmp = { id: 'tmp-' + cid(), url: data, unggah: true }; S.ui.galeriEdit.push(tmp); renderGaleriEdit();
+    latar('Foto galeri', () => rawApi('profil.galeriAdd', { target: target, data: data }, true),
+      r => { tmp.id = r.id; delete tmp.unggah; renderGaleriEdit(); },
+      () => { S.ui.galeriEdit = (S.ui.galeriEdit || []).filter(x => x !== tmp); renderGaleriEdit(); });
   }
-  if (files.length) { toast('Foto ditambahkan ke galeri.', 'ok'); S.fetchedAt = {}; }
+  toast(files.length + ' foto sedang diunggah ke galeri…', 'ok');
 }
 async function hapusGaleri(id) {
   if (!(await ask('Hapus foto ini dari galeri?', 'Hapus'))) return;
@@ -2371,7 +2429,9 @@ function uploadFoto(input) {
   const f = input.files && input.files[0]; if (!f) return;
   kompres(f, 480, .85).then(async data => {
     $('#bav').innerHTML = '<img src="' + data + '">';
-    try { const r = await run(() => api('profil.photo', { target: S.ui.editTarget || undefined, data: data, mime: 'image/jpeg' }), 'Foto profil diperbarui.'); if (!S.ui.editTarget) S.B.user.foto = r.foto; S.fetchedAt = {}; } catch (e) {}
+    if (!wajibOnline('Mengganti foto profil')) return;
+    const target = S.ui.editTarget || undefined;
+    latar('Foto profil', () => rawApi('profil.photo', { target: target, data: data, mime: 'image/jpeg' }, true), r => { if (!target && r && r.foto) S.B.user.foto = r.foto; toast('Foto profil diperbarui.', 'ok'); });
   }).catch(e => toast(e.message, 'err'));
 }
 async function openSettings() { push('Pengaturan Aplikasi', pSettings); }
@@ -3403,7 +3463,7 @@ function postForm(i) {
   const t = x.target || {}, khusus = x.privasi === 'khusus';
   S.ui.pfile = null; S.ui.pfoto = []; S.ui.phapus = [];
   const d = sheet(i === null ? 'Buat Postingan' : 'Edit Postingan',
-    '<textarea class="in" id="pteks" style="min-height:120px" maxlength="5000" placeholder="Tulis sesuatu…">' + esc(x.teks) + '</textarea>' +
+    '<textarea class="in" id="pteks" style="min-height:120px" maxlength="5000" placeholder="Tulis sesuatu…">' + esc(x.teks || (i === null ? store.get('alhuda_draf_post') || '' : '')) + '</textarea>' +
     '<div id="pgal" class="pgalf">' + (x.galeri || []).map(id => '<div data-g="' + esc(id) + '"><img src="' + esc(driveImg(id)) + '" referrerpolicy="no-referrer"><button type="button" onclick="S.ui.phapus.push(this.parentNode.dataset.g);this.parentNode.remove()">' + ic('x') + '</button></div>').join('') + '</div>' +
     '<div id="pprev" style="margin-top:10px">' + (x.lampiran ? '<div class="pfile">' + esc(labelJenis(x.lampiran.jenis) + ' • ' + (x.lampiran.nama || '')) + '<label class="small" style="margin-left:auto;display:flex;gap:4px;align-items:center"><input type="checkbox" id="phl"> Hapus</label></div>' : '') + '</div>' +
     '<div class="row" style="gap:8px;margin:10px 0 14px">' +
@@ -3429,13 +3489,17 @@ function postForm(i) {
     else if (hapusUtama) p.hapusLampiran = true;
     if (S.ui.phapus.length) p.hapusGaleri = S.ui.phapus.slice();
     if (!p.teks && !p.data && !tambahan.length && !(x.lampiran && !p.hapusLampiran)) return toast('Tulis sesuatu atau lampirkan file.', 'err');
-    const b = e.currentTarget; busy(b, true); if (p.data || tambahan.length) b.innerHTML = '<span class="spin"></span> Mengunggah…';
-    try {
-      const r = await api('post.save', p);
-      for (let k = 0; k < tambahan.length; k++) { b.innerHTML = '<span class="spin"></span> Mengunggah foto ' + (k + 2) + '/' + (tambahan.length + 1) + '…'; await api('post.fotoTambah', { id: r.id || x.id, data: tambahan[k].data, nama: tambahan[k].nama }); }
-      toast(i === null ? 'Postingan dibagikan.' : 'Postingan disimpan.', 'ok'); closeSheet(); S.ui.post = null; S.fetchedAt = {}; refresh();
-    }
-    catch (z) { toast(z.message, 'err'); busy(b, false); }
+    if (!wajibOnline('Menyimpan postingan')) return;
+    const baru = i === null, jmlFoto = (p.data ? 1 : 0) + tambahan.length;
+    closeSheet(); S.ui.post = null;
+    toast(jmlFoto ? 'Postingan sedang diunggah di latar belakang…' : (baru ? 'Postingan dibagikan.' : 'Postingan disimpan.'), 'ok');
+    latar(baru ? 'Postingan baru' : 'Ubah postingan', async job => {
+      job.info = jmlFoto ? 'Mengunggah foto 1/' + jmlFoto + '…' : 'Menyimpan…'; updKirim();
+      const r = await rawApi('post.save', p, true);
+      for (let k = 0; k < tambahan.length; k++) { job.info = 'Mengunggah foto ' + (k + 2) + '/' + jmlFoto + '…'; await rawApi('post.fotoTambah', { id: r.id || x.id, data: tambahan[k].data, nama: tambahan[k].nama }, true); }
+      return r;
+    }, () => { store.set('alhuda_draf_post', null); if (jmlFoto) toast(baru ? 'Postingan berhasil dibagikan.' : 'Postingan berhasil disimpan.', 'ok'); },
+    () => { if (baru && p.teks) store.set('alhuda_draf_post', p.teks); });
   };
 }
 function postPrivasi() { const k = ($('input[name=pp]:checked') || {}).value === 'khusus'; $('#ppk').classList.toggle('hide', !k); $$('input[name=pp]').forEach(r => r.parentNode.classList.toggle('on', r.checked)); }
