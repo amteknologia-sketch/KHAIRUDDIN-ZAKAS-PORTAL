@@ -326,3 +326,58 @@ Cukup ganti isi **`Index`** dengan **Index.html** yang baru, lalu pilih **Terapk
 
 ## Domain sendiri (ditunda)
 - Untuk sementara portal tetap memakai alamat GitHub Pages bawaan. Saat domain alhudamalikussaleh.web.id sudah siap, tambahkan file `web/CNAME`, isi Custom domain di Settings → Pages, lalu atur DNS.
+
+## Pembaruan v2.8.5
+- **Postingan dengan banyak foto (maks. 10):** foto berganti sendiri setiap 4 detik dengan transisi fade. Pengguna juga bisa mengusapnya, dan ketuk untuk memperbesar. Saat mengedit, foto tambahan bisa dihapus satu per satu. Kolom `galeri` ditambahkan otomatis ke sheet Postingan.
+- **Membuka aplikasi yang sudah terpasang:**
+  - `manifest.webmanifest` kini berisi `launch_handler`, `handle_links`, dan `related_applications`.
+  - Chrome/Edge di komputer (versi 139 ke atas) otomatis membuka tautan situs di aplikasi yang sudah terpasang.
+  - Jika situs dibuka di tab browser padahal aplikasi sudah terpasang, muncul bar **"Buka Aplikasi"**.
+  - iPhone/Safari tidak mendukung pengalihan otomatis.
+- File yang diganti: `Publik`, `Index.html`, dan `web/manifest.webmanifest`.
+- **Tampilan postingan:** foto/video kini diletakkan di atas teks dan tampil sesuai rasio aslinya (9:16 tetap potret, 16:9 tetap landscape). @username tidak ditampilkan lagi; nama tetap bisa diketuk untuk membuka profil.
+
+## Halaman Home (percobaan) — alhudamalikussaleh.web.id/home.html
+- Isi folder khusus di GitHub: `home/home.html` dan `home/img/`. Folder `img/` berisi banner1–3, contoh foto berita, dan logo. CSS dan JavaScript sudah menyatu di dalam home.html.
+- Saat situs diterbitkan, workflow menyalin isi folder itu ke situs. Hasilnya bisa dibuka di `/home.html` dan `/img/...`.
+- **Banner utama:** 1–5 gambar JPG 16:9, berganti tiap 4 detik dengan fade, bisa diusap atau digeser lewat panah dan titik.
+- **Berita:** nama, tanggal, banner (bisa lebih dari satu, bisa diusap), dan isi berita maksimal 5 baris (rata kiri-kanan, baris pertama menjorok) dengan tombol *Lihat selengkapnya*.
+- **Konten dari aplikasi:** jika aplikasi sudah punya postingan yang disetujui tampil di Layar Utama, berita otomatis diganti dengan postingan tersebut. Teks Tentang Dayah dan akun IG juga diambil dari Pengaturan aplikasi.
+- **Tombol Login** membuka aplikasi. Jika pengguna sudah login, tombolnya bertuliskan "Beranda" dan langsung membuka Beranda aplikasi.
+- **Tombol Tentang** membuka jendela Tentang Dayah beserta lokasi dan tombol Instagram.
+
+## Pembaruan v2.9.0 — Akses Khusus Admin (Tahap 1)
+Menu **Pengaturan → Akses Khusus Admin** (terlihat oleh Admin dan Pengembang) berisi:
+- **Keamanan Kata Sandi & Akun:**
+  - Reset kata sandi pengguna (dibuat acak atau diketik sendiri), lalu kirim ke WhatsApp atau salin. Reset otomatis mengeluarkan akun dari semua perangkat.
+  - Kunci atau buka akun.
+  - Akun Pengembang hanya dapat diubah oleh Pengembang.
+- **Kelola Data Pengguna:** tambah, ubah, dan hapus santri serta dewan guru (per kelas atau nonaktif).
+- **Pengajuan Santri Baru**
+- **Daftar Kelas & Nama Lembaga:** tambah, ubah, dan hapus kelas, serta ubah nama lembaga (mis. PDF Wustha → SMP). Nama ini dipakai di seluruh aplikasi, formulir pendaftaran, dan kop raport.
+- **Tentang Dayah & Instagram**, **Logo Aplikasi & Kop Surat** (kini juga untuk Admin), **Layar Utama Publik**, dan **Pengaturan Aplikasi**.
+- Pengaturan baru: `lembaga_wustha`, `lembaga_ulya`, `lembaga_salafi`, `sandi_min`.
+- File yang diganti: `Publik` dan `Index.html`.
+
+## Pembaruan v2.9.1 — Akses Khusus Admin (Tahap 2: Pengaturan Akademik)
+- **Sesi & Jam Pelajaran:**
+  - Tambah, ubah, dan hapus sesi lengkap dengan kode, jam mulai–selesai, berlaku untuk Salafi/PDF, dan hari (Setiap Hari atau hari tertentu).
+  - Satu sesi bisa ditandai sebagai **sesi wali kelas otomatis**.
+  - Mengganti kode sesi ikut memperbarui roster. Jika sesi yang masih dipakai roster dihapus, Admin diminta konfirmasi terlebih dahulu.
+- **Wali Kelas:** pilih *Otomatis* (guru yang mengajar di sesi wali) atau tunjuk guru tertentu per kelas. Berlaku di daftar kelas, raport PDF, laporan iuran & tahunan, serta hak mengisi status naik kelas.
+- **Istilah Kegiatan:** "Mengulang Malam" beserta jamnya bisa diganti (mis. *Bimbingan*), dan istilah baru tampil di Beranda, menu Absen & Izin, serta roster.
+- **Kabag / Peran & Hak Akses:**
+  - Tambah peran baru yang mewarisi hak akses dari peran bawaan.
+  - Ganti nama peran (pengguna ikut dipindahkan), hapus atau sembunyikan peran, dan tampilkan kembali peran yang disembunyikan.
+  - Peran Admin dan Pengembang Aplikasi tidak dapat diubah.
+- Sheet baru `WaliKelas` dan `Peran` dibuat otomatis, dan kolom `hari` ditambahkan ke sheet Sesi.
+- File yang diganti: `Publik` dan `Index.html`.
+
+## Pembaruan v2.10.0 — Akses Pengembang (Tahap 3)
+Menu **Pengaturan → Akses Pengembang** (hanya Pengembang Aplikasi):
+- **Tema Aplikasi**: 10 pilihan tema + warna kustom (warna utama, aksen, latar) dengan pratinjau. Bisa **dikunci** agar semua pengguna memakai tema yang sama. Berlaku juga di halaman login.
+- **Tentang Aplikasi**: nama aplikasi (ponsel/komputer), versi, deskripsi, pemilik, alamat, pembuat, penerbit, tanggal revisi, kontak.
+- **Sebutan Lembaga**: kata "Dayah" diganti di seluruh tampilan, halaman login & PDF (mis. Pesantren). Email/tautan tidak ikut diganti.
+- **Login Khusus Pengembang**: akun di Script Properties (DEV_USER, DEV_PASS, DEV_AKTIF), bukan di sheet Users. 5× salah sandi → dikunci 15 menit.
+- **Alamat Server (URL Web App)**: diganti dari aplikasi tanpa membangun ulang APK. Di halaman login, **ketuk logo 5 kali** untuk membuka pengaturan server. Bila belum ada URL sama sekali, aplikasi langsung menampilkan halaman "Hubungkan ke Server".
+- APK perlu dibangun ulang (versionCode 15 / 2.10.0) agar alamat server baru juga dipakai notifikasi & sinkron latar belakang.

@@ -488,3 +488,522 @@ function baruRingkas_(u) {
   const db = ACTIONS.dashboard;
   ACTIONS.dashboard = function (u, p) { const d = db(u, p); try { d.baru = baruRingkas_(u); } catch (e) {} return d; };
 })();
+
+/* ============================================================
+ *  POSTINGAN BANYAK FOTO (v2.8.5)
+ *  Foto pertama tetap di kolom "lampiran"; foto tambahan (maks. 10 total) di kolom "galeri".
+ * ============================================================ */
+if (SHEETS.Postingan.indexOf('galeri') < 0) SHEETS.Postingan.push('galeri');
+const POST_FOTO_MAKS = 10;
+function postGaleri_(r) { try { return JSON.parse(r.galeri || '[]'); } catch (e) { return []; } }
+function postFotos_(r) {
+  const out = []; try { const l = r.lampiran ? JSON.parse(r.lampiran) : null; if (l && l.jenis === 'foto') out.push(l.id); } catch (e) {}
+  return out.concat(postGaleri_(r).map(g => g.id));
+}
+ACTIONS['post.fotoTambah'] = function (u, p) {
+  const r0 = readAll_('Postingan').find(x => x.id === p.id); if (!r0) throw new Error('Postingan tidak ditemukan.');
+  need_(lc_(r0.username) === lc_(u.username), 'Hanya pemilik yang dapat menambah foto.');
+  if (postFotos_(r0).length >= POST_FOTO_MAKS) throw new Error('Maksimal ' + POST_FOTO_MAKS + ' foto per postingan.');
+  const bytes = Utilities.base64Decode(String(p.data || '').replace(/^data:[^,]*,/, ''));
+  if (!bytes.length) throw new Error('Foto kosong.');
+  if (bytes.length > CHAT_MAKS.foto * 1024 * 1024) throw new Error('Ukuran foto maksimal ' + CHAT_MAKS.foto + ' MB.');
+  const nama = String(p.nama || 'foto.jpg').replace(/[\\/:*?"<>|]+/g, '_').slice(0, 120);
+  const f = postFolder_().createFile(Utilities.newBlob(bytes, 'image/jpeg', Date.now() + '_' + nama));
+  try { f.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); } catch (e) {}
+  return lock_(() => {
+    const r = readAll_('Postingan').find(x => x.id === p.id), g = postGaleri_(r);
+    g.push({ id: f.getId(), mime: 'image/jpeg', nama: nama });
+    update_('Postingan', r._row, { galeri: JSON.stringify(g) });
+    return { id: f.getId(), jumlah: postFotos_(Object.assign({}, r, { galeri: JSON.stringify(g) })).length };
+  });
+};
+(function () {
+  const sv = ACTIONS['post.save'];
+  ACTIONS['post.save'] = function (u, p) {
+    const res = sv(u, p);
+    if (p.id && (Array.isArray(p.hapusGaleri) && p.hapusGaleri.length || p.hapusLampiran)) {
+      lock_(() => {
+        const r = readAll_('Postingan').find(x => x.id === p.id); if (!r) return;
+        let g = postGaleri_(r);
+        const hapus = (p.hapusGaleri || []).map(String);
+        g.filter(x => hapus.indexOf(x.id) >= 0).forEach(x => { try { DriveApp.getFileById(x.id).setTrashed(true); } catch (e) {} });
+        g = g.filter(x => hapus.indexOf(x.id) < 0);
+        const patch = { galeri: JSON.stringify(g) };
+        if (!r.lampiran && g.length) { const a = g.shift(); patch.lampiran = JSON.stringify({ id: a.id, nama: a.nama, mime: a.mime, ukuran: 0, jenis: 'foto' }); patch.galeri = JSON.stringify(g); }   // foto utama dihapus → foto berikutnya naik
+        update_('Postingan', r._row, patch);
+      });
+    }
+    return res;
+  };
+  const del = ACTIONS['post.delete'];
+  ACTIONS['post.delete'] = function (u, p) {
+    const r = readAll_('Postingan').find(x => x.id === p.id);
+    const g = r ? postGaleri_(r) : [];
+    const res = del(u, p);
+    g.forEach(x => { try { DriveApp.getFileById(x.id).setTrashed(true); } catch (e) {} });
+    return res;
+  };
+  const pl = ACTIONS['post.list'];
+  ACTIONS['post.list'] = function (u, p) {
+    const d = pl(u, p), rows = {}; readAll_('Postingan').forEach(r => { if (r.id) rows[r.id] = r; });
+    const isi = x => { const r = rows[x.id]; if (!r) return; x.fotos = postFotos_(r); x.galeri = postGaleri_(r).map(g => g.id); };
+    if (d && d.items) d.items.forEach(isi); else if (d && d.id) isi(d);
+    return d;
+  };
+  const lain = typeof mediaBolehLain_ === 'function' ? mediaBolehLain_ : null;
+  mediaBolehLain_ = function (u, id) {
+    if (lain && lain(u, id)) return true;
+    return readAll_('Postingan').some(r => r.galeri && String(r.galeri).indexOf(id) >= 0 && postBoleh_(u, r));
+  };
+})();
+
+/* ============================================================
+ *  AKSES KHUSUS ADMIN — TAHAP 1 (v2.9.0)
+ *  Keamanan kata sandi & akun, nama lembaga (mis. PDF Wustha → SMP), logo & kop untuk Admin.
+ * ============================================================ */
+[
+  ['lembaga_wustha', 'PDF Wustha', 'Nama tampilan lembaga jenjang Wustha (mis. PDF Wustha / SMP / MTs)'],
+  ['lembaga_ulya', 'PDF Ulya', 'Nama tampilan lembaga jenjang Ulya (mis. PDF Ulya / SMA / MA)'],
+  ['lembaga_salafi', 'Salafi', 'Nama tampilan lembaga jenjang Salafi'],
+  ['sandi_min', '6', 'Panjang minimal kata sandi saat Admin mereset / membuat akun']
+].forEach(r => { if (!DEFAULT_SETTINGS.some(x => x[0] === r[0])) DEFAULT_SETTINGS.push(r); });
+function lembagaLabel_() {
+  const s = settingsMap_();
+  return { Wustha: s.lembaga_wustha || 'PDF Wustha', Ulya: s.lembaga_ulya || 'PDF Ulya', Salafi: s.lembaga_salafi || 'Salafi' };
+}
+function sandiMin_() { return Math.max(4, num_(settingsMap_().sandi_min) || 6); }
+function akunBoleh_(u, x) {
+  need_(perms_(u).users, 'Hanya Admin yang dapat mengelola akun pengguna.');
+  need_(!isDev_(x) || isDev_(u), 'Akun Pengembang Aplikasi hanya dapat diubah oleh Pengembang.');
+}
+function sandiAcak_() { const c = 'abcdefghjkmnpqrstuvwxyz23456789'; let s = ''; for (let i = 0; i < 8; i++) s += c[Math.floor(Math.random() * c.length)]; return s; }
+function waAkun_(x) {
+  const v = readAll_('Verifikasi').find(r => lc_(r.username) === lc_(x.username));
+  return String((v && v.wa) || x.wa || '').trim();
+}
+/** Daftar semua akun (termasuk nonaktif) untuk halaman Keamanan & Kelola Pengguna. */
+ACTIONS['admin.akun'] = function (u) {
+  need_(perms_(u).users, 'Hanya Admin yang dapat melihat daftar akun.');
+  const v = verifSet_(), ver = {}; readAll_('Verifikasi').forEach(r => ver[lc_(r.username)] = r.wa);
+  return readAll_('Users').filter(x => x.username).map(x => ({ username: x.username, nama: x.nama, tipe: x.tipe, kelas: x.kelas || '', kabag: x.kabag || '',
+    nis_nip: x.nis_nip || '', jenis_nomor: x.jenis_nomor || '', asal: x.asal || '', foto: x.foto || '', aktif: lc_(x.aktif) === 'tidak' ? 'Tidak' : 'Ya',
+    wa: String(ver[lc_(x.username)] || x.wa || ''), v: v[lc_(x.username)] ? 1 : 0, dev: isDev_(x) ? 1 : 0 }))
+    .sort((a, b) => String(a.nama).localeCompare(String(b.nama)));
+};
+/** Reset kata sandi: otomatis mengeluarkan akun dari semua perangkat (token lama tidak berlaku). */
+ACTIONS['admin.resetSandi'] = function (u, p) {
+  const x = findUser_(p.username); if (!x) throw new Error('Pengguna tidak ditemukan.');
+  akunBoleh_(u, x);
+  const pw = String(p.password || '').trim() || sandiAcak_();
+  if (pw.length < sandiMin_()) throw new Error('Kata sandi minimal ' + sandiMin_() + ' karakter.');
+  if (/\s/.test(pw)) throw new Error('Kata sandi tidak boleh mengandung spasi.');
+  lock_(() => update_('Users', x._row, { password: hashPw_(pw) }));
+  const s = settingsMap_();
+  const pesan = "Assalamu'alaikum " + x.nama + ",\n\nKata sandi akun *" + (s.nama_mobile || 'ALHUDA MOBILE') + "* Anda telah direset oleh Admin.\n\n" +
+    "Username : *" + x.username + "*\nKata sandi baru : *" + pw + "*\n\nSilakan login kembali, lalu ganti kata sandi melalui menu Pengaturan → Biodata Pengguna. Jangan bagikan kata sandi kepada siapa pun.";
+  return { username: x.username, nama: x.nama, password: pw, wa: waAkun_(x), pesan: pesan };
+};
+/** Kunci (nonaktifkan) / buka akun. Akun nonaktif tidak dapat login. */
+ACTIONS['admin.aktif'] = function (u, p) {
+  const x = findUser_(p.username); if (!x) throw new Error('Pengguna tidak ditemukan.');
+  akunBoleh_(u, x);
+  need_(lc_(x.username) !== lc_(u.username), 'Tidak dapat mengunci akun sendiri.');
+  lock_(() => update_('Users', x._row, { aktif: p.aktif ? 'Ya' : 'Tidak' }));
+  return { username: x.username, aktif: p.aktif ? 'Ya' : 'Tidak' };
+};
+/* Logo & Kop Surat juga dapat diubah Admin (sebelumnya khusus Pengembang). */
+(function () {
+  const sbgDev = u => (pbAdmin_(u) && !isDev_(u)) ? Object.assign({}, u, { kabag: (u.kabag ? u.kabag + ',' : '') + 'Pengembang Aplikasi' }) : u;
+  ['logo.upload', 'logo.reset', 'logo.get'].forEach(a => { const asli = ACTIONS[a]; if (asli) ACTIONS[a] = (u, p) => asli(sbgDev(u), p); });
+  /* Nama lembaga di kop raport PDF ikut pengaturan */
+  const kopAsli = kop_;
+  kop_ = function (judul, logoKey) {
+    try {
+      const L = lembagaLabel_();
+      judul = String(judul).replace(/^PDF WUSTHA\b/, String(L.Wustha).toUpperCase()).replace(/^PDF ULYA\b/, String(L.Ulya).toUpperCase());
+    } catch (e) {}
+    return kopAsli(judul, logoKey);
+  };
+  /* label lembaga ke aplikasi (boot) & halaman login (publicInfo) */
+  const bt = ACTIONS.boot;
+  ACTIONS.boot = function (u, p) { const b = bt(u, p); try { b.settings.lembaga = lembagaLabel_(); b.settings.sandi_min = sandiMin_(); } catch (e) {} return b; };
+  const pi = publicInfo_;
+  publicInfo_ = function () { const o = pi(); try { o.lembaga = lembagaLabel_(); } catch (e) {} return o; };
+})();
+if (typeof SYNC_BACA !== 'undefined') SYNC_BACA.push('admin.akun');
+
+/* ============================================================
+ *  AKSES KHUSUS ADMIN — TAHAP 2: PENGATURAN AKADEMIK (v2.9.1)
+ *  Sesi & jam pelajaran, wali kelas (manual / otomatis dari sesi), istilah, kabag/peran & hak akses.
+ * ============================================================ */
+[
+  ['istilah_mengulang', 'Mengulang Malam', 'Istilah kegiatan mengulang malam (mis. Bimbingan / Muthala\'ah)'],
+  ['jam_mengulang', '22.30 - 23.30', 'Jam kegiatan mengulang malam']
+].forEach(r => { if (!DEFAULT_SETTINGS.some(x => x[0] === r[0])) DEFAULT_SETTINGS.push(r); });
+if (SHEETS.Sesi.indexOf('hari') < 0) SHEETS.Sesi.push('hari');
+SHEETS.WaliKelas = ['kelas', 'guru', 'diubah_oleh', 'diubah'];
+SHEETS.Peran = ['nama', 'tipe', 'akses', 'keterangan', 'sembunyi', 'diubah'];
+const PERAN_DILINDUNGI = ['Pengembang Aplikasi', 'Admin'];
+const PERAN_INFO = {
+  'Pengembang Aplikasi': 'Semua akses + pengaturan khusus pengembang',
+  'Admin': 'Semua akses pengelolaan aplikasi',
+  'Kabag Pendidikan': 'Roster, absen guru, nilai semua kelas, mengulang malam, pengumuman, naik kelas',
+  'Kabag Administrasi': 'Roster pelajaran',
+  'Kabag Bendahara': 'Iuran bulanan, uang tahunan & saldo santri',
+  'Kabag Jamaah': 'Absen jamaah & catatan haris',
+  'Kabag Algojo': 'Pelanggaran santri & catatan haris',
+  'Kabag Kebersihan': 'Piket & kebersihan',
+  'Kabag Media': 'Pengumuman',
+  'Kabag Humas': 'Izin keluar sebentar & pengumuman',
+  'Kabag Asrama': 'Asrama & pelanggaran',
+  'Kabag Perizinan': 'Perizinan pulang',
+  'Kabag Muzakir': 'Kabilah'
+};
+function peranRows_() { return readAll_('Peran').filter(r => r.nama); }
+function peranKustom_() { return peranRows_().filter(r => r.tipe === 'kustom').map(r => ({ nama: r.nama, akses: String(r.akses || '').split(',').map(s => s.trim()).filter(Boolean), keterangan: r.keterangan || '' })); }
+function peranSembunyi_() { return peranRows_().filter(r => r.tipe === 'bawaan' && r.sembunyi === 'Ya').map(r => r.nama); }
+let PERAN_MEMO = null;
+function peranMap_() { if (PERAN_MEMO) return PERAN_MEMO; const m = {}; peranKustom_().forEach(p => m[lc_(p.nama)] = p); return (PERAN_MEMO = m); }
+/* Peran kustom mewarisi hak akses dari peran bawaan yang dipilih */
+(function () {
+  const asli = roles_;
+  roles_ = function (u) {
+    const r = asli(u); let m; try { m = peranMap_(); } catch (e) { return r; }
+    if (!Object.keys(m).length) return r;
+    const out = r.slice();
+    r.forEach(n => { const p = m[lc_(n)]; if (p) p.akses.forEach(a => { if (a !== 'Pengembang Aplikasi' && out.indexOf(a) < 0) out.push(a); }); });
+    return out;
+  };
+})();
+function daftarPeran_() {
+  const sembunyi = peranSembunyi_();
+  return KABAG_LIST.filter(n => sembunyi.indexOf(n) < 0).concat(peranKustom_().map(k => k.nama).filter(n => KABAG_LIST.indexOf(n) < 0));
+}
+function gantiPeranUser_(lama, baru) {
+  readAll_('Users').forEach(x => {
+    const r = String(x.kabag || '').split(',').map(s => s.trim()).filter(Boolean);
+    if (r.indexOf(lama) < 0) return;
+    const n = r.map(s => s === lama ? baru : s).filter(Boolean).filter((s, i, arr) => arr.indexOf(s) === i);
+    update_('Users', x._row, { kabag: n.join(', ') });
+  });
+}
+ACTIONS['peran.list'] = function (u) {
+  need_(perms_(u).users, 'Hanya Admin yang dapat mengelola peran.');
+  const kustom = peranKustom_(), sembunyi = peranSembunyi_(), pakai = {};
+  readAll_('Users').forEach(x => String(x.kabag || '').split(',').map(s => s.trim()).filter(Boolean).forEach(n => pakai[n] = (pakai[n] || 0) + 1));
+  const bawaan = KABAG_LIST.filter(n => PERAN_INFO[n]);
+  return {
+    bawaan: bawaan.map(n => ({ nama: n, info: PERAN_INFO[n], sembunyi: sembunyi.indexOf(n) >= 0, dilindungi: PERAN_DILINDUNGI.indexOf(n) >= 0, jumlah: pakai[n] || 0 })),
+    kustom: kustom.map(k => Object.assign({}, k, { jumlah: pakai[k.nama] || 0 })),
+    aksesPilihan: bawaan.filter(n => n !== 'Pengembang Aplikasi').map(n => ({ nama: n, info: PERAN_INFO[n] }))
+  };
+};
+/** Tambah / ubah peran. Mengganti nama peran bawaan = membuat peran baru yang mewarisi aksesnya, peran lama disembunyikan. */
+ACTIONS['peran.save'] = function (u, p) {
+  need_(perms_(u).users, 'Hanya Admin yang dapat mengelola peran.');
+  const nama = String(p.nama || '').trim().replace(/,/g, ' ');
+  if (!nama || nama.length > 40) throw new Error('Nama peran wajib diisi (maks. 40 karakter).');
+  const akses = (Array.isArray(p.akses) ? p.akses : String(p.akses || '').split(',')).map(s => String(s).trim()).filter(s => s && s !== 'Pengembang Aplikasi' && PERAN_INFO[s]);
+  if (akses.indexOf('Admin') >= 0) need_(isDev_(u) || pbAdmin_(u), 'Hanya Admin yang dapat memberi akses Admin.');
+  const orig = String(p.original || '').trim();
+  return lock_(() => {
+    PERAN_MEMO = null;
+    const rows = peranRows_(), adaNama = n => KABAG_LIST.indexOf(n) >= 0 || rows.some(r => r.nama === n && r.tipe === 'kustom');
+    const rowOrig = rows.find(r => r.nama === orig && r.tipe === 'kustom');
+    if (!orig || orig !== nama) need_(!adaNama(nama) || (orig && lc_(orig) === lc_(nama)), 'Nama peran "' + nama + '" sudah ada.');
+    if (rowOrig) {   // ubah peran kustom
+      if (!akses.length) throw new Error('Pilih minimal satu hak akses.');
+      update_('Peran', rowOrig._row, { nama: nama, akses: akses.join(', '), keterangan: String(p.keterangan || ''), diubah: now_() });
+      if (orig !== nama) gantiPeranUser_(orig, nama);
+    } else if (orig && PERAN_INFO[orig]) {   // ganti nama peran bawaan
+      need_(PERAN_DILINDUNGI.indexOf(orig) < 0, 'Peran ' + orig + ' tidak dapat diganti namanya.');
+      if (orig === nama) return true;
+      append_('Peran', { nama: nama, tipe: 'kustom', akses: orig, keterangan: 'Nama baru untuk ' + orig, sembunyi: '', diubah: now_() });
+      const b = rows.find(r => r.nama === orig && r.tipe === 'bawaan');
+      if (b) update_('Peran', b._row, { sembunyi: 'Ya', diubah: now_() }); else append_('Peran', { nama: orig, tipe: 'bawaan', akses: '', keterangan: '', sembunyi: 'Ya', diubah: now_() });
+      gantiPeranUser_(orig, nama);
+    } else {   // peran baru
+      if (!akses.length) throw new Error('Pilih minimal satu hak akses.');
+      append_('Peran', { nama: nama, tipe: 'kustom', akses: akses.join(', '), keterangan: String(p.keterangan || ''), sembunyi: '', diubah: now_() });
+    }
+    PERAN_MEMO = null;
+    return true;
+  });
+};
+/** Hapus peran (kustom dihapus; bawaan disembunyikan). Peran juga dilepas dari semua pengguna. */
+ACTIONS['peran.delete'] = function (u, p) {
+  need_(perms_(u).users, 'Hanya Admin yang dapat mengelola peran.');
+  const nama = String(p.nama || '').trim();
+  need_(PERAN_DILINDUNGI.indexOf(nama) < 0, 'Peran ' + nama + ' tidak dapat dihapus.');
+  return lock_(() => {
+    PERAN_MEMO = null;
+    const rows = peranRows_(), k = rows.find(r => r.nama === nama && r.tipe === 'kustom');
+    if (k) deleteRows_('Peran', [k._row]);
+    else if (PERAN_INFO[nama]) { const b = rows.find(r => r.nama === nama && r.tipe === 'bawaan'); if (b) update_('Peran', b._row, { sembunyi: 'Ya' }); else append_('Peran', { nama: nama, tipe: 'bawaan', sembunyi: 'Ya', diubah: now_() }); }
+    else throw new Error('Peran tidak ditemukan.');
+    gantiPeranUser_(nama, '');
+    PERAN_MEMO = null;
+    return true;
+  });
+};
+/** Tampilkan kembali peran bawaan yang disembunyikan. */
+ACTIONS['peran.pulihkan'] = function (u, p) {
+  need_(perms_(u).users, 'Hanya Admin yang dapat mengelola peran.');
+  return lock_(() => { const b = peranRows_().find(r => r.nama === p.nama && r.tipe === 'bawaan'); if (b) update_('Peran', b._row, { sembunyi: '' }); return true; });
+};
+
+/* ---------- sesi & jam pelajaran ---------- */
+(function () {
+  sesiAll_ = function () {
+    return readAll_('Sesi').filter(s => s.kode).map(s => ({ kode: s.kode, jam: s.jam, berlaku: s.berlaku, wali: lc_(s.wali_kelas) === 'ya', hari: s.hari || 'Setiap Hari' }));
+  };
+})();
+ACTIONS['sesi.save'] = function (u, p) {
+  need_(can_(u, 'Kabag Pendidikan'), 'Hanya Admin / Kabag Pendidikan yang dapat mengatur sesi.');
+  const kode = String(p.kode || '').trim().toUpperCase(), orig = String(p.original || '').trim();
+  if (!/^[A-Z0-9]{1,6}$/.test(kode)) throw new Error('Kode sesi 1–6 huruf/angka, mis. S1.');
+  const jam = String(p.jam || '').trim();
+  if (!/^\d{1,2}[.:]\d{2}\s*-\s*\d{1,2}[.:]\d{2}$/.test(jam)) throw new Error('Format jam: 07.30 - 09.00');
+  const berlaku = (Array.isArray(p.berlaku) ? p.berlaku : String(p.berlaku || '').split(',')).map(s => String(s).trim()).filter(s => s === 'Salafi' || s === 'PDF');
+  if (!berlaku.length) throw new Error('Pilih berlaku untuk Salafi dan/atau PDF.');
+  let hari = (Array.isArray(p.hari) ? p.hari : String(p.hari || '').split(',')).map(s => String(s).trim()).filter(s => HARI.indexOf(s) >= 0);
+  if (!hari.length || hari.indexOf('Setiap Hari') >= 0) hari = ['Setiap Hari'];
+  return lock_(() => {
+    const rows = readAll_('Sesi').filter(s => s.kode);
+    const lama = orig ? rows.find(s => s.kode === orig) : null;
+    if (orig && !lama) throw new Error('Sesi tidak ditemukan.');
+    if ((!orig || orig !== kode) && rows.some(s => s.kode === kode)) throw new Error('Kode sesi ' + kode + ' sudah dipakai.');
+    if (p.wali) rows.forEach(s => { if (s !== lama && lc_(s.wali_kelas) === 'ya') update_('Sesi', s._row, { wali_kelas: 'Tidak' }); });
+    const obj = { kode: kode, jam: jam.replace(/\s*-\s*/, ' - ').replace(/:/g, '.'), berlaku: berlaku.join(', '), wali_kelas: p.wali ? 'Ya' : 'Tidak', hari: hari.join(', ') };
+    if (lama) {
+      update_('Sesi', lama._row, obj);
+      if (orig !== kode) readAll_('Roster').forEach(r => { if (r.sesi === orig) update_('Roster', r._row, { sesi: kode }); });
+    } else append_('Sesi', obj);
+    return sesiAll_();
+  });
+};
+ACTIONS['sesi.delete'] = function (u, p) {
+  need_(can_(u, 'Kabag Pendidikan'), 'Hanya Admin / Kabag Pendidikan yang dapat mengatur sesi.');
+  return lock_(() => {
+    const s = readAll_('Sesi').find(x => x.kode === p.kode); if (!s) throw new Error('Sesi tidak ditemukan.');
+    const r = readAll_('Roster').filter(x => x.sesi === p.kode);
+    if (r.length && !p.paksa) throw new Error('PAKAI:' + r.length);
+    if (r.length) deleteRows_('Roster', r.map(x => x._row));
+    deleteRows_('Sesi', [s._row]);
+    return sesiAll_();
+  });
+};
+
+/* ---------- wali kelas: manual per kelas, atau otomatis dari sesi wali ---------- */
+(function () {
+  const otomatis = waliOf_;
+  waliOf_ = function (kelas) {
+    const m = readAll_('WaliKelas').find(r => r.kelas === kelas && r.guru);
+    if (m) { const g = findUser_(m.guru); if (g) return { username: g.username, nama: g.nama, jenis: jenisNomor_(g.jenis_nomor), nomor: g.nis_nip || '', manual: true }; }
+    return otomatis(kelas);
+  };
+  const kl = kelasList_;
+  kelasList_ = function (u) { return kl(u).map(k => { const w = waliOf_(k.nama); k.wali = w ? w.nama : ''; return k; }); };
+  /* nama kelas berubah / kelas dihapus → data wali ikut */
+  const ks = ACTIONS['kelas.save'];
+  if (ks) ACTIONS['kelas.save'] = function (u, p) {
+    const r = ks(u, p);
+    try { if (p.original && p.original !== p.nama) lock_(() => readAll_('WaliKelas').forEach(w => { if (w.kelas === p.original) update_('WaliKelas', w._row, { kelas: p.nama }); })); } catch (e) {}
+    return r;
+  };
+  const kd = ACTIONS['kelas.delete'];
+  if (kd) ACTIONS['kelas.delete'] = function (u, p) {
+    const r = kd(u, p);
+    try { lock_(() => { const rows = readAll_('WaliKelas').filter(w => w.kelas === p.nama).map(w => w._row); if (rows.length) deleteRows_('WaliKelas', rows); }); } catch (e) {}
+    return r;
+  };
+})();
+ACTIONS['wali.list'] = function (u) {
+  need_(can_(u, 'Kabag Pendidikan'), 'Hanya Admin / Kabag Pendidikan yang dapat mengatur wali kelas.');
+  const ws = sesiAll_().find(x => x.wali), r = rosterAll_(), man = {};
+  readAll_('WaliKelas').forEach(w => { if (w.guru) man[w.kelas] = w.guru; });
+  return { sesiWali: ws || null, kelas: kelasAll_().map(k => {
+    const a = ws && r.find(x => x.kelas === k.nama && x.sesi === ws.kode), g = man[k.nama] ? findUser_(man[k.nama]) : null;
+    return { kelas: k.nama, jenjang: k.jenjang, manual: g ? g.username : '', manualNama: g ? g.nama : '', otomatis: a ? a.guruNama : '' };
+  }) };
+};
+ACTIONS['wali.save'] = function (u, p) {
+  need_(can_(u, 'Kabag Pendidikan'), 'Hanya Admin / Kabag Pendidikan yang dapat mengatur wali kelas.');
+  if (!kelasAll_().some(k => k.nama === p.kelas)) throw new Error('Kelas tidak ditemukan.');
+  if (p.guru) { const g = findUser_(p.guru); if (!g || g.tipe !== 'Guru') throw new Error('Guru tidak ditemukan.'); }
+  return lock_(() => {
+    const r = readAll_('WaliKelas').find(w => w.kelas === p.kelas);
+    const obj = { kelas: p.kelas, guru: p.guru || '', diubah_oleh: u.username, diubah: now_() };
+    if (r) { if (p.guru) update_('WaliKelas', r._row, obj); else deleteRows_('WaliKelas', [r._row]); } else if (p.guru) append_('WaliKelas', obj);
+    return ACTIONS['wali.list'](u);
+  });
+};
+
+/* ---------- boot: peran, istilah ---------- */
+(function () {
+  const bt = ACTIONS.boot;
+  ACTIONS.boot = function (u, p) {
+    PERAN_MEMO = null;
+    const b = bt(u, p);
+    try {
+      b.kabagList = daftarPeran_();
+      const s = settingsMap_();
+      b.settings.istilah = { mengulang: s.istilah_mengulang || 'Mengulang Malam', jamMengulang: s.jam_mengulang || '22.30 - 23.30' };
+      b.perms = perms_(u);
+    } catch (e) {}
+    return b;
+  };
+})();
+if (typeof SYNC_BACA !== 'undefined') SYNC_BACA.push('peran.list', 'wali.list');
+
+/* ============================================================
+ *  AKSES KHUSUS PENGEMBANG — TAHAP 3 (v2.10.0)
+ *  Tema aplikasi, Tentang Aplikasi, istilah lembaga ("Dayah" → "Pesantren"),
+ *  login khusus pengembang (tanpa akun di sheet Users), alamat server diatur di aplikasi.
+ * ============================================================ */
+[
+  ['tema_app', '', 'Tema bawaan aplikasi (diatur dari menu Akses Pengembang)'],
+  ['tema_kunci', 'Tidak', 'Kunci tema: pengguna tidak dapat memilih tema sendiri (Ya / Tidak)'],
+  ['istilah_lembaga', 'Dayah', 'Sebutan lembaga di seluruh aplikasi (mis. Pesantren / Pondok / Sekolah)'],
+  ['tentang_aplikasi', 'ALHUDA MOBILE adalah aplikasi sistem informasi akademik, administrasi dan komunikasi santri: absensi, nilai & raport digital, iuran, perizinan, asrama, pengumuman serta room chat dalam satu aplikasi.', 'Deskripsi di halaman Tentang Aplikasi'],
+  ['tentang_kontak', '', 'Kontak pengembang (WhatsApp / email) di halaman Tentang Aplikasi']
+].forEach(r => { if (!DEFAULT_SETTINGS.some(x => x[0] === r[0])) DEFAULT_SETTINGS.push(r); });
+['tema_app', 'tema_kunci', 'istilah_lembaga', 'tentang_aplikasi', 'tentang_kontak', 'tentang_pemilik', 'tentang_alamat', 'tentang_pembuat', 'tanggal_revisi', 'penerbit', 'versi']
+  .forEach(k => { if (SETTINGS_DEV_ONLY.indexOf(k) < 0) SETTINGS_DEV_ONLY.push(k); });
+
+const HEX_ = /^#[0-9a-fA-F]{6}$/;
+function temaApp_() {
+  try {
+    const t = JSON.parse(settingsMap_().tema_app || 'null');
+    if (!t || !HEX_.test(t.pri) || !HEX_.test(t.pri2)) return null;
+    return { nama: String(t.nama || 'Kustom').slice(0, 30), pri: t.pri, pri2: t.pri2, bg: HEX_.test(t.bg) ? t.bg : '' };
+  } catch (e) { return null; }
+}
+function temaKunci_() { return lc_(settingsMap_().tema_kunci) === 'ya'; }
+/** Sebutan lembaga; kata yang mengandung "dayah" (selain "Dayah" itu sendiri) ditolak agar tidak berulang. */
+function istilahLembaga_() {
+  const v = String(settingsMap_().istilah_lembaga || '').trim();
+  return v && (lc_(v) === 'dayah' || !/dayah/i.test(v)) ? v : 'Dayah';
+}
+function gantiDayah_(teks, t) {
+  t = t || istilahLembaga_(); if (lc_(t) === 'dayah') return String(teks);
+  return String(teks).replace(/(^|[^A-Za-z0-9_@.\/-])(dayah)(?![A-Za-z0-9_@])/gi, (all, pre, m) =>
+    pre + (m === 'DAYAH' ? t.toUpperCase() : m.charAt(0) === 'D' ? t.charAt(0).toUpperCase() + t.slice(1) : t.toLowerCase()));
+}
+
+/* ---------- login khusus pengembang (disimpan di Script Properties, bukan di Sheet) ---------- */
+function devAkun_() {
+  if (MEMO._devAkun !== undefined) return MEMO._devAkun;
+  const pr = PropertiesService.getScriptProperties();
+  let un = lc_(pr.getProperty('DEV_USER') || ''), pw = String(pr.getProperty('DEV_PASS') || '');
+  const aktif = lc_(pr.getProperty('DEV_AKTIF') || 'ya') !== 'tidak';
+  if (pw && pw.indexOf('h$') !== 0) { pw = hashPw_(pw); pr.setProperty('DEV_PASS', pw); } // sandi yang diisi manual langsung dienkripsi
+  MEMO._devAkun = (un && pw) ? { username: un, password: pw, aktif: aktif } : null;
+  return MEMO._devAkun;
+}
+function devVirtual_() {
+  const d = devAkun_(); if (!d || !d.aktif) return null;
+  return { username: d.username, password: d.password, nama: 'Pengembang Aplikasi', tipe: 'Guru', kabag: 'Pengembang Aplikasi', aktif: 'Ya', _row: 0, _virtual: true };
+}
+(function () {
+  const cariAsli = findUser_;
+  findUser_ = function (username) {
+    const d = devVirtual_();
+    if (d && lc_(username) === d.username) return d;
+    return cariAsli(username);
+  };
+  /* Akun pengembang khusus tidak ada di sheet Users → tidak boleh ditulis ke baris mana pun. */
+  const updAsli = update_;
+  update_ = function (name, row, patch) {
+    if (name === 'Users' && !(Number(row) >= 2)) throw new Error('Akun Pengembang Khusus tidak tersimpan di sheet Users, sehingga datanya tidak dapat diubah dari sini.');
+    return updAsli(name, row, patch);
+  };
+  /* Batasi percobaan login akun pengembang: 5× salah → dikunci 15 menit. */
+  const loginAsli = login_;
+  login_ = function (p) {
+    const d = devAkun_();
+    if (!p || p._aksi || !d || lc_(p.username) !== d.username) return loginAsli(p);
+    const c = CacheService.getScriptCache(), k = 'devgagal';
+    const n = Number(c.get(k) || 0);
+    if (n >= 5) throw new Error('Terlalu banyak percobaan login. Coba lagi 15 menit lagi.');
+    try { const r = loginAsli(p); c.remove(k); return r; }
+    catch (e) { c.put(k, String(n + 1), 900); throw e; }
+  };
+  /* Username akun pengembang khusus tidak boleh dipakai pengguna lain. */
+  const usAsli = ACTIONS['users.save'];
+  if (usAsli) ACTIONS['users.save'] = function (u, p) {
+    const d = devAkun_();
+    if (d && p && lc_(p.username) === d.username && lc_(p.original) !== d.username) throw new Error('Username "' + p.username + '" sudah dipakai.');
+    return usAsli(u, p);
+  };
+})();
+ACTIONS['dev.login.get'] = function (u) {
+  need_(isDev_(u), 'Hanya Pengembang Aplikasi.');
+  const d = devAkun_();
+  return { username: d ? d.username : '', ada: !!d, aktif: d ? d.aktif : false, sedangDipakai: !!u._virtual };
+};
+ACTIONS['dev.login.save'] = function (u, p) {
+  need_(isDev_(u), 'Hanya Pengembang Aplikasi.');
+  const pr = PropertiesService.getScriptProperties(), d = devAkun_();
+  const un = lc_(p.username || (d && d.username) || '');
+  need_(/^[a-z0-9._]{3,30}$/.test(un), 'Username 3–30 karakter: huruf kecil, angka, titik atau garis bawah.');
+  const lain = readAll_('Users').find(r => lc_(r.username) === un);
+  need_(!lain, 'Username "' + un + '" sudah dipakai pengguna lain di sheet Users.');
+  const aktif = p.aktif !== false;
+  if (u._virtual && (!aktif || un !== u.username)) throw new Error('Anda sedang masuk memakai akun ini. Masuk dengan akun Pengembang lain untuk mengganti username atau menonaktifkannya.');
+  if (p.password) need_(String(p.password).length >= 8 && !/\s/.test(p.password), 'Kata sandi minimal 8 karakter tanpa spasi.');
+  else need_(d, 'Kata sandi wajib diisi untuk akun baru.');
+  pr.setProperty('DEV_USER', un);
+  if (p.password) pr.setProperty('DEV_PASS', hashPw_(String(p.password)));
+  pr.setProperty('DEV_AKTIF', aktif ? 'Ya' : 'Tidak');
+  delete MEMO._devAkun;
+  const r = ACTIONS['dev.login.get'](u);
+  if (u._virtual && p.password) { const v = devVirtual_(); if (v) r.token = makeToken_(v); } // sandi sendiri diganti → token baru
+  return r;
+};
+
+/* ---------- tema aplikasi ---------- */
+ACTIONS['dev.tema.save'] = function (u, p) {
+  need_(isDev_(u), 'Hanya Pengembang Aplikasi.');
+  const t = p.tema;
+  let nilai = '';
+  if (t) {
+    need_(HEX_.test(t.pri) && HEX_.test(t.pri2), 'Warna tidak valid.');
+    nilai = JSON.stringify({ nama: String(t.nama || 'Kustom').slice(0, 30), pri: t.pri, pri2: t.pri2, bg: HEX_.test(t.bg) ? t.bg : '' });
+  }
+  settingsSave_(u, { values: { tema_app: nilai, tema_kunci: p.kunci ? 'Ya' : 'Tidak' } });
+  return { tema: temaApp_(), tema_kunci: temaKunci_() };
+};
+
+/* ---------- PDF: kata "dayah" ikut sebutan lembaga (hanya teks, bukan atribut/gambar) ---------- */
+(function () {
+  const pdfAsli = toPdf_;
+  toPdf_ = function (html, name) {
+    const t = istilahLembaga_();
+    if (lc_(t) !== 'dayah') html = String(html).replace(/>([^<]+)</g, (a, x) => '>' + gantiDayah_(x, t) + '<');
+    return pdfAsli(html, name);
+  };
+})();
+
+/* ---------- boot & halaman login ---------- */
+(function () {
+  const bt = ACTIONS.boot;
+  ACTIONS.boot = function (u, p) {
+    const b = bt(u, p);
+    try {
+      const s = settingsMap_();
+      b.settings.tema = temaApp_(); b.settings.tema_kunci = temaKunci_();
+      b.settings.istilah_lembaga = istilahLembaga_();
+      b.settings.tentang_aplikasi = s.tentang_aplikasi || ''; b.settings.tentang_kontak = s.tentang_kontak || '';
+      b.settings.nama_web = s.nama_web; b.settings.nama_mobile = s.nama_mobile;
+      b.devKhusus = !!u._virtual;
+    } catch (e) {}
+    return b;
+  };
+  const pi = publicInfo_;
+  publicInfo_ = function () {
+    const o = pi();
+    try { o.tema = temaApp_(); o.tema_kunci = temaKunci_(); o.istilah_lembaga = istilahLembaga_(); } catch (e) {}
+    return o;
+  };
+})();

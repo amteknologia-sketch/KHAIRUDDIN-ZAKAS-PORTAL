@@ -3,7 +3,7 @@
 <head>
 <base target="_top">
 <meta charset="utf-8">
-<meta name="alhuda-app" content="2.8.1">
+<meta name="alhuda-app" content="2.10.0">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>ALHUDA MOBILE</title>
 <style>
@@ -332,8 +332,9 @@ textarea.in{min-height:90px;resize:vertical}
 .post .small svg{width:13px;height:13px;vertical-align:-2px}
 .post .ptxt{white-space:pre-wrap;margin:10px 0 4px;line-height:1.5;font-size:14px;overflow-wrap:anywhere}
 .post .pmed{margin:10px -16px 0;background:#000;cursor:pointer;position:relative}
-.post .pmed img{display:block;width:100%;max-height:480px;object-fit:contain}
-.post .pmed.vid2{background:#000}.post .pmed video{display:block;width:100%;max-height:480px;background:#000}
+.post .pmed:first-child,.post .row+.pmed{margin-top:12px}
+.post .pmed img{display:block;width:100%;height:auto;max-height:none;object-fit:contain}
+.post .pmed.vid2{background:#000}.post .pmed video{display:block;width:100%;height:auto;max-height:none;background:#000}
 .post .pdoc{display:flex;gap:10px;align-items:center;margin-top:10px;padding:10px;border-radius:12px;background:var(--chip);cursor:pointer}
 .post .pdoc .di{width:40px;height:40px;border-radius:10px;background:var(--pri);color:#fff;display:grid;place-items:center;font-size:10px;font-weight:800;flex:none}
 .post .pdoc b{display:block;font-size:13px;word-break:break-all}
@@ -393,7 +394,17 @@ html:not(.desk) .login:not(.daftar) .yy{text-align:left;font-size:10.5px;margin:
 .ptentang{font-size:14px;line-height:1.7;color:var(--text)}
 /* paragraf postingan: rata kiri-kanan + inden baris pertama */
 .nfi.baru{background:var(--soft);border-radius:12px}.nfi .av svg{width:18px;height:18px}.nfdot{width:9px;height:9px;border-radius:50%;background:#ef4444;flex:none}
-.tjus{white-space:normal!important}.tjus p{text-align:justify;text-indent:1.6em;margin:0 0 6px;hyphens:auto}.tjus p:last-child{margin-bottom:0}
+.tjus{white-space:normal!important}
+/* foto postingan bergeser (fade) */
+.fsl{position:relative;aspect-ratio:4/5;background:#0f172a;overflow:hidden;cursor:pointer;touch-action:pan-y}
+.post .fsl .fs-img,.fsl .fs-img{position:absolute;max-height:none;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .9s ease}.fsl .fs-img.on{opacity:1}
+.fs-n{position:absolute;top:10px;right:10px;background:rgba(15,23,42,.6);color:#fff;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:999px;z-index:2}
+.fs-dots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:5px;z-index:2}.fs-dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.55);transition:all .3s}.fs-dots i.on{width:16px;border-radius:3px;background:#fff}
+.appbar{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top));width:calc(100% - 20px);max-width:520px;z-index:40;display:flex;align-items:center;gap:10px;background:var(--card);border-radius:16px;padding:10px 12px;box-shadow:0 10px 30px rgba(0,0,0,.18);animation:up .25s ease-out}
+.appbar img{width:38px;height:38px;border-radius:10px}.appbar b{display:block;font-size:13.5px}.appbar .grow span{display:block;font-size:11.5px;color:var(--sub)}
+.appbar .btn{text-decoration:none;white-space:nowrap}.appbar .x{border:0;background:none;color:var(--sub);width:28px;height:28px;display:grid;place-items:center;padding:0}
+.pgalf{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px}.pgalf:empty{display:none}.pgalf div{position:relative}.pgalf img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;display:block}
+.pgalf button{position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;display:grid;place-items:center;padding:0}.pgalf button svg{width:12px;height:12px}.tjus p{text-align:justify;text-indent:1.6em;margin:0 0 6px;hyphens:auto}.tjus p:last-child{margin-bottom:0}
 .tjus ul{margin:0 0 6px;padding-left:2.4em}.tjus li{text-align:justify}
 .ptentang p{text-align:justify;text-indent:1.6em;margin:0 0 10px;hyphens:auto}
 .ptentang ul{margin:-4px 0 10px;padding-left:2.6em}.ptentang li{text-align:justify;margin-bottom:4px}
@@ -476,7 +487,7 @@ html.desk .post .pmed{margin:10px 0 0;border-radius:12px;overflow:hidden}
 html.desk .app:not(.shell){max-width:none;height:auto;min-height:100%}
 html.desk .login{max-width:none;margin:0;padding:0;min-height:100vh;display:flex;flex-direction:row;align-items:stretch}
 html.desk .login .hd,html.desk .login.daftar .hd.sm{flex:1 1 52%;position:sticky;top:0;height:100vh;border-radius:0;padding:48px 64px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
-  background:radial-gradient(circle at 85% 12%,rgba(255,255,255,.12) 0 160px,transparent 161px),radial-gradient(circle at 10% 95%,rgba(255,255,255,.08) 0 220px,transparent 221px),linear-gradient(145deg,var(--pri2),#0b4d3a);box-sizing:border-box}
+  background:radial-gradient(circle at 85% 12%,rgba(255,255,255,.12) 0 160px,transparent 161px),radial-gradient(circle at 10% 95%,rgba(255,255,255,.08) 0 220px,transparent 221px),linear-gradient(145deg,var(--pri2),color-mix(in srgb,var(--pri2) 70%,#000));box-sizing:border-box}
 html.desk .login .hd .lg{margin:0 0 22px;width:112px;height:112px;border-radius:30px}html.desk .login .hd .lg img{width:98px;height:98px}
 html.desk .login h1{text-align:left;font-size:38px;letter-spacing:2px}
 html.desk .login .yy{text-align:left;font-size:14px;margin:6px 0 0;letter-spacing:1px}
@@ -598,14 +609,16 @@ const isSantri = () => me().tipe === 'Santri';
 /* ---------- API ---------- */
 let pending = 0;
 function prog(on) { pending += on ? 1 : -1; const p = $('#prog'); p.style.width = pending > 0 ? '70%' : '100%'; if (pending <= 0) { pending = 0; setTimeout(() => { if (!pending) p.style.width = '0'; }, 250); } }
-const API_URL = (function () { try { return (BR && BR.apiUrl && BR.apiUrl()) || window.ALHUDA_API_URL || ''; } catch (e) { return ''; } })();
+/** Alamat server (URL Web App) yang diatur Pengembang di perangkat ini — bila kosong memakai bawaan APK / config.js. */
+function urlServerLokal() { try { return localStorage.getItem('alhuda_api_url') || ''; } catch (e) { return ''; } }
+const API_URL = (function () { try { return urlServerLokal() || (BR && BR.apiUrl && BR.apiUrl()) || window.ALHUDA_API_URL || ''; } catch (e) { return ''; } })();
 const HAS_GAS = !!(window.google && google.script && google.script.run);
 function handleRes(r, res, rej) {
   if (r && r.ok) return res(r.data);
   const m = r ? r.error : 'Terjadi kesalahan';
   if (m === 'SESSION') { logout(true); rej(new Error('Sesi berakhir, silakan login kembali.')); } else rej(new Error(m));
 }
-const NATIVE = !!(BR && BR.call);
+const NATIVE = !!(BR && BR.call) && !(urlServerLokal() && !BR.setApiUrl); // APK lama tanpa setApiUrl → pakai fetch ke server yang diatur
 const PENDING = {}; let SEQ = 0;
 window.__nativeRes = function (id, txt) { const p = PENDING[id]; if (p) { delete PENDING[id]; p(txt); } };
 /** Terjemahkan balasan server yang bukan JSON menjadi pesan yang jelas. */
@@ -645,7 +658,7 @@ function rawApi(action, params, silent) {
       .finally(() => { if (!silent) prog(false); });
   }
   return new Promise((res, rej) => {
-    if (!HAS_GAS) return rej(new Error('Aplikasi harus dibuka melalui URL Web App Google Apps Script.'));
+    if (!HAS_GAS) return rej(new Error('Alamat server belum diatur. Ketuk logo 5 kali di halaman login untuk mengatur server.'));
     if (!silent) prog(true);
     google.script.run
       .withSuccessHandler(r => { if (!silent) prog(false); handleRes(r, res, rej); })
@@ -662,7 +675,7 @@ function rawApi(action, params, silent) {
  *  - Setiap perubahan membawa _cid unik → server tidak mencatat dua kali.
  * ============================================================= */
 const WRITE_RE = /\.(save|delete|send|kembali|naik)$/;
-const ONLINE_ONLY = { 'publik.ajukan': 'Mengajukan ke layar utama', 'publik.turunkan': 'Menurunkan dari layar utama', 'publik.putuskan': 'Verifikasi layar utama', 'publik.komentarPutuskan': 'Verifikasi komentar', 'profil.publik': 'Mengubah visibilitas akun', 'profil.password': 'Ganti kata sandi', 'profil.photo': 'Unggah foto profil', 'raport.pdf': 'Cetak PDF', 'iuran.pdf': 'Cetak PDF', 'tahunan.pdf': 'Cetak PDF', 'settings.save': 'Mengubah pengaturan aplikasi', 'logo.upload': 'Mengganti logo', 'logo.reset': 'Mengganti logo', 'profil.galeriAdd': 'Menambah foto galeri', 'profil.galeriDelete': 'Menghapus foto galeri', 'chat.file': 'Mengirim foto, video, atau dokumen', 'iuran.laporan': 'Cetak laporan PDF', 'tahunan.laporan': 'Cetak laporan PDF', 'grup.save': 'Menyimpan grup', 'grup.keluar': 'Keluar dari grup', 'chat.forward': 'Meneruskan pesan', 'chat.edit': 'Mengedit pesan', 'chat.hapus': 'Menghapus pesan', 'haris.save': 'Menyimpan daftar haris', 'haris.delete': 'Menghapus kelompok haris', 'asrama.save': 'Menyimpan asrama', 'asrama.delete': 'Menghapus asrama', 'asrama.dokAdd': 'Mengunggah dokumentasi', 'asrama.dokDelete': 'Menghapus dokumentasi', 'kabilah.save': 'Menyimpan kabilah', 'kabilah.delete': 'Menghapus kabilah', 'post.save': 'Menyimpan postingan', 'post.delete': 'Menghapus postingan', 'post.bagikan': 'Membagikan postingan', 'pengajuan.terima': 'Menerima santri baru', 'pengajuan.tolak': 'Menolak pengajuan', 'verif.save': 'Menyimpan data verifikasi', 'verif.upload': 'Mengunggah dokumen', 'verif.hapusFile': 'Menghapus dokumen', 'kelas.save': 'Menyimpan kelas', 'kelas.delete': 'Menghapus kelas' };
+const ONLINE_ONLY = { 'dev.login.save': 'Mengatur login pengembang', 'dev.tema.save': 'Mengatur tema aplikasi', 'sesi.save': 'Mengatur sesi', 'sesi.delete': 'Menghapus sesi', 'wali.save': 'Mengatur wali kelas', 'peran.save': 'Mengatur peran', 'peran.delete': 'Menghapus peran', 'peran.pulihkan': 'Memulihkan peran', 'admin.resetSandi': 'Reset kata sandi', 'admin.aktif': 'Mengunci / membuka akun', 'post.fotoTambah': 'Mengunggah foto', 'publik.ajukan': 'Mengajukan ke layar utama', 'publik.turunkan': 'Menurunkan dari layar utama', 'publik.putuskan': 'Verifikasi layar utama', 'publik.komentarPutuskan': 'Verifikasi komentar', 'profil.publik': 'Mengubah visibilitas akun', 'profil.password': 'Ganti kata sandi', 'profil.photo': 'Unggah foto profil', 'raport.pdf': 'Cetak PDF', 'iuran.pdf': 'Cetak PDF', 'tahunan.pdf': 'Cetak PDF', 'settings.save': 'Mengubah pengaturan aplikasi', 'logo.upload': 'Mengganti logo', 'logo.reset': 'Mengganti logo', 'profil.galeriAdd': 'Menambah foto galeri', 'profil.galeriDelete': 'Menghapus foto galeri', 'chat.file': 'Mengirim foto, video, atau dokumen', 'iuran.laporan': 'Cetak laporan PDF', 'tahunan.laporan': 'Cetak laporan PDF', 'grup.save': 'Menyimpan grup', 'grup.keluar': 'Keluar dari grup', 'chat.forward': 'Meneruskan pesan', 'chat.edit': 'Mengedit pesan', 'chat.hapus': 'Menghapus pesan', 'haris.save': 'Menyimpan daftar haris', 'haris.delete': 'Menghapus kelompok haris', 'asrama.save': 'Menyimpan asrama', 'asrama.delete': 'Menghapus asrama', 'asrama.dokAdd': 'Mengunggah dokumentasi', 'asrama.dokDelete': 'Menghapus dokumentasi', 'kabilah.save': 'Menyimpan kabilah', 'kabilah.delete': 'Menghapus kabilah', 'post.save': 'Menyimpan postingan', 'post.delete': 'Menghapus postingan', 'post.bagikan': 'Membagikan postingan', 'pengajuan.terima': 'Menerima santri baru', 'pengajuan.tolak': 'Menolak pengajuan', 'verif.save': 'Menyimpan data verifikasi', 'verif.upload': 'Mengunggah dokumen', 'verif.hapusFile': 'Menghapus dokumen', 'kelas.save': 'Menyimpan kelas', 'kelas.delete': 'Menghapus kelas' };
 S.online = true;
 function isOnline() { try { if (BR && BR.isOnline) return !!BR.isOnline(); } catch (e) {} return navigator.onLine !== false; }
 function uname() { return (S.B && S.B.user && S.B.user.username) || store.get('alhuda_uname') || '_'; }
@@ -961,8 +974,80 @@ function busy(btn, on) { if (!btn) return; btn.disabled = on; if (on) { btn.data
 /* ---------- theme ---------- */
 const THEMES = [['terang','Terang',['#f1f1f1','#10b981','#0f6e4f']],['gelap','Gelap',['#0e1412','#34d399','#17201d']],['pink','Pink',['#fdeef6','#ec4899','#9d174d']],
   ['merah','Merah',['#fdecec','#ef4444','#991b1b']],['putih','Putih',['#ffffff','#e5e7eb','#1f2937']],['biru','Biru',['#eaf1fe','#3b82f6','#1e3a8a']]];
-function applyTheme(t) { document.documentElement.setAttribute('data-theme', t || 'terang'); store.set('alhuda_theme', t);
+function applyTheme(t) {
+  if (temaKunci()) t = 'terang'; else if (t) store.set('alhuda_theme', t);
+  document.documentElement.setAttribute('data-theme', t || 'terang');
+  terapkanTemaApp();
   try { BR && BR.setStatusColor && BR.setStatusColor(getComputedStyle(document.documentElement).getPropertyValue('--pri2').trim()); } catch (e) {} }
+/* Tema bawaan dari Pengembang (berlaku untuk tema "Terang"). */
+const TEMA_PRESET = [['Hijau Al-Huda', '#10b981', '#0f6e4f'], ['Biru Laut', '#0ea5e9', '#075985'], ['Biru Tua', '#3b82f6', '#1e3a8a'], ['Ungu', '#8b5cf6', '#5b21b6'],
+  ['Toska', '#14b8a6', '#115e59'], ['Coklat', '#d97706', '#78350f'], ['Emas', '#ca8a04', '#713f12'], ['Merah Marun', '#e11d48', '#881337'],
+  ['Pink', '#ec4899', '#9d174d'], ['Abu Elegan', '#64748b', '#1e293b']];
+const hexOk = c => /^#[0-9a-f]{6}$/i.test(c || '');
+function campur(a, b, t) { const x = i => parseInt(a.substr(i, 2), 16), y = i => parseInt(b.substr(i, 2), 16); return '#' + [1, 3, 5].map(i => Math.round(x(i) * (1 - t) + y(i) * t).toString(16).padStart(2, '0')).join(''); }
+function setSumber() { return (S.B && S.B.settings) || S.pub || null; }
+function temaApp() {
+  if (S.temaCoba !== undefined) return S.temaCoba;
+  const s = setSumber(); let t = s && s.hasOwnProperty('tema') ? s.tema : undefined;
+  if (t === undefined) { try { t = JSON.parse(store.get('alhuda_tema_app') || 'null'); } catch (e) { t = null; } }
+  return t && hexOk(t.pri) && hexOk(t.pri2) ? t : null;
+}
+function temaKunci() { const s = setSumber(); return s && s.hasOwnProperty('tema_kunci') ? !!s.tema_kunci : store.get('alhuda_tema_kunci') === '1'; }
+function terapkanTemaApp() {
+  const r = document.documentElement, t = temaApp();
+  ['--pri', '--pri2', '--soft', '--chip', '--bg'].forEach(v => r.style.removeProperty(v));
+  if (!t || r.getAttribute('data-theme') !== 'terang') return;
+  r.style.setProperty('--pri', t.pri); r.style.setProperty('--pri2', t.pri2);
+  r.style.setProperty('--soft', campur(t.pri, '#ffffff', .88)); r.style.setProperty('--chip', campur(t.pri2, '#ffffff', .92));
+  if (hexOk(t.bg)) r.style.setProperty('--bg', t.bg);
+}
+/** Simpan tema & sebutan lembaga di perangkat agar langsung tampil saat aplikasi dibuka (sebelum data server datang). */
+function simpanTampilanLokal(s) {
+  if (!s) return;
+  const lamaIst = store.get('alhuda_istilah_lembaga') || 'Dayah';
+  if (s.hasOwnProperty('tema')) store.set('alhuda_tema_app', s.tema ? JSON.stringify(s.tema) : null);
+  if (s.hasOwnProperty('tema_kunci')) store.set('alhuda_tema_kunci', s.tema_kunci ? '1' : null);
+  if (s.istilah_lembaga) store.set('alhuda_istilah_lembaga', s.istilah_lembaga);
+  applyTheme(store.get('alhuda_theme') || 'terang');
+  if ((s.istilah_lembaga || 'Dayah') !== lamaIst) mulaiGantiKata();
+}
+
+/* ---------- sebutan lembaga: kata "dayah" diganti di seluruh tampilan ---------- */
+function istilahLembaga() {
+  const s = setSumber(); let v = s && s.istilah_lembaga; if (!v) v = store.get('alhuda_istilah_lembaga');
+  v = String(v || '').trim(); return v && (v.toLowerCase() === 'dayah' || !/dayah/i.test(v)) ? v : 'Dayah';
+}
+const GK = { t: 'Dayah', mo: null, re: /(^|[^A-Za-z0-9_@.\/-])(dayah)(?![A-Za-z0-9_@])/gi };
+/** Ganti "dayah" (kata utuh; bukan bagian email / tautan / nama kunci) dengan sebutan lembaga, mengikuti huruf besar-kecilnya. */
+function gantiKata(str) {
+  const t = GK.t; if (!str || t.toLowerCase() === 'dayah' || !/dayah/i.test(str)) return str;
+  return str.replace(GK.re, (a, pre, m) => pre + (m === 'DAYAH' ? t.toUpperCase() : m.charAt(0) === 'D' ? t.charAt(0).toUpperCase() + t.slice(1) : t.toLowerCase()));
+}
+const GK_LEWAT = { SCRIPT: 1, STYLE: 1, TEXTAREA: 1 };
+function gkTeks(n) {
+  const p = n.parentNode; if (!p || GK_LEWAT[p.nodeName] || (p.closest && p.closest('[contenteditable],.noganti'))) return;
+  const v = n.nodeValue, b = gantiKata(v); if (b !== v) n.nodeValue = b;
+}
+function gkAttr(x) { ['placeholder', 'title', 'aria-label'].forEach(a => { const v = x.getAttribute(a); if (v && /dayah/i.test(v)) x.setAttribute(a, gantiKata(v)); }); }
+function gkEl(el) {
+  if (GK_LEWAT[el.nodeName] || (el.closest && el.closest('.noganti'))) return;
+  if (el.getAttribute) gkAttr(el);
+  if (el.querySelectorAll) el.querySelectorAll('[placeholder],[title],[aria-label]').forEach(x => { if (!x.closest('.noganti')) gkAttr(x); });
+  const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), L = []; let n;
+  while ((n = w.nextNode())) if (/dayah/i.test(n.nodeValue)) L.push(n);
+  L.forEach(gkTeks);
+}
+function mulaiGantiKata() {
+  GK.t = istilahLembaga();
+  if (GK.t.toLowerCase() === 'dayah') { if (GK.mo) { GK.mo.disconnect(); GK.mo = null; } return; }
+  gkEl(document.documentElement);
+  if (GK.mo) return;
+  GK.mo = new MutationObserver(ms => ms.forEach(m => {
+    if (m.type === 'characterData') gkTeks(m.target);
+    else m.addedNodes.forEach(n => n.nodeType === 3 ? gkTeks(n) : n.nodeType === 1 && gkEl(n));
+  }));
+  GK.mo.observe(document.documentElement, { childList: true, subtree: true, characterData: true });
+}
 
 /* =============================================================
  *  LOGIN
@@ -982,13 +1067,14 @@ async function showLogin() {
     '<div class="card daftar-cta"><div class="grow"><div class="b">Belum punya akun?</div><div class="small muted">Calon santri dapat mendaftar secara online.</div></div><button class="btn sec" onclick="formDaftar()">' + ic('edit') + ' Daftar Santri Baru</button></div>' +
     '<div class="muted small" style="text-align:center;margin-top:18px">© 2026 DAMAS.Media_Centre</div></div>';
   tataLogin(); pubMulai();
+  { let n = 0, tm; $('#lg').addEventListener('click', () => { clearTimeout(tm); tm = setTimeout(() => n = 0, 1500); if (++n >= 5) { n = 0; openServer(); } }); }
   $('#lp').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
   if (!isOnline()) toast('Anda sedang offline. Login pertama kali memerlukan internet.', 'err');
   setTimeout(showInstallBar, 600);
   try {
     const info = await api('publicInfo', {}, true);
     if (info.logo) $('#lg').innerHTML = '<img src="' + esc(info.logo) + '" referrerpolicy="no-referrer" onerror="this.parentNode.innerHTML=LOGO_SVG">';
-    S.pub = info; $('#lgName').textContent = appName(info); document.title = appName(info);
+    S.pub = info; simpanTampilanLokal(info); $('#lgName').textContent = appName(info); document.title = appName(info);
     if (info.nama_yayasan) $('#lgYy').textContent = info.nama_yayasan;
   } catch (e) {}
 }
@@ -1027,6 +1113,7 @@ async function startApp() {
   $('#app').innerHTML = '<div class="login" style="justify-content:center;align-items:center"><div class="lg">' + LOGO_SVG + '</div><div class="yy" style="margin-top:10px">Memuat data...</div></div>';
   try { S.B = await api('boot'); }
   catch (e) { if (S.token) { $('#app').innerHTML = '<div class="empty" style="padding-top:40%">' + ic('info') + '<div>' + esc(e.message) + '</div><br><button class="btn" onclick="startApp()">Coba lagi</button> <button class="btn sec" onclick="logout()">Keluar</button></div>'; } return; }
+  simpanTampilanLokal(S.B.settings);
   $('#app').classList.add('shell'); document.title = appName();
   $('#app').innerHTML =
     '<div class="top" id="top"></div><div class="net hide" id="net" onclick="openQueue()"></div><div class="view" id="view"></div>' +
@@ -1339,7 +1426,7 @@ PAGES.beranda = async function () {
     '<div class="dt">' + ic('cal') + esc(tanggal) + '</div></div>';
   h += '<div class="quick">' +
     qa('cal', 'Roster Pelajaran', 'openRoster()') + qa('chat', 'Room Chat', 'openChat()', d.unread) +
-    qa('repeat', 'Mengulang Malam', "go('absen');S.ui.absTab='mengulang';refresh()") + qa('post', 'Postingan', 'openPostingan()', jmlBaru('post')) + '</div>';
+    qa('repeat', esc(istilah()), "go('absen');S.ui.absTab='mengulang';refresh()") + qa('post', 'Postingan', 'openPostingan()', jmlBaru('post')) + '</div>';
   if (ann) h += '<div class="sec"><h3>Pengumuman Terbaru</h3><button class="link" onclick="openPengumuman()">Lihat semua</button></div>' +
     '<div class="card ann"><div class="h">' + ic('bell') + esc(ann.judul) + '</div><div style="margin:6px 0 4px;line-height:1.45">' + esc(ann.isi) + '</div><div class="muted small">' + tgl(ann.tanggal) + ' • ' + esc(ann.oleh) + '</div></div>';
   if (d.publikMenunggu) h += '<button class="notif-btn adm" onclick="openLayarUtama()"><span class="ic">' + ic('globe') + '<span class="badge">' + d.publikMenunggu + '</span></span>' +
@@ -1485,7 +1572,7 @@ async function pRoster() {
     });
     h += '</div>';
   });
-  h += '<div class="sess" style="border-color:#a78bfa"><div class="jam">22.30 - 23.30 • Mengulang Malam</div><div class="small muted" style="margin-top:4px">Lihat menu Absen & Izin → Mengulang Malam.</div></div></div>';
+  h += '<div class="sess" style="border-color:#a78bfa"><div class="jam">' + esc(jamIstilah()) + ' • ' + esc(istilah()) + '</div><div class="small muted" style="margin-top:4px">Lihat menu Absen & Izin → ' + esc(istilah()) + '.</div></div></div>';
   h += '<div class="muted small" style="padding:0 4px">Guru yang mengajar pada sesi 19.30 - 22.00 otomatis menjadi wali kelas.</div>';
   view(h);
   if (P().roster) fab(() => rosterForm(null));
@@ -1772,7 +1859,7 @@ function userForm(i, tipe, kelas) {
 PAGES.absen = async function () {
   const tabs = [['santri', 'Absen Santri'], ['jamaah', 'Absen Jamaah Santri']];
   if (!isSantri()) tabs.push(['guru', 'Absen Guru']);
-  tabs.push(['keluar', 'Izin Keluar Sebentar'], ['pulang', 'Perizinan Pulang'], ['mengulang', 'Mengulang Malam']);
+  tabs.push(['keluar', 'Izin Keluar Sebentar'], ['pulang', 'Perizinan Pulang'], ['mengulang', istilah()]);
   if (!isSantri()) tabs.push(['pelanggaran', 'Pelanggaran']);
   const tab = uiState('absTab', 'santri');
   view(chips('absTab', tabs, 'refresh()') + '<div id="tc"></div>');
@@ -1896,7 +1983,7 @@ async function tMengulang() {
   const list = await api('mengulang.list');
   if (P().mengulang) setTimeout(() => fab(() => mengulangForm(null)), 0);
   const mine = me().username.toLowerCase();
-  return '<div class="card row" style="background:var(--soft)"><div class="ic" style="color:var(--pri2)">' + ic('moon') + '</div><div class="grow"><div class="b">Daftar Mengulang Malam</div><div class="small muted">Pukul 22.30 - 23.30</div></div></div>' +
+  return '<div class="card row" style="background:var(--soft)"><div class="ic" style="color:var(--pri2)">' + ic('moon') + '</div><div class="grow"><div class="b">Daftar ' + esc(istilah()) + '</div><div class="small muted">Pukul ' + esc(jamIstilah()) + '</div></div></div>' +
     (list.length ? list.map(g => {
       let last = '', rows = '';
       g.santri.forEach(s => { if (s.kelas !== last) { rows += '<div class="grp">' + esc(s.kelas || '-') + '</div>'; last = s.kelas; } rows += '<div class="small" style="padding:3px 0;' + (s.username.toLowerCase() === mine ? 'font-weight:800;color:var(--pri2)' : '') + '">• ' + esc(s.nama) + '</div>'; });
@@ -1913,7 +2000,7 @@ function mengulangForm(i) {
     if (!ss.length) return;
     list += '<div class="grp">' + esc(k.nama) + '</div>' + ss.map(s => '<label data-q="' + esc(s.nama.toLowerCase()) + '" style="display:flex;gap:8px;padding:7px 2px;border-bottom:1px solid var(--line);font-weight:500;color:var(--text);margin:0"><input type="checkbox" value="' + esc(s.username) + '"' + (chosen[s.username.toLowerCase()] ? ' checked' : '') + ' onchange="cntMg()" style="accent-color:var(--pri2)">' + esc(s.nama) + '</label>').join('');
   });
-  const d = sheet(g.id ? 'Edit Daftar Mengulang' : 'Tambah Daftar Mengulang', fld('Nama Guru', sel('mg', guruOpts('— Pilih guru —'), g.guru || '')) + fld('Lokasi', inp('ml', g.lokasi || '', 'placeholder="Contoh: Balai 2"')) +
+  const d = sheet((g.id ? 'Edit Daftar ' : 'Tambah Daftar ') + istilah(), fld('Nama Guru', sel('mg', guruOpts('— Pilih guru —'), g.guru || '')) + fld('Lokasi', inp('ml', g.lokasi || '', 'placeholder="Contoh: Balai 2"')) +
     '<div class="f"><label>Daftar Santri (<span id="mc">0</span> dipilih)</label><div class="search">' + ic('search') + '<input class="in" placeholder="Cari santri..." oninput="filterList(this.value)"></div>' +
     '<div id="fl" style="max-height:44vh;overflow:auto;border:1px solid var(--line);border-radius:12px;padding:0 10px;background:var(--card)">' + list + '</div></div>' +
     '<button class="btn full" id="msv">Simpan</button>' + (g.id ? '<button class="btn red full" style="margin-top:8px" id="mdl">Hapus</button>' : ''));
@@ -2097,13 +2184,10 @@ PAGES.peraturan = async function () {
   let h = '<div class="card row" style="cursor:pointer" onclick="openProfil(\'' + esc(u.username) + '\')">' + avatar(u, 'sm').replace('av sm', 'av sm" style="width:56px;height:56px;font-size:18px') + '<div class="grow"><div class="b" style="font-size:15px">' + esc(u.nama) + vb(u) + '</div><div class="small muted">@' + esc(u.username) + ' • ' + (isSantri() ? 'Santri • ' + esc(u.kelas) : 'Dewan Guru') + '</div>' +
     (!isSantri() && u.kabag ? '<div>' + u.kabag.split(',').map(x => '<span class="pillx">' + esc(x.trim()) + '</span>').join('') + '</div>' : '') + '</div></div>';
   const m = [['user', 'Profil Saya', 'Lihat profil seperti dilihat pengguna lain', 'openProfil(me().username)'],
-    ['shield', 'Verifikasi Data Saya', u.v ? 'Data sudah lengkap & terverifikasi' : (isSantri() ? 'Lengkapi data diri, orang tua & dokumen' : 'Lengkapi data diri & dokumen'), 'openVerif()'], ['edit', 'Biodata Pengguna', 'Ubah foto, data diri, privasi & galeri', 'openBiodata()'], ['palette', 'Tema Aplikasi', 'Terang, gelap, pink, merah, putih, biru', 'openTema()'], ['lock', 'Keamanan & Kata Sandi', 'Ganti kata sandi akun', 'openPassword()']];
+    ['shield', 'Verifikasi Data Saya', u.v ? 'Data sudah lengkap & terverifikasi' : (isSantri() ? 'Lengkapi data diri, orang tua & dokumen' : 'Lengkapi data diri & dokumen'), 'openVerif()'], ['edit', 'Biodata Pengguna', 'Ubah foto, data diri, privasi & galeri', 'openBiodata()'], ['palette', 'Tema Aplikasi', temaKunci() ? 'Diatur oleh Pengembang Aplikasi' : 'Terang, gelap, pink, merah, putih, biru', 'openTema()'], ['lock', 'Keamanan & Kata Sandi', 'Ganti kata sandi akun', 'openPassword()']];
   if (P().pengumuman) m.push(['mega', 'Kelola Pengumuman', 'Buat & ubah pengumuman', 'openPengumuman()']);
-  if (P().users) m.push(['grad', 'Kelola Daftar Kelas', 'Tambah, ubah & hapus kelas', 'openKelolaKelas()'], ['users', 'Pengajuan Santri Baru', 'Terima / tolak pendaftaran online', 'openPengajuan()']);
-  if (isAdminApp()) m.push(['globe', 'Layar Utama Publik', 'Verifikasi postingan & komentar tamu di halaman depan', 'openLayarUtama()']);
-  if (P().settings) m.push(['mosque', 'Tentang Dayah & Instagram', 'Ubah teks Tentang Dayah, alamat, lokasi & Instagram di halaman depan', 'openEditDepan()']);
-  if (P().settings) m.push(['gear', 'Pengaturan Aplikasi', 'Tahun ajaran, nominal, kop surat', 'openSettings()']);
-  if (P().dev) m.push(['palette', 'Logo Aplikasi & Kop Surat', 'Logo Dayah, PDF Wustha, PDF Ulya', 'openLogo()']);
+  if (isAdminApp() || P().users || P().settings) m.push(['shield', 'Akses Khusus Admin', 'Keamanan akun, data pengguna, kelas & lembaga, tampilan & pengaturan', 'openAksesAdmin()']);
+  if (P().dev) m.push(['gear', 'Akses Pengembang', 'Tema, Tentang Aplikasi, sebutan lembaga, login khusus & alamat server', 'openAksesDev()']);
   m.push(['repeat', 'Antrean Offline', Q.mine().length ? Q.mine().length + ' perubahan belum terkirim' : 'Semua perubahan sudah terkirim', 'openQueue()']);
   m.push(['ig', 'Instagram Dayah', '@' + igDayah() + ' • ketuk untuk menjelajahi', 'bukaIGDayah()']);
   m.push(['info', 'Tentang Aplikasi', 'Versi & pembuat aplikasi', 'openTentang()']);
@@ -2112,6 +2196,7 @@ PAGES.peraturan = async function () {
   view(h);
 };
 function openTema() {
+  if (temaKunci()) return sheet('Tema Aplikasi', '<div class="card hcard small">' + ic('lock') + ' Tema aplikasi dikunci oleh Pengembang Aplikasi' + (temaApp() ? ' (' + esc(temaApp().nama || 'Kustom') + ')' : '') + ', sehingga sama untuk semua pengguna.</div>');
   const cur = store.get('alhuda_theme') || 'terang';
   sheet('Tema Aplikasi', '<div class="swatch">' + THEMES.map(t => '<div class="sw' + (t[0] === cur ? ' on' : '') + '" onclick="applyTheme(\'' + t[0] + '\');openTema();topBar()"><div class="dots">' + t[2].map(c => '<i style="background:' + c + '"></i>').join('') + '</div>' + t[1] + '</div>').join('') + '</div>');
 }
@@ -2279,7 +2364,7 @@ function uploadFoto(input) {
 }
 async function openSettings() { push('Pengaturan Aplikasi', pSettings); }
 async function pSettings() {
-  const t = loading(4); const list = await api('settings.get'); if (!alive(t)) return;
+  const t = loading(4); const list = (await api('settings.get')).filter(x => ['tema_app', 'tema_kunci'].indexOf(x.kunci) < 0); if (!alive(t)) return;
   view('<div class="card">' + list.map(s => fld(s.keterangan || s.kunci, (s.pilihan ? sel('st_' + s.kunci, s.pilihan, s.nilai || s.pilihan[0], 'data-k="' + s.kunci + '"') : /^(template_|tentang_dayah)/.test(s.kunci) ? '<textarea class="in" style="min-height:220px" id="st_' + s.kunci + '" data-k="' + s.kunci + '"' + (s.devOnly && !P().dev ? ' disabled' : '') + '>' + esc(String(s.nilai || '').replace(/\\n/g, '\n')) + '</textarea>' : inp('st_' + s.kunci, s.nilai, (s.devOnly && !P().dev ? 'disabled' : '') + ' data-k="' + s.kunci + '"')) +
     '<div class="small muted" style="margin-top:3px">' + esc(s.kunci) + (s.devOnly ? ' • hanya Pengembang Aplikasi' : '') + '</div>')).join('') +
     '<button class="btn full" onclick="simpanSettings(this)">Simpan Pengaturan</button></div><div class="muted small" style="padding:0 4px">Semua pengaturan juga dapat diubah langsung di sheet "Pengaturan".</div>');
@@ -2291,7 +2376,7 @@ async function simpanSettings(btn) {
   busy(btn, false);
 }
 /* ---------- Logo (khusus Pengembang Aplikasi) ---------- */
-function openLogo() { push('Logo Aplikasi & Kop Surat', pLogo, { sub: 'Khusus Pengembang Aplikasi' }); }
+function openLogo() { push('Logo Aplikasi & Kop Surat', pLogo, { sub: 'Admin & Pengembang Aplikasi' }); }
 async function pLogo() {
   const t = loading(3);
   const L = await api('logo.get');
@@ -2307,8 +2392,8 @@ async function pLogo() {
   };
   view('<div class="card row small" style="background:var(--soft)">' + ic('info') + '<span class="grow">Gunakan gambar persegi (PNG/JPG), minimal 300×300 piksel, latar putih atau transparan. Logo baru langsung dipakai di aplikasi dan dokumen PDF.</span></div>' +
     item('dayah', 'Logo Dayah', 'Halaman login, Tentang Aplikasi, kop raport Salafi, laporan iuran & uang tahunan.') +
-    item('wustha', 'Logo PDF Wustha', 'Kop raport santri kelas Wustha. Bila kosong, memakai logo Dayah.') +
-    item('ulya', 'Logo PDF Ulya', 'Kop raport santri kelas Ulya. Bila kosong, memakai logo Dayah.') +
+    item('wustha', 'Logo ' + lbl('Wustha'), 'Kop raport santri kelas Wustha. Bila kosong, memakai logo Dayah.') +
+    item('ulya', 'Logo ' + lbl('Ulya'), 'Kop raport santri kelas Ulya. Bila kosong, memakai logo Dayah.') +
     '<div class="muted small" style="padding:0 4px">Ikon aplikasi di layar HP mengikuti APK dan hanya berubah bila APK dibuat ulang.</div>');
 }
 function unggahLogo(jenis, input) {
@@ -2359,6 +2444,21 @@ function showInstallBar() {
   if ($('.login .card')) { const d = document.createElement('div'); d.innerHTML = installHtml('inst-float'); document.body.appendChild(d.firstChild); return; }
   if (S.B && S.tab === 'beranda' && !S.stack.length && $('.banner')) $('.banner').insertAdjacentHTML('beforebegin', '<div style="margin-bottom:12px">' + installHtml() + '</div>');
 }
+/** Aplikasi sudah terpasang tetapi dibuka di tab browser → tawarkan membuka aplikasinya (Chrome/Edge Android & komputer). */
+async function cekAppTerpasang() {
+  if (BR || HAS_GAS || $('#appBar')) return;
+  if ((window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone) return;
+  let ada = store.get('alhuda_installed') === '1';
+  try { if (navigator.getInstalledRelatedApps) ada = (await navigator.getInstalledRelatedApps()).length > 0 || ada; } catch (e) {}
+  if (!ada) return;
+  const url = location.href.split('#')[0] + (location.hash || '');
+  const d = document.createElement('div'); d.id = 'appBar'; d.className = 'appbar';
+  d.innerHTML = '<img src="icons/icon-192.png" onerror="this.outerHTML=LOGO_SVG.replace(\'width:90%;height:90%\',\'width:34px;height:34px\')" alt=""><span class="grow"><b>' + esc(appName()) + ' sudah terpasang</b><span>Buka lewat aplikasi agar lebih cepat</span></span>' +
+    '<a class="btn sm" href="' + esc(url) + '" target="_blank" rel="noopener" onclick="setTimeout(()=>{const b=$(\'#appBar\');if(b)b.remove()},800)">Buka Aplikasi</a><button class="x" onclick="this.parentNode.remove()" aria-label="Tutup">' + ic('x') + '</button>';
+  document.body.appendChild(d);
+}
+if ('launchQueue' in window) { try { window.launchQueue.setConsumer(p => { if (p && p.targetURL) { const h = new URL(p.targetURL).hash; if (h && h !== location.hash) location.hash = h; } }); } catch (e) {} }
+setTimeout(cekAppTerpasang, 1500);
 function hideInstallBar() { const e = $('#instBar'); if (e) (e.parentNode.id === 'view' || e.classList.contains('inst-float') ? e : e.parentNode).remove(); }
 async function pasangApp() {
   if (installPrompt) { installPrompt.prompt(); try { const c = await installPrompt.userChoice; if (c && c.outcome === 'accepted') hideInstallBar(); } catch (e) {} installPrompt = null; return; }
@@ -2372,9 +2472,11 @@ async function pasangApp() {
 function openTentang() {
   const s = S.B.settings;
   sheet('Tentang Aplikasi', '<div style="text-align:center;margin-bottom:12px"><div class="lg" style="width:76px;height:76px;margin:0 auto 8px;border-radius:22px;background:#fff;display:grid;place-items:center;box-shadow:var(--shadow);overflow:hidden">' + (s.logo ? '<img src="' + esc(s.logo) + '" style="width:64px;height:64px;object-fit:contain" referrerpolicy="no-referrer">' : LOGO_SVG) + '</div>' +
-    '<div class="b" style="font-size:17px">' + esc(appName()) + '</div><div class="small muted">Versi ' + esc(s.versi) + '</div></div>' +
-    '<div class="card"><div class="list">' + [['Pemilik', s.tentang_pemilik], ['Alamat', s.tentang_alamat], ['Dibuat oleh', s.tentang_pembuat], ['Tanggal Revisi', s.tanggal_revisi], ['Penerbit', s.penerbit]]
-      .map(x => '<div class="it" style="cursor:default"><div class="grow"><div class="s">' + x[0] + '</div><div class="t">' + esc(x[1]) + '</div></div></div>').join('') + '</div></div>');
+    '<div class="b" style="font-size:17px">' + esc(appName()) + '</div><div class="small muted">Versi ' + esc(s.versi) + ' • tampilan ' + esc(APP_VER) + '</div></div>' +
+    (s.tentang_aplikasi ? '<div class="card ptentang">' + teksRapi(String(s.tentang_aplikasi).replace(/\\n/g, '\n')) + '</div>' : '') +
+    '<div class="card"><div class="list">' + [['Pemilik', s.tentang_pemilik], ['Alamat', s.tentang_alamat], ['Dibuat oleh', s.tentang_pembuat], ['Tanggal Revisi', s.tanggal_revisi], ['Penerbit', s.penerbit], ['Kontak', s.tentang_kontak]]
+      .filter(x => x[0] !== 'Kontak' || (x[1] && x[1] !== '-')).map(x => '<div class="it" style="cursor:default"><div class="grow"><div class="s">' + x[0] + '</div><div class="t">' + esc(x[1]) + '</div></div></div>').join('') + '</div></div>' +
+    (P().dev ? '<button class="btn sec full" onclick="closeSheet();openTentangDev()">' + ic('edit') + ' Ubah Tentang Aplikasi</button>' : ''));
 }
 
 /* =============================================================
@@ -3206,21 +3308,49 @@ function postHtml(x, i) {
   const a = x.lampiran;
   let media = '';
   if (a) {
-    if (a.jenis === 'foto') media = '<div class="pmed" onclick="lihatGambar(this.querySelector(\'img\').src)"><img src="' + esc(driveImg(a.id)) + '" referrerpolicy="no-referrer" loading="lazy" onerror="mediaFallback(this,\'' + esc(a.id) + '\')"></div>';
+    if (a.jenis === 'foto') media = fotoSlider(x.fotos && x.fotos.length ? x.fotos : [a.id]);
     else if (a.jenis === 'video') media = '<div class="pmed att vid2">' + videoTag(videoUrl(a.id), a.id, false) + '</div>';
     else { const ext = (String(a.nama || '').split('.').pop() || 'DOK').slice(0, 4).toUpperCase();
       media = '<div class="pdoc" onclick="openExt(driveView(\'' + esc(a.id) + '\'))"><span class="di">' + esc(ext) + '</span><span class="grow"><b>' + esc(a.nama) + '</b><span class="small muted">' + esc(ukuran(a.ukuran)) + ' • Ketuk untuk membuka</span></span></div>'; }
   }
   return '<div class="card post" id="post-' + esc(x.id) + '"><div class="row">' + '<span onclick="openProfil(\'' + esc(x.username) + '\')" style="cursor:pointer">' + avatar(x, 'sm') + '</span>' +
-    '<div class="grow"><div class="b">' + esc(x.nama) + vb(x.username) + ' <span class="pu" onclick="openProfil(\'' + esc(x.username) + '\')">@' + esc(x.username) + '</span></div>' +
+    '<div class="grow"><div class="b" style="cursor:pointer" onclick="openProfil(\'' + esc(x.username) + '\')">' + esc(x.nama) + vb(x.username) + '</div>' +
     '<div class="small muted">' + esc(tgl(x.waktu) + ', ' + jam(x.waktu)) + (x.diedit ? ' • diedit' : '') + (x.milik ? ' • ' + ic('eye') + ' ' + esc(x.privasiLabel) : '') + pbChip(x) + '</div></div>' +
     (x.milik || x.bolehHapus || isAdminApp() ? '<button class="ibtn" onclick="postMenu(' + i + ')" aria-label="Menu">' + ic('more') + '</button>' : '') + '</div>' +
-    (x.teks ? '<div class="ptxt tjus">' + teksRapi(x.teks) + '</div>' : '') + media +
+    media + (x.teks ? '<div class="ptxt tjus">' + teksRapi(x.teks) + '</div>' : '') +
     '<div class="pact"><button class="' + (x.liked ? 'on' : '') + '" onclick="postSuka(' + i + ',this)">' + ic('heart') + '<span>' + (x.likes || '') + ' Suka</span></button>' +
     '<button onclick="postKomentar(' + i + ')">' + ic('comment') + '<span>' + (x.komentar || '') + ' Komentar</span></button>' +
     '<button onclick="postBagikan(' + i + ')">' + ic('share') + '<span>Bagikan</span></button>' +
     (x.milik ? '' : '<button onclick="chatWith(\'' + esc(x.username) + '\')">' + ic('chat') + '<span>Chat</span></button>') + '</div></div>';
 }
+/** Foto postingan: 1 foto biasa; >1 foto bergeser sendiri (fade 4 detik) & bisa diusap. */
+function fotoSlider(ids) {
+  const img = (id, k) => '<img class="fs-img' + (k === 0 ? ' on' : '') + '" src="' + esc(driveImg(id)) + '" referrerpolicy="no-referrer" loading="lazy"' + (k === 0 ? ' onload="fsRasio(this)"' : '') + ' onerror="mediaFallback(this,\'' + esc(id) + '\')">';
+  if (ids.length < 2) return '<div class="pmed" onclick="lihatGambar(this.querySelector(\'img\').src)">' + img(ids[0], 0).replace('fs-img on', '') + '</div>';
+  return '<div class="pmed fsl" data-i="0">' + ids.map(img).join('') + '<span class="fs-n">1/' + ids.length + '</span><div class="fs-dots">' + ids.map((z, k) => '<i class="' + (k ? '' : 'on') + '"></i>').join('') + '</div></div>';
+}
+/** Kotak slider mengikuti rasio asli foto pertama (9:16 tetap 9:16, 16:9 tetap 16:9). */
+function fsRasio(im) { const el = im.closest('.fsl'); if (el && im.naturalWidth) el.style.aspectRatio = im.naturalWidth + ' / ' + im.naturalHeight; }
+function fsKe(el, arah) {
+  const im = $$('.fs-img', el), n = im.length; if (n < 2) return;
+  const i = ((+el.dataset.i || 0) + arah + n) % n; el.dataset.i = i; el.dataset.t = Date.now();
+  im.forEach((x, k) => x.classList.toggle('on', k === i)); $$('.fs-dots i', el).forEach((x, k) => x.classList.toggle('on', k === i));
+  const c = $('.fs-n', el); if (c) c.textContent = (i + 1) + '/' + n;
+}
+setInterval(() => {
+  if (document.hidden) return;
+  $$('.fsl').forEach(el => {
+    if (Date.now() - (+el.dataset.t || 0) < 4000) return;   // baru diusap → tunggu
+    const r = el.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return;   // hanya yang terlihat
+    fsKe(el, 1);
+  });
+}, 4000);
+(function () {
+  let x0 = null, y0 = 0, el = null;
+  document.addEventListener('touchstart', e => { el = e.target.closest && e.target.closest('.fsl'); if (el) { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; el.dataset.t = Date.now(); } }, { passive: true });
+  document.addEventListener('touchend', e => { if (!el || x0 === null) return; const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0; if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { el.dataset.swipe = Date.now(); fsKe(el, dx < 0 ? 1 : -1); } x0 = null; el = null; }, { passive: true });
+  document.addEventListener('click', e => { const f = e.target.closest && e.target.closest('.fsl'); if (!f) return; if (Date.now() - (+f.dataset.swipe || 0) < 500) return; const im = $('.fs-img.on', f); if (im) lihatGambar(im.src); });
+})();
 function postRender(i) { const e = $('#post-' + S.ui.post.items[i].id); if (e) { const t = document.createElement('div'); t.innerHTML = postHtml(S.ui.post.items[i], i); e.replaceWith(t.firstChild); } }
 async function postLagi(btn) {
   busy(btn, true);
@@ -3251,12 +3381,14 @@ function postForm(i) {
   if (!isOnline()) return toast('Membuat postingan memerlukan koneksi internet.', 'err');
   const x = i === null ? { teks: '', lampiran: null, privasi: 'semua', target: {} } : S.ui.post.items[i];
   const t = x.target || {}, khusus = x.privasi === 'khusus';
-  S.ui.pfile = null;
+  S.ui.pfile = null; S.ui.pfoto = []; S.ui.phapus = [];
   const d = sheet(i === null ? 'Buat Postingan' : 'Edit Postingan',
     '<textarea class="in" id="pteks" style="min-height:120px" maxlength="5000" placeholder="Tulis sesuatu…">' + esc(x.teks) + '</textarea>' +
+    '<div id="pgal" class="pgalf">' + (x.galeri || []).map(id => '<div data-g="' + esc(id) + '"><img src="' + esc(driveImg(id)) + '" referrerpolicy="no-referrer"><button type="button" onclick="S.ui.phapus.push(this.parentNode.dataset.g);this.parentNode.remove()">' + ic('x') + '</button></div>').join('') + '</div>' +
     '<div id="pprev" style="margin-top:10px">' + (x.lampiran ? '<div class="pfile">' + esc(labelJenis(x.lampiran.jenis) + ' • ' + (x.lampiran.nama || '')) + '<label class="small" style="margin-left:auto;display:flex;gap:4px;align-items:center"><input type="checkbox" id="phl"> Hapus</label></div>' : '') + '</div>' +
     '<div class="row" style="gap:8px;margin:10px 0 14px">' +
-      ['foto:image:Foto:image/*', 'video:video:Video:video/*', 'dokumen:file:Dokumen:' + DOK_ACCEPT].map(z => { const q = z.split(':'); return '<label class="btn sec sm grow" style="cursor:pointer">' + ic(q[1]) + ' ' + q[2] + '<input type="file" class="hide" accept="' + q.slice(3).join(':') + '" onchange="postPilihFile(this,\'' + q[0] + '\')"></label>'; }).join('') + '</div>' +
+      ['foto:image:Foto:image/*', 'video:video:Video:video/*', 'dokumen:file:Dokumen:' + DOK_ACCEPT].map(z => { const q = z.split(':'); return '<label class="btn sec sm grow" style="cursor:pointer">' + ic(q[1]) + ' ' + q[2] + '<input type="file" class="hide" accept="' + q.slice(3).join(':') + '" ' + (q[0] === 'foto' ? ' multiple' : '') + ' onchange="postPilihFile(this,\'' + q[0] + '\')"></label>'; }).join('') + '</div>' +
+    '<div class="small muted" style="margin:-6px 0 12px">Foto bisa lebih dari satu (maks. 10). Lebih dari 1 foto akan tampil bergeser otomatis.</div>' +
     '<div class="f"><label>Siapa yang boleh melihat?</label><div class="seg2">' +
       '<label class="' + (khusus ? '' : 'on') + '"><input type="radio" name="pp" value="semua"' + (khusus ? '' : ' checked') + ' onchange="postPrivasi()"> Semua pengguna</label>' +
       '<label class="' + (khusus ? 'on' : '') + '"><input type="radio" name="pp" value="khusus"' + (khusus ? ' checked' : '') + ' onchange="postPrivasi()"> Pilih tertentu</label></div></div>' +
@@ -3269,15 +3401,35 @@ function postForm(i) {
     const p = { id: i === null ? undefined : x.id, teks: val('pteks'), privasi: khusus ? 'khusus' : 'semua',
       target: { guru: $('#ppg', d).checked, kelas: $$('#ppkl input', d).filter(z => z.checked).map(z => z.value), users: ambilPilih('ppu', d) } };
     if (khusus && !p.target.guru && !p.target.kelas.length && !p.target.users.length) return toast('Pilih siapa saja yang boleh melihat.', 'err');
-    if (S.ui.pfile) Object.assign(p, S.ui.pfile); else if ($('#phl', d) && $('#phl', d).checked) p.hapusLampiran = true;
-    if (!p.teks && !p.data && !(x.lampiran && !p.hapusLampiran)) return toast('Tulis sesuatu atau lampirkan file.', 'err');
-    const b = e.currentTarget; busy(b, true); if (p.data) b.innerHTML = '<span class="spin"></span> Mengunggah…';
-    try { await api('post.save', p); toast(i === null ? 'Postingan dibagikan.' : 'Postingan disimpan.', 'ok'); closeSheet(); S.ui.post = null; S.fetchedAt = {}; refresh(); }
+    const hapusUtama = !!($('#phl', d) && $('#phl', d).checked);
+    let tambahan = S.ui.pfoto.slice();
+    const adaFotoUtama = x.lampiran && x.lampiran.jenis === 'foto' && !hapusUtama;
+    if (S.ui.pfile) Object.assign(p, S.ui.pfile);
+    else if (tambahan.length && !adaFotoUtama) { const f0 = tambahan.shift(); Object.assign(p, f0); }   // foto pertama jadi lampiran utama
+    else if (hapusUtama) p.hapusLampiran = true;
+    if (S.ui.phapus.length) p.hapusGaleri = S.ui.phapus.slice();
+    if (!p.teks && !p.data && !tambahan.length && !(x.lampiran && !p.hapusLampiran)) return toast('Tulis sesuatu atau lampirkan file.', 'err');
+    const b = e.currentTarget; busy(b, true); if (p.data || tambahan.length) b.innerHTML = '<span class="spin"></span> Mengunggah…';
+    try {
+      const r = await api('post.save', p);
+      for (let k = 0; k < tambahan.length; k++) { b.innerHTML = '<span class="spin"></span> Mengunggah foto ' + (k + 2) + '/' + (tambahan.length + 1) + '…'; await api('post.fotoTambah', { id: r.id || x.id, data: tambahan[k].data, nama: tambahan[k].nama }); }
+      toast(i === null ? 'Postingan dibagikan.' : 'Postingan disimpan.', 'ok'); closeSheet(); S.ui.post = null; S.fetchedAt = {}; refresh();
+    }
     catch (z) { toast(z.message, 'err'); busy(b, false); }
   };
 }
 function postPrivasi() { const k = ($('input[name=pp]:checked') || {}).value === 'khusus'; $('#ppk').classList.toggle('hide', !k); $$('input[name=pp]').forEach(r => r.parentNode.classList.toggle('on', r.checked)); }
 async function postPilihFile(input, jenis) {
+  if (jenis === 'foto') {   // boleh banyak foto
+    const files = Array.from(input.files || []); input.value = ''; if (!files.length) return;
+    if (S.ui.pfile && S.ui.pfile.mime !== 'image/jpeg') S.ui.pfile = null;   // ganti video/dokumen dengan foto
+    for (const f of files) {
+      if (S.ui.pfoto.length + ($$('#pgal > div').length) >= 10) { toast('Maksimal 10 foto per postingan.', 'err'); break; }
+      try { S.ui.pfoto.push({ data: await kompres(f, 1600, .85), mime: 'image/jpeg', nama: (f.name || 'foto').replace(/\.[^.]+$/, '') + '.jpg' }); } catch (e) { toast(e.message, 'err'); }
+    }
+    pfotoRender(); return;
+  }
+  S.ui.pfoto = []; pfotoRender();
   const f = input.files && input.files[0]; input.value = ''; if (!f) return;
   if (jenis !== 'foto' && f.size > LAMPIRAN_MAKS[jenis] * 1048576) return toast('Ukuran ' + jenis + ' maksimal ' + LAMPIRAN_MAKS[jenis] + ' MB.', 'err');
   try {
@@ -3286,6 +3438,11 @@ async function postPilihFile(input, jenis) {
     S.ui.pfile = { data: data, mime: mime, nama: nama };
     $('#pprev').innerHTML = '<div class="pfile">' + (jenis === 'foto' ? '<img src="' + data + '">' : '') + '<span class="grow">' + esc(labelJenis(jenis) + ' • ' + nama) + '<br><span class="small muted">' + ukuran(f.size) + '</span></span><button class="ibtn" onclick="S.ui.pfile=null;$(\'#pprev\').innerHTML=\'\'">' + ic('x') + '</button></div>';
   } catch (e) { toast(e.message, 'err'); }
+}
+function pfotoRender() {
+  const e = $('#pprev'); if (!e) return;
+  if (!S.ui.pfoto.length) { if (!S.ui.pfile) e.innerHTML = ''; return; }
+  e.innerHTML = '<div class="pgalf">' + S.ui.pfoto.map((f, k) => '<div><img src="' + f.data + '"><button type="button" onclick="S.ui.pfoto.splice(' + k + ',1);pfotoRender()">' + ic('x') + '</button></div>').join('') + '</div><div class="small muted" style="margin-top:4px">' + S.ui.pfoto.length + ' foto baru dipilih</div>';
 }
 async function postKomentar(i) {
   const x = S.ui.post.items[i];
@@ -3381,7 +3538,7 @@ function formDaftar() {
     f('dnisn', 'NISN', 'inputmode="numeric" maxlength="12" placeholder="Nomor Induk Siswa Nasional"') +
     f('dwa', 'Nomor WhatsApp Aktif', 'inputmode="tel" maxlength="16" placeholder="08xxxxxxxxxx"') +
     '<div class="f"><label>Alamat <span class="wj">*</span></label><textarea class="in" id="dal" maxlength="300" style="min-height:70px" placeholder="Desa, kecamatan, kabupaten"></textarea></div>' +
-    '<div class="f"><label>Lembaga <span class="wj">*</span></label>' + sel('dlb', [['', '— Pilih lembaga —'], ['PDF Wustha', 'PDF Wustha'], ['PDF Ulya', 'PDF Ulya'], ['Salafi', 'Salafi']], '', 'onchange="daftarLembaga()"') + '</div>' +
+    '<div class="f"><label>Lembaga <span class="wj">*</span></label>' + sel('dlb', [['', '— Pilih lembaga —'], ['PDF Wustha', lbl('Wustha')], ['PDF Ulya', lbl('Ulya')], ['Salafi', lbl('Salafi')]], '', 'onchange="daftarLembaga()"') + '</div>' +
     '<div id="dpdf" class="hide">' + f('das', 'Asal Sekolah', 'maxlength="120" placeholder="Contoh: SDN 1 Lhokseumawe / MTsN 2 Aceh Utara"') + '</div>' +
     '<div id="dsal" class="hide"><div class="f"><label>Apakah sedang / akan kuliah? <span class="wj">*</span></label><div class="seg2">' +
       '<label><input type="radio" name="dku" value="Ya" onchange="daftarKuliah()"> Ya, kuliah</label><label><input type="radio" name="dku" value="Tidak" onchange="daftarKuliah()"> Tidak</label></div></div>' +
@@ -3436,9 +3593,9 @@ async function pPengajuan() {
   S.ui.pj = list;
   const r2 = (l, v) => v ? '<div class="pjr"><span>' + l + '</span><b>' + esc(v) + '</b></div>' : '';
   h += list.length ? list.map((x, i) => '<div class="card pj"><div class="row"><div class="av sm">' + esc(inisial(x.nama)) + '</div><div class="grow"><div class="b" style="font-size:15px">' + esc(x.nama) + '</div>' +
-    '<div class="small muted">' + esc(tgl(x.waktu) + ', ' + jam(x.waktu)) + ' • ' + esc(x.lembaga) + '</div></div>' +
+    '<div class="small muted">' + esc(tgl(x.waktu) + ', ' + jam(x.waktu)) + ' • ' + esc(lblV(x.lembaga)) + '</div></div>' +
     '<span class="st ' + (x.status === 'Diterima' ? 'ok' : x.status === 'Ditolak' ? 'A' : 'w') + '">' + esc(x.status) + '</span></div>' +
-    '<div class="pjd">' + r2('NISN', x.nisn) + r2('WhatsApp', x.wa) + r2('Alamat', x.alamat) + r2('Lembaga', x.lembaga) + r2('Asal Sekolah', x.asal_sekolah) +
+    '<div class="pjd">' + r2('NISN', x.nisn) + r2('WhatsApp', x.wa) + r2('Alamat', x.alamat) + r2('Lembaga', lblV(x.lembaga)) + r2('Asal Sekolah', x.asal_sekolah) +
       (x.lembaga === 'Salafi' ? r2('Kuliah', x.kuliah) + r2('Kampus', x.kampus) + r2('Jurusan', x.jurusan) : '') +
       r2('Ayah', x.ayah + (x.kerja_ayah ? ' (' + x.kerja_ayah + ')' : '')) + r2('Ibu', x.ibu + (x.kerja_ibu ? ' (' + x.kerja_ibu + ')' : '')) +
       r2('Akun', x.akun ? '@' + x.akun : '') + r2('Catatan', x.catatan) + '</div>' +
@@ -3458,11 +3615,11 @@ function terimaForm(i) {
   const x = S.ui.pj[i];
   const jj = x.lembaga === 'PDF Wustha' ? 'Wustha' : x.lembaga === 'PDF Ulya' ? 'Ulya' : 'Salafi';
   const kls = S.B.kelas.filter(k => k.jenjang === jj).concat(S.B.kelas.filter(k => k.jenjang !== jj));
-  const d = sheet('Terima: ' + x.nama, '<div class="small muted" style="margin-bottom:12px">Buat akun untuk ' + esc(x.nama) + ' (' + esc(x.lembaga) + ').</div>' +
+  const d = sheet('Terima: ' + x.nama, '<div class="small muted" style="margin-bottom:12px">Buat akun untuk ' + esc(x.nama) + ' (' + esc(lblV(x.lembaga)) + ').</div>' +
     fld('Jenis Akun', sel('tjt', [['Santri', 'Santri'], ['Guru', 'Dewan Guru']], 'Santri', 'onchange="$(\'#tjk\').classList.toggle(\'hide\',this.value!==\'Santri\');$(\'#tjg\').classList.toggle(\'hide\',this.value!==\'Guru\')"')) +
     fld('Username', inp('tju', usernameSaran(x.nama), 'autocapitalize="none" maxlength="30"')) +
     fld('Password', '<div class="pw"><input class="in" id="tjp" value="' + sandiAcak() + '"><button class="eye" type="button" onclick="$(\'#tjp\').value=sandiAcak()" title="Buat ulang">' + ic('repeat') + '</button></div>') +
-    '<div id="tjk">' + fld('Kelas', sel('tjc', kls.map(k => [k.nama, k.nama + ' (' + k.jenjang + ')']), kls[0] && kls[0].nama)) + '</div>' +
+    '<div id="tjk">' + fld('Kelas', sel('tjc', kls.map(k => [k.nama, k.nama + ' (' + lbl(k.jenjang) + ')']), kls[0] && kls[0].nama)) + '</div>' +
     '<div id="tjg" class="hide"><div class="f"><label>Kabag (boleh lebih dari satu)</label><div class="checks" id="tjkb">' + (S.B.kabagList || []).filter(k => k !== 'Pengembang Aplikasi' || P().dev)
       .map(k => '<label><input type="checkbox" value="' + esc(k) + '" onchange="this.parentNode.classList.toggle(\'on\',this.checked)">' + esc(k) + '</label>').join('') + '</div></div></div>' +
     '<button class="btn full" id="tjsv">' + ic('check') + ' Simpan & Buat Akun</button>');
@@ -3486,7 +3643,7 @@ function hasilAkun(r) {
 }
 async function tolakPj(i) {
   const x = S.ui.pj[i];
-  const d = sheet('Tolak Pengajuan', '<div class="small muted" style="margin-bottom:10px">' + esc(x.nama) + ' (' + esc(x.lembaga) + ')</div>' + fld('Alasan (opsional)', inp('tja', '', 'maxlength="300" placeholder="Contoh: kuota penuh"')) +
+  const d = sheet('Tolak Pengajuan', '<div class="small muted" style="margin-bottom:10px">' + esc(x.nama) + ' (' + esc(lblV(x.lembaga)) + ')</div>' + fld('Alasan (opsional)', inp('tja', '', 'maxlength="300" placeholder="Contoh: kuota penuh"')) +
     '<button class="btn red full" id="tjtl">Tolak Pengajuan</button>');
   $('#tjtl', d).onclick = async e => { busy(e.target, true); try { await api('pengajuan.tolak', { id: x.id, catatan: val('tja') }); toast('Pengajuan ditolak.', 'ok'); closeSheet(); S.fetchedAt = {}; refresh(); } catch (z) { toast(z.message, 'err'); busy(e.target, false); } };
 }
@@ -3504,7 +3661,7 @@ async function pVerif() {
   S.ui.vf = v;
   const kunci = k => v.terkunci.indexOf(k) >= 0, dt = v.data;
   const fx = (k, attr, area) => {
-    if (kunci(k)) return '<div class="f"><label>' + VF_LABEL[k] + '</label><div class="vfl">' + esc(dt[k]) + ' <span title="Terkunci">🔒</span></div></div>';
+    if (kunci(k)) return '<div class="f"><label>' + VF_LABEL[k] + '</label><div class="vfl">' + esc(k === 'lembaga' ? lblV(dt[k]) : dt[k]) + ' <span title="Terkunci">🔒</span></div></div>';
     return '<div class="f"><label>' + VF_LABEL[k] + (k === 'wa' && dt.wa ? ' <span class="small muted">(bisa diubah)</span>' : '') + '</label>' +
       (area ? '<textarea class="in vfi" data-k="' + k + '" maxlength="300" style="min-height:64px">' + esc(dt[k]) + '</textarea>' : '<input class="in vfi" data-k="' + k + '" value="' + esc(dt[k]) + '" ' + (attr || '') + '>') + '</div>';
   };
@@ -3516,7 +3673,7 @@ async function pVerif() {
   else h += '<div class="card hcard small">' + ic('shield') + ' Mode Admin: semua data ' + esc(v.nama) + ' dapat direvisi.</div>';
   h += '<div class="card"><div class="lbl" style="margin-top:0">Data Diri</div>' + fx('nama_ktp', 'maxlength="120"') + (guru ? '' : fx('nisn', 'inputmode="numeric" maxlength="12"')) +
     fx('no_ktp', 'inputmode="numeric" maxlength="16" placeholder="16 digit NIK"') + fx('no_kk', 'inputmode="numeric" maxlength="16" placeholder="16 digit"') + fx('alamat_ktp', '', true) +
-    (guru ? '' : (lbEdit ? '<div class="f"><label>Lembaga</label>' + sel('vflb', [['', '— Pilih lembaga —'], ['PDF Wustha', 'PDF Wustha'], ['PDF Ulya', 'PDF Ulya'], ['Salafi', 'Salafi']], lb, 'class="vfi" data-k="lembaga" onchange="vfLembaga()"').replace('<select class="in"', '<select class="in vfi" data-k="lembaga"') + '</div>' : fx('lembaga')) +
+    (guru ? '' : (lbEdit ? '<div class="f"><label>Lembaga</label>' + sel('vflb', [['', '— Pilih lembaga —'], ['PDF Wustha', lbl('Wustha')], ['PDF Ulya', lbl('Ulya')], ['Salafi', lbl('Salafi')]], lb, 'class="vfi" data-k="lembaga" onchange="vfLembaga()"').replace('<select class="in"', '<select class="in vfi" data-k="lembaga"') + '</div>' : fx('lembaga')) +
     '<div id="vfpdf" class="' + (lb === 'PDF Wustha' || lb === 'PDF Ulya' ? '' : 'hide') + '">' + fx('asal_sekolah', 'maxlength="120"') + '</div>' +
     '<div id="vfsal" class="' + (lb === 'Salafi' ? '' : 'hide') + '">' + (kunci('kuliah') ? fx('kuliah') : '<div class="f"><label>Apakah kuliah?</label><div class="seg2">' +
       ['Ya', 'Tidak'].map(o => '<label class="' + (dt.kuliah === o ? 'on' : '') + '"><input type="radio" name="vfku" value="' + o + '"' + (dt.kuliah === o ? ' checked' : '') + ' onchange="vfKuliah()"> ' + (o === 'Ya' ? 'Ya, kuliah' : 'Tidak') + '</label>').join('') + '</div></div>') +
@@ -3606,10 +3763,10 @@ async function lihatVerif(id, mime, nama) {
 function openKelolaKelas() { push('Kelola Daftar Kelas', pKelolaKelas, { sub: 'Tambah, ubah & hapus kelas' }); }
 function pKelolaKelas() {
   const jj = ['Wustha', 'Ulya', 'Salafi'];
-  let h = '<div class="muted small" style="margin:0 4px 10px">Urutan menentukan susunan kelas di seluruh aplikasi & laporan.</div>';
+  let h = lembagaCard() + '<div class="muted small" style="margin:6px 4px 10px">Urutan menentukan susunan kelas di seluruh aplikasi & laporan.</div>';
   jj.forEach(j => {
     const l = S.B.kelas.filter(k => k.jenjang === j);
-    h += '<div class="sec"><h3>' + (j === 'Salafi' ? 'Salafi' : 'PDF ' + j) + ' (' + l.length + ')</h3></div><div class="card"><div class="list">' + (l.length ? l.map(k =>
+    h += '<div class="sec"><h3>' + lbl(j) + ' (' + l.length + ')</h3></div><div class="card"><div class="list">' + (l.length ? l.map(k =>
       '<div class="it" onclick="kelasForm(\'' + esc(k.nama) + '\')"><div class="av sm">' + esc(k.nama.replace(/\D/g, '') || 'K') + '</div><div class="grow"><div class="t">' + esc(k.nama) + '</div><div class="s">Urutan ' + (S.B.kelas.indexOf(k) + 1) + '</div></div>' + ic('edit') + '</div>').join('') : '<div class="muted small">Belum ada kelas.</div>') + '</div></div>';
   });
   view(h);
@@ -3619,7 +3776,7 @@ function kelasForm(nama) {
   const k = nama ? S.B.kelas.find(x => x.nama === nama) : { nama: '', jenjang: 'Salafi' };
   const idx = nama ? S.B.kelas.indexOf(k) + 1 : S.B.kelas.length + 1;
   const d = sheet(nama ? 'Ubah Kelas' : 'Tambah Kelas', fld('Nama Kelas', inp('kln', k.nama, 'maxlength="60" placeholder="Contoh: Kelas 2 Wustha Inti"')) +
-    fld('Jenjang', sel('klj', [['Wustha', 'PDF Wustha'], ['Ulya', 'PDF Ulya'], ['Salafi', 'Salafi']], k.jenjang)) +
+    fld('Lembaga / Jenjang', sel('klj', [['Wustha', lbl('Wustha')], ['Ulya', lbl('Ulya')], ['Salafi', lbl('Salafi')]], k.jenjang)) +
     fld('Urutan', inp('klu', idx, 'type="number" min="1" inputmode="numeric"')) +
     (nama ? '<div class="small muted" style="margin:-4px 0 12px">Mengganti nama kelas otomatis memindahkan santri & roster ke nama baru.</div>' : '') +
     '<button class="btn full" id="klsv">Simpan</button>' + (nama ? '<button class="btn red full" style="margin-top:8px" id="kldl">Hapus Kelas</button>' : ''));
@@ -3711,7 +3868,7 @@ function buatSlider(el, items, opt) {
     const x = items[pi];
     meta.classList.remove('on'); void meta.offsetWidth;
     meta.innerHTML = '<div class="row psl-who"><span onclick="pubProfil(\'' + esc(x.username) + '\')">' + avatar(x, 'sm') + '</span><div class="grow" style="min-width:0"><div class="b ell">' + esc(x.nama) + (x.v ? VBADGE : '') +
-      ' <span class="pu" onclick="pubProfil(\'' + esc(x.username) + '\')">@' + esc(x.username) + '</span></div><div class="small muted">' + esc(x.tanggal) + '</div></div></div>' +
+      '</div><div class="small muted">' + esc(x.tanggal) + '</div></div></div>' +
       (x.teks ? '<div class="psl-txt tjus">' + teksRapi(x.teks) + '</div><button class="psl-more hide">Lihat selengkapnya</button>' : '') +
       '<div class="pact psl-act"><button class="' + (x.liked ? 'on' : '') + '" data-a="like">' + ic('heart') + '<span>' + (x.likes || '') + ' Suka</span></button>' +
       '<button data-a="kom">' + ic('comment') + '<span>' + (x.komentar || '') + ' Komentar</span></button><button data-a="share">' + ic('share') + '<span>Bagikan</span></button></div>';
@@ -4063,6 +4220,250 @@ function aturAkunPublik(publik, un) {
   });
 }
 
+
+/* =============================================================
+ *  AKSES KHUSUS ADMIN (Tahap 1)
+ * ============================================================= */
+function LBL() { return (S.B && S.B.settings && S.B.settings.lembaga) || (S.pub && S.pub.lembaga) || { Wustha: 'PDF Wustha', Ulya: 'PDF Ulya', Salafi: 'Salafi' }; }
+/** Nama tampilan lembaga dari kode jenjang (Wustha / Ulya / Salafi). */
+function lbl(j) { return LBL()[j] || j; }
+/** Nama tampilan dari nilai tersimpan ("PDF Wustha" / "PDF Ulya" / "Salafi"). */
+function lblV(v) { return v === 'PDF Wustha' ? lbl('Wustha') : v === 'PDF Ulya' ? lbl('Ulya') : v === 'Salafi' ? lbl('Salafi') : (v || ''); }
+function openAksesAdmin() { push('Akses Khusus Admin', pAksesAdmin, { sub: 'Pengelolaan aplikasi oleh Admin' }); }
+function pAksesAdmin() {
+  const g = (judul, items) => items.length ? '<div class="sec"><h3>' + judul + '</h3></div><div class="card"><div class="list">' + items.map(x =>
+    '<div class="it" onclick="' + x[3] + '"><div class="av sm" style="background:var(--soft);color:var(--pri2)">' + ic(x[0]) + '</div><div class="grow"><div class="t">' + x[1] + '</div><div class="s">' + x[2] + '</div></div>' + ic('right') + '</div>').join('') + '</div></div>' : '';
+  const akun = [], akad = [], tampil = [], lain = [];
+  if (P().users) akun.push(['lock', 'Keamanan Kata Sandi & Akun', 'Reset kata sandi, kunci / buka akun, keluar dari semua perangkat', 'openKeamanan()'],
+    ['users', 'Kelola Data Pengguna', 'Tambah, ubah & hapus data santri dan dewan guru', 'openKelolaUser()'],
+    ['users', 'Pengajuan Santri Baru', 'Terima / tolak pendaftaran online', 'openPengajuan()']);
+  if (P().users || P().nilaiSemua) akad.push(['clock', 'Sesi & Jam Pelajaran', 'Tambah, ubah, hapus sesi per hari & jam • sesi wali kelas otomatis', 'openSesi()'],
+    ['user', 'Wali Kelas', 'Tunjuk wali kelas manual, atau otomatis dari sesi wali', 'openWali()']);
+  if (P().settings) akad.push(['edit', 'Istilah Kegiatan', 'Ganti istilah "' + esc(istilah()) + '" (mis. Bimbingan) & jamnya', 'openIstilah()']);
+  if (P().users) akad.push(['shield', 'Kabag / Peran & Hak Akses', 'Tambah, ganti nama, hapus peran beserta hak aksesnya', 'openPeran()']);
+  if (P().users) akad.push(['grad', 'Daftar Kelas & Nama Lembaga', 'Tambah, ubah, hapus kelas • ubah nama lembaga (mis. ' + esc(lbl('Wustha')) + ' → SMP)', 'openKelolaKelas()']);
+  if (P().settings) tampil.push(['mosque', 'Tentang Dayah & Instagram', 'Teks Tentang Dayah, alamat, lokasi & Instagram di halaman depan', 'openEditDepan()']);
+  if (isAdminApp() || P().dev) tampil.push(['palette', 'Logo Aplikasi & Kop Surat', 'Logo dayah, ' + esc(lbl('Wustha')) + ' & ' + esc(lbl('Ulya')) + ' untuk kop raport', 'openLogo()']);
+  if (isAdminApp()) tampil.push(['globe', 'Layar Utama Publik', 'Verifikasi postingan & komentar tamu di halaman depan', 'openLayarUtama()']);
+  if (P().settings) lain.push(['gear', 'Pengaturan Aplikasi', 'Tahun ajaran, nominal iuran, kop surat, teks pesan', 'openSettings()']);
+  view('<div class="card hcard small" style="display:flex;gap:10px;align-items:flex-start">' + ic('shield') + '<span>Menu ini hanya terlihat oleh Admin' + (P().dev ? ' & Pengembang Aplikasi' : '') + '. Perubahan langsung berlaku untuk semua pengguna.</span></div>' +
+    g('Akun & Pengguna', akun) + g('Pengaturan Akademik', akad) + g('Tampilan & Halaman Depan', tampil) + g('Lainnya', lain));
+}
+
+/* ---------- keamanan kata sandi & akun ---------- */
+function openKeamanan() { S.ui.kmQ = ''; push('Keamanan Kata Sandi & Akun', pKeamanan, { sub: 'Reset kata sandi & kunci akun' }); }
+async function pKeamanan() {
+  const t = loading(5); const list = await api('admin.akun'); if (!alive(t)) return;
+  S.ui.km = list;
+  const md = uiState('kmMode', 'Semua');
+  const f = list.filter(x => md === 'Semua' || (md === 'Nonaktif' ? x.aktif === 'Tidak' : x.tipe === md));
+  let h = '<div class="card hcard small">' + ic('info') + ' Mereset kata sandi otomatis mengeluarkan akun dari <b>semua perangkat</b>. Akun yang dikunci tidak dapat login sampai dibuka kembali.</div>' +
+    seg('kmMode', [['Semua', 'Semua (' + list.length + ')'], ['Santri', 'Santri'], ['Guru', 'Dewan Guru'], ['Nonaktif', 'Terkunci (' + list.filter(x => x.aktif === 'Tidak').length + ')']], 'refresh()') +
+    '<div class="search">' + ic('search') + '<input class="in" placeholder="Cari nama / username…" value="' + esc(S.ui.kmQ || '') + '" oninput="S.ui.kmQ=this.value;$$(\'#kml .it\').forEach(x=>x.style.display=x.dataset.q.indexOf(this.value.toLowerCase())>=0?\'\':\'none\')"></div>' +
+    '<div class="card"><div class="list" id="kml">' + (f.length ? f.map(x => { const i = list.indexOf(x), kunci = x.aktif === 'Tidak';
+      return '<div class="it" style="cursor:default" data-q="' + esc((x.nama + ' ' + x.username).toLowerCase()) + '">' + avatar(x, 'sm') +
+        '<div class="grow" style="min-width:0"><div class="t ell">' + esc(x.nama) + (x.v ? VBADGE : '') + '</div><div class="s ell">@' + esc(x.username) + ' • ' + esc(x.tipe === 'Santri' ? 'Santri ' + (x.kelas || '') : (x.kabag || 'Dewan Guru')) + '</div>' +
+        (kunci ? '<span class="st A" style="margin-top:4px;display:inline-block">Terkunci</span>' : '') + '</div>' +
+        '<div class="row" style="gap:6px;flex:none">' + (x.dev && !P().dev ? '<span class="small muted">Pengembang</span>' :
+          '<button class="btn sec sm" onclick="resetSandi(' + i + ')" title="Reset kata sandi">' + ic('lock') + '</button>' +
+          (x.username.toLowerCase() === me().username.toLowerCase() ? '' : '<button class="btn sm ' + (kunci ? '' : 'red') + '" onclick="kunciAkun(' + i + ')">' + (kunci ? 'Buka' : 'Kunci') + '</button>')) + '</div></div>'; }).join('')
+      : empty('Tidak ada akun.', 'users')) + '</div></div>';
+  view(h);
+  if (S.ui.kmQ) $('.search input').dispatchEvent(new Event('input'));
+}
+function resetSandi(i) {
+  const x = S.ui.km[i], min = (S.B.settings.sandi_min || 6);
+  const d = sheet('Reset Kata Sandi', '<div class="row" style="gap:10px;margin-bottom:12px">' + avatar(x, 'sm') + '<div><b>' + esc(x.nama) + '</b><div class="small muted">@' + esc(x.username) + '</div></div></div>' +
+    fld('Kata sandi baru', '<div class="pw"><input class="in" id="rsp" value="' + sandiAcak() + '" autocapitalize="none"><button class="eye" type="button" onclick="$(\'#rsp\').value=sandiAcak()" title="Buat acak">' + ic('repeat') + '</button></div>') +
+    '<div class="small muted" style="margin:-4px 0 12px">Minimal ' + min + ' karakter tanpa spasi. Akun akan keluar dari semua perangkat.</div>' +
+    '<button class="btn full" id="rssv">' + ic('lock') + ' Reset Kata Sandi</button>');
+  $('#rssv', d).onclick = async e => {
+    const pw = val('rsp'); if (pw.length < min) return toast('Kata sandi minimal ' + min + ' karakter.', 'err');
+    busy(e.target, true);
+    try {
+      const r = await api('admin.resetSandi', { username: x.username, password: pw });
+      S.ui.akunPesan = r.pesan; closeSheet();
+      sheet('Kata Sandi Direset', '<div class="okc">' + ic('check') + '</div><div style="text-align:center;margin-bottom:12px"><b>' + esc(r.nama) + '</b><br><span class="small muted">@' + esc(r.username) + '</span></div>' +
+        '<div class="mprev" style="max-height:220px;overflow:auto">' + esc(r.pesan) + '</div>' +
+        (r.wa ? '<button class="btn full wa" onclick="openExt(waLink(\'' + esc(r.wa) + '\') + \'?text=\' + encodeURIComponent(S.ui.akunPesan))">' + ic('wa') + ' Kirim ke WhatsApp ' + esc(r.wa) + '</button>' :
+          '<div class="small muted" style="margin-bottom:8px">Nomor WhatsApp pengguna belum tercatat.</div><button class="btn full wa" onclick="openExt(\'https://wa.me/?text=\' + encodeURIComponent(S.ui.akunPesan))">' + ic('wa') + ' Bagikan lewat WhatsApp</button>') +
+        '<button class="btn sec full" style="margin-top:8px" onclick="salinCadangan(S.ui.akunPesan)&&toast(\'Pesan disalin.\',\'ok\')">' + ic('copy') + ' Salin Pesan</button>' +
+        '<div class="small muted" style="margin-top:10px">Kata sandi hanya ditampilkan sekarang.</div>');
+    } catch (z) { toast(z.message, 'err'); busy(e.target, false); }
+  };
+}
+async function kunciAkun(i) {
+  const x = S.ui.km[i], buka = x.aktif === 'Tidak';
+  if (!(await ask((buka ? 'Buka kembali akun ' : 'Kunci akun ') + x.nama + '?' + (buka ? '' : ' Pengguna tidak akan bisa login sampai akun dibuka.'), buka ? 'Buka' : 'Kunci'))) return;
+  try { await api('admin.aktif', { username: x.username, aktif: buka }); toast(buka ? 'Akun dibuka.' : 'Akun dikunci.', 'ok'); S.fetchedAt = {}; refresh(); } catch (e) { toast(e.message, 'err'); }
+}
+
+/* ---------- kelola data pengguna ---------- */
+function openKelolaUser() { S.ui.kuQ = ''; push('Kelola Data Pengguna', pKelolaUser, { sub: 'Tambah, ubah & hapus pengguna' }); }
+async function pKelolaUser() {
+  const t = loading(6); const list = await api('admin.akun'); if (!alive(t)) return;
+  S.ui.ku = list;
+  const md = uiState('kuMode', 'Santri');
+  const f = list.filter(x => md === 'Nonaktif' ? x.aktif === 'Tidak' : x.tipe === md && x.aktif !== 'Tidak');
+  const grup = {};
+  f.forEach(x => { const k = md === 'Santri' ? (x.kelas || 'Tanpa kelas') : md === 'Guru' ? 'Dewan Guru' : (x.tipe === 'Santri' ? 'Santri' : 'Dewan Guru'); (grup[k] = grup[k] || []).push(x); });
+  const urut = md === 'Santri' ? S.B.kelas.map(k => k.nama).concat(['Tanpa kelas']) : Object.keys(grup);
+  let h = seg('kuMode', [['Santri', 'Santri (' + list.filter(x => x.tipe === 'Santri' && x.aktif !== 'Tidak').length + ')'], ['Guru', 'Dewan Guru (' + list.filter(x => x.tipe === 'Guru' && x.aktif !== 'Tidak').length + ')'], ['Nonaktif', 'Nonaktif']], 'refresh()') +
+    '<div class="search">' + ic('search') + '<input class="in" placeholder="Cari nama / username…" oninput="$$(\'#kul .it\').forEach(x=>x.style.display=x.dataset.q.indexOf(this.value.toLowerCase())>=0?\'\':\'none\')"></div><div id="kul">';
+  urut.forEach(k => { const l = grup[k]; if (!l || !l.length) return;
+    h += '<div class="sec"><h3>' + esc(k) + ' (' + l.length + ')</h3></div><div class="card"><div class="list">' + l.map(x =>
+      '<div class="it" data-q="' + esc((x.nama + ' ' + x.username).toLowerCase()) + '" onclick="userForm(reg(S.ui.ku[' + list.indexOf(x) + ']))">' + avatar(x, 'sm') +
+      '<div class="grow" style="min-width:0"><div class="t ell">' + esc(x.nama) + (x.v ? VBADGE : '') + '</div><div class="s ell">@' + esc(x.username) + (x.tipe === 'Guru' ? ' • ' + esc(x.kabag || '-') : '') + '</div></div>' + ic('edit') + '</div>').join('') + '</div></div>'; });
+  if (!f.length) h += '<div class="card">' + empty('Belum ada pengguna.', 'users') + '</div>';
+  view(h + '</div>');
+  fab(() => { const d = sheet('Tambah Pengguna', '<div class="mlist"><button class="mitem" id="kus">' + ic('users') + ' Santri</button><button class="mitem" id="kug">' + ic('grad') + ' Dewan Guru</button></div>');
+    $('#kus', d).onclick = () => { closeSheet(); userForm(null, 'Santri'); }; $('#kug', d).onclick = () => { closeSheet(); userForm(null, 'Guru'); }; });
+}
+
+/* ---------- nama lembaga (di halaman Daftar Kelas) ---------- */
+function lembagaCard() {
+  return '<div class="card"><div class="b" style="margin-bottom:4px">Nama Lembaga</div><div class="small muted" style="margin-bottom:10px">Ubah nama tampilan jenjang di seluruh aplikasi, formulir pendaftaran & kop raport. Contoh: PDF Wustha → SMP.</div>' +
+    '<div class="row" style="gap:8px;flex-wrap:wrap">' + ['Wustha', 'Ulya', 'Salafi'].map(j => '<div style="flex:1 1 140px">' + fld('Jenjang ' + j, inp('lb' + j, lbl(j), 'maxlength="40"')) + '</div>').join('') + '</div>' +
+    '<button class="btn sec full" onclick="simpanLembaga(this)">' + ic('check') + ' Simpan Nama Lembaga</button></div>';
+}
+async function simpanLembaga(btn) {
+  const v = { lembaga_wustha: val('lbWustha'), lembaga_ulya: val('lbUlya'), lembaga_salafi: val('lbSalafi') };
+  if (!v.lembaga_wustha || !v.lembaga_ulya || !v.lembaga_salafi) return toast('Nama lembaga tidak boleh kosong.', 'err');
+  busy(btn, true);
+  try { await api('settings.save', { values: v }); S.B.settings.lembaga = { Wustha: v.lembaga_wustha, Ulya: v.lembaga_ulya, Salafi: v.lembaga_salafi }; cset(ckey('boot', {}), S.B, 'boot', {}); toast('Nama lembaga disimpan.', 'ok'); refresh(); }
+  catch (e) { toast(e.message, 'err'); busy(btn, false); }
+}
+
+/* =============================================================
+ *  PENGATURAN AKADEMIK (Tahap 2)
+ * ============================================================= */
+function istilah() { return (S.B && S.B.settings && S.B.settings.istilah && S.B.settings.istilah.mengulang) || 'Mengulang Malam'; }
+function jamIstilah() { return (S.B && S.B.settings && S.B.settings.istilah && S.B.settings.istilah.jamMengulang) || '22.30 - 23.30'; }
+async function bootUlang() { await segarkanBoot(); try { topBar(); } catch (e) {} }
+
+/* ---------- sesi & jam ---------- */
+function openSesi() { push('Sesi & Jam Pelajaran', pSesi, { sub: 'Atur sesi per hari & jam' }); }
+function jamMulai(j) { const m = String(j).match(/(\d{1,2})[.:](\d{2})/); return m ? (+m[1]) * 60 + (+m[2]) : 0; }
+function pSesi() {
+  const list = (S.B.sesi || []).slice().sort((a, b) => jamMulai(a.jam) - jamMulai(b.jam));
+  const ws = list.find(x => x.wali);
+  let h = '<div class="card hcard small">' + ic('info') + ' Sesi wali kelas: <b>' + (ws ? esc(ws.kode + ' • ' + ws.jam) : 'belum ditentukan') + '</b>. Guru yang mengajar di sesi ini otomatis menjadi wali kelas, kecuali wali kelas ditunjuk manual.</div>';
+  h += '<div class="card"><div class="list">' + (list.length ? list.map(x => '<div class="it" onclick="sesiForm(\'' + esc(x.kode) + '\')"><div class="av sm" style="background:var(--soft);color:var(--pri2);font-size:12px">' + esc(x.kode) + '</div>' +
+    '<div class="grow"><div class="t">' + esc(x.jam) + (x.wali ? ' <span class="pillx">Wali Kelas</span>' : '') + '</div><div class="s">' + esc(x.berlaku) + ' • ' + esc(x.hari || 'Setiap Hari') + '</div></div>' + ic('edit') + '</div>').join('')
+    : empty('Belum ada sesi.', 'clock')) + '</div></div>';
+  view(h); fab(() => sesiForm(null));
+}
+function sesiForm(kode) {
+  const x = kode ? S.B.sesi.find(s => s.kode === kode) : { kode: '', jam: '', berlaku: 'Salafi, PDF', hari: 'Setiap Hari', wali: false };
+  const jm = String(x.jam).match(/(\d{1,2})[.:](\d{2})\s*-\s*(\d{1,2})[.:](\d{2})/), pad = n => String(n).padStart(2, '0');
+  const mulai = jm ? pad(jm[1]) + ':' + jm[2] : '', selesai = jm ? pad(jm[3]) + ':' + jm[4] : '';
+  const bl = String(x.berlaku).split(/[\s,]+/), hr = String(x.hari || 'Setiap Hari').split(/\s*,\s*/);
+  const cek = (nm, v, on, label) => '<label class="' + (on ? 'on' : '') + '"><input type="checkbox" name="' + nm + '" value="' + esc(v) + '"' + (on ? ' checked' : '') + ' onchange="this.parentNode.classList.toggle(\'on\',this.checked)">' + esc(label || v) + '</label>';
+  const d = sheet(kode ? 'Ubah Sesi ' + kode : 'Tambah Sesi',
+    '<div class="row" style="gap:8px"><div style="width:110px">' + fld('Kode', inp('sk', x.kode, 'maxlength="6" placeholder="S6" style="text-transform:uppercase"')) + '</div>' +
+    '<div class="grow">' + fld('Mulai', '<input class="in" type="time" id="sm" value="' + mulai + '">') + '</div><div class="grow">' + fld('Selesai', '<input class="in" type="time" id="ss" value="' + selesai + '">') + '</div></div>' +
+    fld('Berlaku untuk', '<div class="checks">' + cek('sb', 'Salafi', bl.indexOf('Salafi') >= 0, lbl('Salafi')) + cek('sb', 'PDF', bl.indexOf('PDF') >= 0, lbl('Wustha') + ' & ' + lbl('Ulya')) + '</div>') +
+    fld('Hari', '<div class="checks">' + (S.B.hari || ['Setiap Hari']).map(hh => cek('sh', hh, hr.indexOf(hh) >= 0)).join('') + '</div>') +
+    '<label class="row" style="gap:8px;margin:4px 0 14px"><input type="checkbox" id="sw"' + (x.wali ? ' checked' : '') + '> Jadikan sesi wali kelas otomatis</label>' +
+    '<button class="btn full" id="ssv">Simpan</button>' + (kode ? '<button class="btn red full" style="margin-top:8px" id="sdl">Hapus Sesi</button>' : ''));
+  const selesaiSimpan = sesi => { S.B.sesi = sesi; cset(ckey('boot', {}), S.B, 'boot', {}); closeSheet(); refresh(); };
+  $('#ssv', d).onclick = async e => {
+    const m = val('sm'), sl = val('ss');
+    if (!m || !sl) return toast('Isi jam mulai & selesai.', 'err');
+    const p = { original: kode || undefined, kode: val('sk').toUpperCase(), jam: m.replace(':', '.') + ' - ' + sl.replace(':', '.'),
+      berlaku: $$('input[name=sb]:checked', d).map(z => z.value), hari: $$('input[name=sh]:checked', d).map(z => z.value), wali: $('#sw', d).checked };
+    busy(e.target, true);
+    try { selesaiSimpan(await api('sesi.save', p)); toast('Sesi disimpan.', 'ok'); } catch (z) { toast(z.message, 'err'); busy(e.target, false); }
+  };
+  if (kode) $('#sdl', d).onclick = async () => {
+    if (!(await ask('Hapus sesi ' + kode + ' (' + x.jam + ')?', 'Hapus'))) return;
+    try { selesaiSimpan(await api('sesi.delete', { kode: kode })); toast('Sesi dihapus.', 'ok'); }
+    catch (z) {
+      const m = String(z.message).match(/^PAKAI:(\d+)/);
+      if (!m) return toast(z.message, 'err');
+      if (!(await ask('Sesi ' + kode + ' masih dipakai di ' + m[1] + ' jadwal roster. Hapus sesi beserta jadwal roster tersebut?', 'Hapus Semua'))) return;
+      try { selesaiSimpan(await api('sesi.delete', { kode: kode, paksa: true })); toast('Sesi & jadwalnya dihapus.', 'ok'); } catch (y) { toast(y.message, 'err'); }
+    }
+  };
+}
+
+/* ---------- wali kelas ---------- */
+function openWali() { push('Wali Kelas', pWali, { sub: 'Manual atau otomatis dari sesi' }); }
+async function pWali() {
+  const t = loading(5); const d = await api('wali.list'); if (!alive(t)) return;
+  S.ui.wl = d;
+  const ws = d.sesiWali;
+  let h = '<div class="card hcard small">' + ic('info') + ' <b>Otomatis</b>: guru yang mengajar di sesi wali (' + (ws ? esc(ws.kode + ' • ' + ws.jam) : 'belum ditentukan') + ') menjadi wali kelas. <b>Manual</b>: tunjuk guru tertentu. Ubah sesi wali di menu Sesi & Jam Pelajaran.</div>';
+  ['Wustha', 'Ulya', 'Salafi'].forEach(j => {
+    const l = d.kelas.filter(k => k.jenjang === j); if (!l.length) return;
+    h += '<div class="sec"><h3>' + esc(lbl(j)) + '</h3></div><div class="card"><div class="list">' + l.map(k => '<div class="it" onclick="waliForm(' + d.kelas.indexOf(k) + ')"><div class="grow"><div class="t">' + esc(k.kelas) + '</div>' +
+      '<div class="s">' + (k.manual ? '<span class="pillx">Manual</span> ' + esc(k.manualNama) : '<span class="pillx" style="opacity:.75">Otomatis</span> ' + esc(k.otomatis || 'belum ada guru di sesi wali')) + '</div></div>' + ic('edit') + '</div>').join('') + '</div></div>';
+  });
+  view(h);
+}
+function waliForm(i) {
+  const k = S.ui.wl.kelas[i], ws = S.ui.wl.sesiWali;
+  const guru = S.B.users.filter(u => u.tipe === 'Guru').sort((a, b) => a.nama.localeCompare(b.nama));
+  const d = sheet('Wali Kelas ' + k.kelas, fld('Wali kelas', sel('wg', [['', 'Otomatis' + (ws ? ' (sesi ' + ws.kode + ': ' + (k.otomatis || 'belum ada') + ')' : '')]].concat(guru.map(g => [g.username, g.nama])), k.manual)) +
+    '<div class="small muted" style="margin:-4px 0 12px">Wali kelas tampil di daftar kelas, raport PDF, laporan iuran & berhak mengisi status naik kelas.</div><button class="btn full" id="wsv">Simpan</button>');
+  $('#wsv', d).onclick = async e => { busy(e.target, true);
+    try { S.ui.wl = await api('wali.save', { kelas: k.kelas, guru: val('wg') }); closeSheet(); S.fetchedAt = {}; toast('Wali kelas disimpan.', 'ok'); refresh(); } catch (z) { toast(z.message, 'err'); busy(e.target, false); } };
+}
+
+/* ---------- istilah ---------- */
+function openIstilah() {
+  const d = sheet('Istilah Kegiatan', fld('Istilah "Mengulang Malam"', inp('ism', istilah(), 'maxlength="40" placeholder="Mis. Bimbingan / Muthala\'ah"')) +
+    fld('Jam kegiatan', inp('isj', jamIstilah(), 'maxlength="20" placeholder="22.30 - 23.30"')) +
+    '<div class="small muted" style="margin:-4px 0 12px">Istilah baru tampil di Beranda, menu Absen & Izin, dan jadwal roster.</div><button class="btn full" id="issv">Simpan</button>');
+  $('#issv', d).onclick = async e => {
+    const v = { istilah_mengulang: val('ism'), jam_mengulang: val('isj') }; if (!v.istilah_mengulang) return toast('Istilah tidak boleh kosong.', 'err');
+    busy(e.target, true);
+    try { await api('settings.save', { values: v }); S.B.settings.istilah = { mengulang: v.istilah_mengulang, jamMengulang: v.jam_mengulang }; cset(ckey('boot', {}), S.B, 'boot', {}); closeSheet(); toast('Istilah disimpan.', 'ok'); refresh(); }
+    catch (z) { toast(z.message, 'err'); busy(e.target, false); }
+  };
+}
+
+/* ---------- kabag / peran & hak akses ---------- */
+function openPeran() { push('Kabag / Peran & Hak Akses', pPeran, { sub: 'Tambah, ganti nama & hapus peran' }); }
+async function pPeran() {
+  const t = loading(5); const d = await api('peran.list'); if (!alive(t)) return;
+  S.ui.pr = d;
+  let h = '<div class="card hcard small">' + ic('info') + ' Peran baru <b>mewarisi hak akses</b> dari peran bawaan yang dipilih. Mengganti nama peran bawaan otomatis memindahkan semua pengguna ke nama baru.</div>';
+  h += '<div class="sec"><h3>Peran Buatan Admin (' + d.kustom.length + ')</h3></div><div class="card"><div class="list">' + (d.kustom.length ? d.kustom.map((k, i) =>
+    '<div class="it" onclick="peranForm(' + i + ')"><div class="av sm" style="background:var(--soft);color:var(--pri2)">' + ic('shield') + '</div><div class="grow"><div class="t">' + esc(k.nama) + ' <span class="small muted">• ' + k.jumlah + ' orang</span></div>' +
+    '<div class="s">Akses: ' + esc(k.akses.join(', ')) + '</div></div>' + ic('edit') + '</div>').join('') : '<div class="muted small">Belum ada. Ketuk ＋ untuk menambah peran.</div>') + '</div></div>';
+  h += '<div class="sec"><h3>Peran Bawaan</h3></div><div class="card"><div class="list">' + d.bawaan.map(b =>
+    '<div class="it" style="cursor:default' + (b.sembunyi ? ';opacity:.55' : '') + '"><div class="grow"><div class="t">' + esc(b.nama) + ' <span class="small muted">• ' + b.jumlah + ' orang</span>' + (b.sembunyi ? ' <span class="pillx">Disembunyikan</span>' : '') + '</div><div class="s">' + esc(b.info) + '</div></div>' +
+    (b.dilindungi ? '<span class="small muted">Tetap</span>' : b.sembunyi ? '<button class="btn sec sm" onclick="peranPulih(\'' + esc(b.nama) + '\')">Tampilkan</button>' :
+      '<button class="ibtn" onclick="peranGantiNama(\'' + esc(b.nama) + '\')" title="Ganti nama">' + ic('edit') + '</button><button class="ibtn" onclick="peranHapus(\'' + esc(b.nama) + '\')" title="Hapus">' + ic('trash') + '</button>') + '</div>').join('') + '</div></div>';
+  view(h); fab(() => peranForm(null));
+}
+function peranForm(i) {
+  const k = i === null ? { nama: '', akses: [], keterangan: '' } : S.ui.pr.kustom[i];
+  const d = sheet(i === null ? 'Tambah Peran' : 'Ubah Peran', fld('Nama peran', inp('prn', k.nama, 'maxlength="40" placeholder="Mis. Bendahara Pembantu"')) +
+    fld('Keterangan (opsional)', inp('prk', k.keterangan, 'maxlength="120"')) +
+    '<div class="f"><label>Hak akses (mewarisi dari peran bawaan)</label><div class="list">' + S.ui.pr.aksesPilihan.filter(a => a.nama !== 'Admin' || isAdminApp()).map(a =>
+      '<label class="it" style="cursor:pointer;align-items:flex-start"><input type="checkbox" name="pra" value="' + esc(a.nama) + '"' + (k.akses.indexOf(a.nama) >= 0 ? ' checked' : '') + ' style="margin-top:4px"><div class="grow"><div class="t">' + esc(a.nama) + '</div><div class="s">' + esc(a.info) + '</div></div></label>').join('') + '</div></div>' +
+    '<button class="btn full" id="prsv">Simpan</button>' + (i === null ? '' : '<button class="btn red full" style="margin-top:8px" id="prdl">Hapus Peran</button>'));
+  $('#prsv', d).onclick = async e => {
+    const p = { original: i === null ? undefined : k.nama, nama: val('prn'), keterangan: val('prk'), akses: $$('input[name=pra]:checked', d).map(z => z.value) };
+    if (!p.nama) return toast('Nama peran wajib diisi.', 'err'); if (!p.akses.length) return toast('Pilih minimal satu hak akses.', 'err');
+    busy(e.target, true);
+    try { await api('peran.save', p); closeSheet(); toast('Peran disimpan.', 'ok'); await bootUlang(); refresh(); } catch (z) { toast(z.message, 'err'); busy(e.target, false); }
+  };
+  if (i !== null) $('#prdl', d).onclick = () => { closeSheet(); peranHapus(k.nama); };
+}
+function peranGantiNama(nama) {
+  const d = sheet('Ganti Nama Peran', '<div class="small muted" style="margin-bottom:10px">Hak akses "' + esc(nama) + '" tetap sama. Semua pengguna dengan peran ini dipindahkan ke nama baru.</div>' +
+    fld('Nama baru', inp('pgn', nama, 'maxlength="40"')) + '<button class="btn full" id="pgsv">Simpan</button>');
+  $('#pgsv', d).onclick = async e => { busy(e.target, true);
+    try { await api('peran.save', { original: nama, nama: val('pgn') }); closeSheet(); toast('Nama peran diganti.', 'ok'); await bootUlang(); refresh(); } catch (z) { toast(z.message, 'err'); busy(e.target, false); } };
+}
+async function peranHapus(nama) {
+  if (!(await ask('Hapus peran "' + nama + '"? Peran ini akan dilepas dari semua pengguna yang memilikinya.', 'Hapus'))) return;
+  try { await api('peran.delete', { nama: nama }); toast('Peran dihapus.', 'ok'); await bootUlang(); refresh(); } catch (e) { toast(e.message, 'err'); }
+}
+async function peranPulih(nama) { try { await api('peran.pulihkan', { nama: nama }); toast('Peran ditampilkan kembali.', 'ok'); await bootUlang(); refresh(); } catch (e) { toast(e.message, 'err'); } }
 /* ---------- notifikasi pesan baru ---------- */
 function startPolls() {
   stopPolls();
@@ -4119,10 +4520,214 @@ document.addEventListener('input', e => { const v = $('#view'); if (v && v.conta
 document.addEventListener('change', e => { const v = $('#view'); if (v && v.contains(e.target) && e.target.tagName !== 'SELECT') S.dirty = true; });
 document.addEventListener('visibilitychange', () => { if (!document.hidden && S.B) pollUnread(); });
 
+/* =============================================================
+ *  AKSES KHUSUS PENGEMBANG (Tahap 3)
+ * ============================================================= */
+function openAksesDev() { push('Akses Pengembang', pAksesDev, { sub: 'Pengaturan khusus Pengembang Aplikasi' }); }
+function pAksesDev() {
+  const g = (judul, items) => '<div class="sec"><h3>' + judul + '</h3></div><div class="card"><div class="list">' + items.map(x =>
+    '<div class="it" onclick="' + x[3] + '"><div class="av sm" style="background:var(--soft);color:var(--pri2)">' + ic(x[0]) + '</div><div class="grow" style="min-width:0"><div class="t">' + x[1] + '</div><div class="s">' + x[2] + '</div></div>' + ic('right') + '</div>').join('') + '</div></div>';
+  const t = temaApp();
+  view('<div class="card hcard small" style="display:flex;gap:10px;align-items:flex-start">' + ic('shield') + '<span>Menu ini hanya terlihat oleh Pengembang Aplikasi. Pengembang juga memiliki <b>semua akses Admin</b>.' +
+      (S.B.devKhusus ? ' Anda masuk memakai <b>akun pengembang khusus</b> (tidak tercatat di sheet Users).' : '') + '</span></div>' +
+    g('Tampilan Aplikasi', [
+      ['palette', 'Tema Aplikasi', (t ? esc(t.nama || 'Kustom') : 'Hijau Al-Huda (bawaan)') + (temaKunci() ? ' • dikunci untuk semua pengguna' : ' • pengguna boleh memilih tema sendiri'), 'openTemaDev()'],
+      ['info', 'Tentang Aplikasi', 'Nama aplikasi, versi, deskripsi, pemilik, pembuat & kontak', 'openTentangDev()'],
+      ['edit', 'Sebutan Lembaga', 'Kata "' + esc(istilahLembaga()) + '" di seluruh aplikasi (mis. Pesantren / Pondok / Sekolah)', 'openIstilahLembaga()']]) +
+    g('Keamanan & Server', [
+      ['lock', 'Login Khusus Pengembang', 'Masuk tanpa akun di sheet Users • sandi disimpan di Script Properties', 'openLoginDev()'],
+      ['globe', 'Alamat Server (URL Web App)', HAS_GAS ? 'Dibuka langsung dari Apps Script' : esc(hostServer(API_URL) || 'Belum diatur') + (urlServerLokal() ? ' • diatur di perangkat ini' : ' • bawaan'), 'openServer()']]) +
+    g('Semua Akses', [
+      ['shield', 'Akses Khusus Admin', 'Akun, data pengguna, sesi, wali kelas, peran, kelas & halaman depan', 'openAksesAdmin()'],
+      ['gear', 'Pengaturan Aplikasi (lengkap)', 'Semua isian di sheet Pengaturan, termasuk nominal iuran', 'openSettings()']]));
+}
+
+/* ---------- tema aplikasi ---------- */
+function openTemaDev() {
+  const t = temaApp() || { nama: TEMA_PRESET[0][0], pri: TEMA_PRESET[0][1], pri2: TEMA_PRESET[0][2], bg: '' };
+  S.ui.tm = { nama: t.nama || 'Kustom', pri: t.pri, pri2: t.pri2, bg: t.bg || '', kunci: temaKunci() };
+  push('Tema Aplikasi', pTemaDev, { sub: 'Warna bawaan untuk semua pengguna' });
+}
+function temaPrevHtml(t) {
+  const bg = hexOk(t.bg) ? t.bg : '#f1f1f1', soft = campur(t.pri, '#ffffff', .88);
+  return '<div style="border-radius:16px;overflow:hidden;border:1px solid #e5e7eb;background:' + bg + ';color:#1f2937">' +
+    '<div style="background:' + t.pri2 + ';color:#fff;padding:11px 14px;font-weight:700;display:flex;justify-content:space-between"><span>' + esc(appName()) + '</span><span>🔔</span></div>' +
+    '<div style="padding:12px"><div style="background:linear-gradient(135deg,' + t.pri2 + ',' + t.pri + ');color:#fff;border-radius:16px;padding:14px;margin-bottom:10px"><div style="font-size:12px;opacity:.85">Assalamu\'alaikum,</div><div style="font-weight:700;font-size:16px">' + esc(me().nama) + '</div></div>' +
+    '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="background:' + t.pri2 + ';color:#fff;border-radius:10px;padding:8px 12px;font-weight:700;font-size:12.5px">Tombol</span>' +
+    '<span style="background:' + soft + ';color:' + t.pri2 + ';border-radius:10px;padding:8px 12px;font-weight:700;font-size:12.5px">Menu</span>' +
+    '<span style="color:' + t.pri + ';font-weight:700;font-size:12.5px">Tautan</span><span style="flex:1"></span><span style="width:40px;height:10px;border-radius:5px;background:#e5e7eb;overflow:hidden;display:inline-block"><i style="display:block;width:65%;height:100%;background:' + t.pri + '"></i></span></div></div></div>';
+}
+function pTemaDev() {
+  const t = S.ui.tm;
+  view('<div class="card"><div class="b" style="margin-bottom:10px">Pratinjau</div><div id="tmPrev">' + temaPrevHtml(t) + '</div></div>' +
+    '<div class="sec"><h3>Pilihan Tema</h3></div><div class="card"><div class="swatch">' + TEMA_PRESET.map((x, i) =>
+      '<div class="sw' + (x[1] === t.pri && x[2] === t.pri2 ? ' on' : '') + '" onclick="temaPilih(' + i + ')"><div class="dots"><i style="background:' + campur(x[1], '#ffffff', .88) + '"></i><i style="background:' + x[1] + '"></i><i style="background:' + x[2] + '"></i></div>' + x[0] + '</div>').join('') + '</div></div>' +
+    '<div class="sec"><h3>Warna Kustom</h3></div><div class="card">' +
+    '<div class="row" style="gap:10px;flex-wrap:wrap">' +
+      '<div style="flex:1 1 120px">' + fld('Warna utama (header & tombol)', '<input type="color" class="in" id="tm2" value="' + t.pri2 + '" style="height:46px;padding:4px" oninput="temaUbah()">') + '</div>' +
+      '<div style="flex:1 1 120px">' + fld('Warna aksen (tautan & grafik)', '<input type="color" class="in" id="tm1" value="' + t.pri + '" style="height:46px;padding:4px" oninput="temaUbah()">') + '</div>' +
+      '<div style="flex:1 1 120px">' + fld('Warna latar', '<input type="color" class="in" id="tmb" value="' + (hexOk(t.bg) ? t.bg : '#f1f1f1') + '" style="height:46px;padding:4px" oninput="temaUbah(1)">') + '</div></div>' +
+    fld('Nama tema', inp('tmn', t.nama, 'maxlength="30" oninput="S.ui.tm.nama=this.value"')) +
+    '<label class="row" style="gap:10px;margin:4px 0 14px;cursor:pointer"><input type="checkbox" id="tmk"' + (t.kunci ? ' checked' : '') + ' onchange="S.ui.tm.kunci=this.checked" style="width:18px;height:18px;accent-color:var(--pri2)"><span><b>Kunci tema untuk semua pengguna</b><br><span class="small muted">Pengguna tidak dapat memilih tema sendiri (gelap, pink, dll.).</span></span></label>' +
+    '<button class="btn full" id="tmsv" onclick="temaSimpan(this,false)">' + ic('check') + ' Simpan Tema</button>' +
+    '<button class="btn sec full" style="margin-top:8px" onclick="temaSimpan(this,true)">' + ic('repeat') + ' Kembalikan Tema Bawaan</button></div>' +
+    '<div class="muted small" style="padding:0 4px">Tema berlaku pada pilihan tema <b>Terang</b> di semua perangkat, termasuk halaman login.</div>');
+}
+function temaPilih(i) { const x = TEMA_PRESET[i]; Object.assign(S.ui.tm, { nama: x[0], pri: x[1], pri2: x[2] }); refresh(); }
+function temaUbah(bg) {
+  const t = S.ui.tm; t.pri = val('tm1'); t.pri2 = val('tm2'); if (bg) t.bg = val('tmb');
+  if (!TEMA_PRESET.some(x => x[1] === t.pri && x[2] === t.pri2) && TEMA_PRESET.some(x => x[0] === t.nama)) { t.nama = 'Kustom'; $('#tmn').value = 'Kustom'; }
+  $('#tmPrev').innerHTML = temaPrevHtml(t); $$('.swatch .sw').forEach(x => x.classList.remove('on'));
+}
+async function temaSimpan(btn, bawaan) {
+  const t = S.ui.tm, tema = bawaan ? null : { nama: t.nama || 'Kustom', pri: t.pri, pri2: t.pri2, bg: t.bg };
+  if (bawaan && !(await ask('Kembalikan ke tema bawaan (Hijau Al-Huda) dan buka kunci tema?', 'Kembalikan'))) return;
+  busy(btn, true);
+  try {
+    const r = await api('dev.tema.save', { tema: tema, kunci: bawaan ? false : t.kunci });
+    S.B.settings.tema = r.tema; S.B.settings.tema_kunci = r.tema_kunci; cset(ckey('boot', {}), S.B, 'boot', {});
+    simpanTampilanLokal(S.B.settings); topBar();
+    toast(bawaan ? 'Tema bawaan dikembalikan.' : 'Tema disimpan untuk semua pengguna.', 'ok');
+    if (bawaan) { openTemaDev(); S.stack.splice(-2, 1); } else busy(btn, false);
+  } catch (e) { toast(e.message, 'err'); busy(btn, false); }
+}
+
+/* ---------- tentang aplikasi ---------- */
+const TENTANG_ISIAN = [['nama_mobile', 'Nama aplikasi di ponsel'], ['nama_web', 'Nama aplikasi di komputer'], ['versi', 'Versi aplikasi'], ['tentang_aplikasi', 'Deskripsi aplikasi', 1],
+  ['tentang_pemilik', 'Pemilik'], ['tentang_alamat', 'Alamat'], ['tentang_pembuat', 'Dibuat oleh'], ['penerbit', 'Penerbit'], ['tanggal_revisi', 'Tanggal revisi'], ['tentang_kontak', 'Kontak pengembang (WhatsApp / email)']];
+function openTentangDev() { push('Tentang Aplikasi', pTentangDev, { sub: 'Isi halaman Tentang Aplikasi' }); }
+async function pTentangDev() {
+  const t = loading(5); const list = await api('settings.get'); if (!alive(t)) return;
+  const m = {}; list.forEach(x => m[x.kunci] = x.nilai || '');
+  view('<div class="card noganti">' + TENTANG_ISIAN.map(x => fld(x[1], x[2]
+      ? '<textarea class="in" id="ta_' + x[0] + '" style="min-height:160px">' + esc(String(m[x[0]] || '').replace(/\\n/g, '\n')) + '</textarea><div class="small muted" style="margin:4px 0 0">Pisahkan paragraf dengan baris kosong. Awali baris dengan "• " untuk daftar.</div>'
+      : inp('ta_' + x[0], m[x[0]], 'maxlength="120"'))).join('') +
+    '<button class="btn full" onclick="tentangSimpan(this)">' + ic('check') + ' Simpan</button>' +
+    '<button class="btn sec full" style="margin-top:8px" onclick="openTentang()">' + ic('eye') + ' Lihat Halaman Tentang</button></div>');
+}
+async function tentangSimpan(btn) {
+  const v = {}; TENTANG_ISIAN.forEach(x => v[x[0]] = ($('#ta_' + x[0]).value || '').trim());
+  if (!v.nama_mobile || !v.nama_web) return toast('Nama aplikasi tidak boleh kosong.', 'err');
+  busy(btn, true);
+  try { await api('settings.save', { values: v }); Object.assign(S.B.settings, v); cset(ckey('boot', {}), S.B, 'boot', {}); topBar(); const nb = $('#nbrand'); if (nb) nb.innerHTML = brandHtml(); toast('Tentang Aplikasi disimpan.', 'ok'); }
+  catch (e) { toast(e.message, 'err'); }
+  busy(btn, false);
+}
+
+/* ---------- sebutan lembaga ---------- */
+function openIstilahLembaga() {
+  const cur = istilahLembaga();
+  const d = sheet('Sebutan Lembaga', '<div class="noganti"><div class="small muted" style="margin-bottom:12px">Kata <b>"Dayah"</b> di seluruh aplikasi, halaman login, pesan sistem & PDF diganti dengan sebutan ini. Huruf besar-kecil menyesuaikan (Dayah → Pesantren, DAYAH → PESANTREN).</div>' +
+    fld('Sebutan lembaga', inp('ilv', cur, 'maxlength="30" placeholder="Mis. Pesantren"')) +
+    '<div class="row" style="gap:6px;flex-wrap:wrap;margin:-4px 0 14px">' + ['Dayah', 'Pesantren', 'Pondok', 'Madrasah', 'Sekolah', 'Ma\'had'].map(x => '<button class="chip" onclick="$(\'#ilv\').value=this.textContent">' + x + '</button>').join('') + '</div>' +
+    '<div class="small muted" style="margin-bottom:12px">Nama lembaga (mis. "Dayah Al-Huda Malikussaleh") dapat diubah di Pengaturan Aplikasi → nama_dayah & nama_yayasan.</div>' +
+    '<button class="btn full" id="ilsv">Simpan</button></div>');
+  $('#ilsv', d).onclick = async e => {
+    const v = val('ilv'); if (!v) return toast('Sebutan tidak boleh kosong.', 'err');
+    if (/dayah/i.test(v) && v.toLowerCase() !== 'dayah') return toast('Sebutan tidak boleh mengandung kata "dayah". Pilih "Dayah" saja atau kata lain.', 'err');
+    busy(e.target, true);
+    try {
+      await api('settings.save', { values: { istilah_lembaga: v } });
+      S.B.settings.istilah_lembaga = v; cset(ckey('boot', {}), S.B, 'boot', {}); store.set('alhuda_istilah_lembaga', v);
+      closeSheet(); mulaiGantiKata(); topBar(); const nb = $('#nbrand'); if (nb) nb.innerHTML = brandHtml(); refresh();
+      toast('Sebutan lembaga disimpan.', 'ok');
+    } catch (z) { toast(z.message, 'err'); busy(e.target, false); }
+  };
+}
+
+/* ---------- login khusus pengembang ---------- */
+function openLoginDev() { push('Login Khusus Pengembang', pLoginDev, { sub: 'Masuk tanpa akun di sheet Users' }); }
+async function pLoginDev() {
+  const t = loading(3); const d = S.ui.ldBaru || await rawApi('dev.login.get'); S.ui.ldBaru = null; if (!alive(t)) return;
+  S.ui.ld = d;
+  const pw = (id, l) => fld(l, '<div class="pw"><input class="in" id="' + id + '" type="password" autocomplete="new-password"><button class="eye" type="button" onclick="togglePw(\'' + id + '\',this)">' + ic('eye') + '</button></div>');
+  view('<div class="card hcard small" style="display:flex;gap:10px;align-items:flex-start">' + ic('lock') + '<span>Akun ini <b>tidak tersimpan di Google Sheet</b>, melainkan di <b>Script Properties</b> Apps Script, sehingga tetap aman walau Sheet dibagikan. Akun ini memiliki semua akses Pengembang & Admin. Salah sandi 5 kali → login dikunci 15 menit.</span></div>' +
+    '<div class="card"><div class="row" style="gap:10px;margin-bottom:12px"><div class="av sm" style="background:var(--soft);color:var(--pri2)">' + ic('user') + '</div><div class="grow"><div class="b">' + (d.ada ? '@' + esc(d.username) : 'Belum dibuat') + '</div><div class="small muted">' +
+      (d.ada ? (d.aktif ? 'Aktif — dapat dipakai untuk login' : 'Nonaktif — tidak dapat dipakai login') : 'Buat username & kata sandi di bawah') + '</div></div>' +
+      (d.ada ? '<span class="st ' + (d.aktif ? 'H' : 'A') + '">' + (d.aktif ? 'Aktif' : 'Nonaktif') + '</span>' : '') + '</div>' +
+    fld('Username', inp('ldu', d.username || 'pengembang', 'maxlength="30" autocapitalize="none"' + (d.sedangDipakai ? ' disabled' : ''))) +
+    pw('ldp', d.ada ? 'Kata sandi baru (kosongkan bila tidak diganti)' : 'Kata sandi (min. 8 karakter)') + pw('ldq', 'Ulangi kata sandi') +
+    '<label class="row" style="gap:10px;margin:4px 0 14px;cursor:pointer"><input type="checkbox" id="lda"' + (!d.ada || d.aktif ? ' checked' : '') + (d.sedangDipakai ? ' disabled' : '') + ' style="width:18px;height:18px;accent-color:var(--pri2)"><span><b>Aktifkan login khusus</b></span></label>' +
+    '<button class="btn full" onclick="loginDevSimpan(this)">' + ic('check') + ' Simpan</button></div>' +
+    '<div class="muted small" style="padding:0 4px">Cara lain: di editor Apps Script → Setelan Project → Properti skrip, isi <b>DEV_USER</b> dan <b>DEV_PASS</b>. Sandi otomatis dienkripsi saat login pertama.</div>');
+}
+async function loginDevSimpan(btn) {
+  const p = { username: val('ldu').toLowerCase(), password: $('#ldp').value, aktif: $('#lda').checked };
+  if (p.password !== $('#ldq').value) return toast('Ulangi kata sandi tidak cocok.', 'err');
+  if (!S.ui.ld.ada && p.password.length < 8) return toast('Kata sandi minimal 8 karakter.', 'err');
+  if (!p.password) delete p.password;
+  busy(btn, true);
+  try { const r = await api('dev.login.save', p); if (r.token) setToken(r.token); S.ui.ldBaru = r; toast('Login khusus pengembang disimpan.', 'ok'); refresh(); }
+  catch (e) { toast(e.message, 'err'); busy(btn, false); }
+}
+
+/* ---------- alamat server (URL Web App) ---------- */
+function hostServer(u) { const m = String(u || '').match(/\/macros\/s\/([\w-]{6})[\w-]*\/exec/); return m ? 'Web App …' + m[1] + '…/exec' : String(u || '').replace(/^https:\/\//, '').slice(0, 40); }
+function formServer(id) {
+  return '<div class="noganti">' + fld('URL Web App', '<textarea class="in" id="' + id + '" style="min-height:76px;font-size:13px" autocapitalize="none" spellcheck="false" placeholder="https://script.google.com/macros/s/…/exec">' + esc(urlServerLokal() || API_URL || '') + '</textarea>') +
+    '<div class="small muted" style="margin:-4px 0 12px">Salin dari Apps Script: <b>Terapkan → Kelola penerapan → URL Aplikasi web</b> (berakhiran <b>/exec</b>). Untuk lembaga lain, salin Sheet & Apps Script, terapkan, lalu masukkan URL-nya di sini.</div>' +
+    '<div id="' + id + 'Hasil"></div>' +
+    '<button class="btn sec full" onclick="ujiServerBtn(this,\'' + id + '\')">' + ic('wifioff') + ' Uji Koneksi</button>' +
+    '<button class="btn full" style="margin-top:8px" onclick="simpanServer(this,\'' + id + '\')">' + ic('check') + ' Simpan & Hubungkan</button>' +
+    (urlServerLokal() && (BR && BR.apiUrl || window.ALHUDA_API_URL) ? '<button class="btn sec full" style="margin-top:8px" onclick="resetServer()">' + ic('repeat') + ' Kembalikan ke Server Bawaan</button>' : '') + '</div>';
+}
+function openServer() {
+  if (HAS_GAS) return sheet('Alamat Server', '<div class="card hcard small">' + ic('info') + ' Aplikasi ini sedang dibuka langsung dari Apps Script, sehingga selalu terhubung ke server ini. Alamat server diatur pada aplikasi Android / web (ALHUDA WEB).</div>');
+  sheet('Alamat Server (URL Web App)', '<div class="small" style="margin-bottom:10px">Server saat ini: <b>' + esc(hostServer(API_URL) || 'belum diatur') + '</b>' + (urlServerLokal() ? ' (diatur di perangkat ini)' : '') + '</div>' + formServer('srvU'));
+}
+/** Dibuka saat aplikasi belum memiliki alamat server sama sekali. */
+function halamanServer() {
+  $('#app').classList.remove('shell');
+  $('#app').innerHTML = '<div class="login"><div class="hd"><div class="lg">' + LOGO_SVG + '</div><h1>' + esc(appName({})) + '</h1><div class="yy" style="margin-bottom:0">Pengaturan awal server</div></div>' +
+    '<div class="card lcard"><div class="b" style="font-size:16px;margin-bottom:2px">Hubungkan ke Server</div><div class="muted small" style="margin-bottom:14px">Aplikasi belum terhubung ke server lembaga. Masukkan URL Web App Google Apps Script milik lembaga Anda.</div>' + formServer('srvA') + '</div></div>';
+  tataLogin();
+}
+async function ujiServer(url) {
+  if (!/^https:\/\/\S+$/.test(url)) throw new Error('URL harus diawali https:// dan tanpa spasi.');
+  let txt;
+  try { txt = await fetch(url, { method: 'POST', redirect: 'follow', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'publicInfo', params: {} }) }).then(r => r.text()); }
+  catch (e) { throw new Error('Tidak dapat terhubung. Periksa URL dan koneksi internet.'); }
+  const r = parseServer(txt);
+  if (!r.ok) throw new Error(r.error);
+  if (!r.data || !r.data.nama_aplikasi) throw new Error('Server terhubung, tetapi bukan server ALHUDA MOBILE.');
+  return r.data;
+}
+async function ujiServerBtn(btn, id) {
+  const box = $('#' + id + 'Hasil'); busy(btn, true);
+  try { const i = await ujiServer(val(id)); box.innerHTML = '<div class="card vok small" style="margin-bottom:10px">' + ic('check') + ' Terhubung: <b>' + esc(i.nama_yayasan || i.nama_aplikasi) + '</b></div>'; }
+  catch (e) { box.innerHTML = '<div class="card vwarn small" style="margin-bottom:10px">' + ic('info') + ' ' + esc(e.message) + '</div>'; }
+  busy(btn, false);
+}
+function pindahServer(url) {
+  store.set('alhuda_api_url', url || null);
+  try { BR && BR.setApiUrl && BR.setApiUrl(url || ''); } catch (e) {}
+  ['alhuda_token', 'alhuda_tema_app', 'alhuda_tema_kunci', 'alhuda_istilah_lembaga'].forEach(k => store.set(k, null));
+  try { BR && BR.setToken && BR.setToken(''); } catch (e) {}
+  try { Object.keys(localStorage).filter(k => k.indexOf('alhuda_unduh_') === 0 || k.indexOf('c:') === 0).forEach(k => localStorage.removeItem(k)); } catch (e) {}
+  toast('Server diganti. Memuat ulang…', 'ok');
+  setTimeout(() => location.reload(), 900);
+}
+async function simpanServer(btn, id) {
+  const url = val(id), box = $('#' + id + 'Hasil');
+  busy(btn, true);
+  let info;
+  try { info = await ujiServer(url); } catch (e) { box.innerHTML = '<div class="card vwarn small" style="margin-bottom:10px">' + ic('info') + ' ' + esc(e.message) + '</div>'; return busy(btn, false); }
+  busy(btn, false);
+  if (url === API_URL && urlServerLokal()) return toast('Server ini sudah dipakai.', 'ok');
+  if (!(await ask('Hubungkan aplikasi ke server "' + (info.nama_yayasan || info.nama_aplikasi) + '"?' + (S.token ? ' Anda akan keluar dari akun dan perlu login kembali.' : ''), 'Hubungkan'))) return;
+  pindahServer(url);
+}
+async function resetServer() {
+  if (!(await ask('Kembalikan ke server bawaan aplikasi? Anda akan keluar dari akun.', 'Kembalikan'))) return;
+  pindahServer('');
+}
+
 /* ---------- mulai ---------- */
 (function init() {
   try { BR && BR.ready && BR.ready(); } catch (e) {}
   applyTheme(store.get('alhuda_theme') || 'terang');
+  mulaiGantiKata();
+  if (!HAS_GAS && !NATIVE && !API_URL) return halamanServer();
   let t = store.get('alhuda_token');
   try { if (!t && BR && BR.getToken) t = BR.getToken() || null; } catch (e) {}
   if (t) { S.token = t; startApp(); } else showLogin();

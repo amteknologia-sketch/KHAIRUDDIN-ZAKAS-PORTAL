@@ -20,7 +20,7 @@ class ChatWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
         val token = prefs.getString("token", "") ?: ""
         if (token.isEmpty()) return Result.success()
         return try {
-            val base = applicationContext.getString(R.string.web_app_url)
+            val base = App.apiUrl(applicationContext)
             val json = Http.get(base + "?api=unread&token=" + URLEncoder.encode(token, "UTF-8"))
             val o = JSONObject(json)
             if (!o.optBoolean("ok")) return Result.success()
@@ -53,7 +53,7 @@ class ChatWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
         // ada perubahan offline yang belum terkirim → jangan timpa tampilan lokal dulu
         val q = synchronized(App.queueLock) { prefs.getString("queue", "[]") ?: "[]" }
         if (q.length > 2) return
-        val url = ctx.getString(R.string.web_app_url)
+        val url = App.apiUrl(ctx)
         for ((key, action, params) in CacheStore.recent(ctx, "c:$uname:", 3L * 24 * 3600 * 1000, 30)) {
             if (action == "chat.unread") continue
             val body = JSONObject().put("token", token).put("action", action).put("params", JSONObject(params))

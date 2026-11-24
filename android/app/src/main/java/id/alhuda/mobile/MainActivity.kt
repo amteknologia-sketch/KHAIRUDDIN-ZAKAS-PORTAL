@@ -133,7 +133,7 @@ class MainActivity : AppCompatActivity() {
 
         Thread {
             try {
-                val fresh = Http.get(getString(R.string.web_app_url) + "?app=html")
+                val fresh = Http.get(App.apiUrl(this@MainActivity) + "?app=html")
                 if (valid(fresh) && fresh != html) cache.writeText(fresh)
             } catch (_: Exception) { /* offline / server lama: pakai versi yang ada */ }
         }.start()
@@ -148,7 +148,11 @@ class MainActivity : AppCompatActivity() {
     inner class Bridge {
         private val prefs get() = getSharedPreferences(App.PREFS, Context.MODE_PRIVATE)
 
-        @JavascriptInterface fun apiUrl(): String = getString(R.string.web_app_url)
+        @JavascriptInterface fun apiUrl(): String = App.apiUrl(this@MainActivity)
+        @JavascriptInterface fun setApiUrl(u: String) {
+            prefs.edit().putString("api_url", if (u.startsWith("https://")) u else "").apply()
+            File(filesDir, "index.html").delete() // tampilan tersimpan berasal dari server lama
+        }
         @JavascriptInterface fun ready() { pageReady = true }
 
         /** Buka tautan luar (WhatsApp, Instagram, dll.) di aplikasinya masing-masing. */
@@ -180,7 +184,7 @@ class MainActivity : AppCompatActivity() {
         /** Kirim permintaan API dari aplikasi (bukan dari WebView) → bebas masalah CORS. Hasil dikembalikan ke window.__nativeRes(id, teks). */
         @JavascriptInterface fun call(id: String, body: String) {
             Thread {
-                val res = try { Http.post(getString(R.string.web_app_url), body) }
+                val res = try { Http.post(App.apiUrl(this@MainActivity), body) }
                           catch (e: Exception) { JSONObject().put("ok", false).put("error", "NET:" + (e.message ?: "")).toString() }
                 main.post { web.evaluateJavascript("window.__nativeRes(" + JSONObject.quote(id) + "," + JSONObject.quote(res) + ")", null) }
             }.start()

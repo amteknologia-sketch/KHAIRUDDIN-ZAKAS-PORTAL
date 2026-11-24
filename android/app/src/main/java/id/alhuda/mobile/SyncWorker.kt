@@ -17,7 +17,7 @@ class SyncWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
         val prefs = applicationContext.getSharedPreferences(App.PREFS, Context.MODE_PRIVATE)
         val token = prefs.getString("token", "") ?: ""
         if (token.isEmpty()) return Result.success()
-        val url = applicationContext.getString(R.string.web_app_url)
+        val url = App.apiUrl(applicationContext)
         var sent = 0
         return synchronized(App.queueLock) {
             val queue = try { JSONArray(prefs.getString("queue", "[]")) } catch (e: Exception) { JSONArray() }
