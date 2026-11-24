@@ -288,6 +288,25 @@ footer b{color:#fff}footer a{color:#fff}
     document.querySelectorAll('.slider').forEach(function (s) { if (!s.dataset.ok) { s.dataset.ok = 1; pasangSlider(s); } });
     document.querySelectorAll('article').forEach(pasangLipat);
   }
+  /* ---------- banner dari img/banner.json (dikelola Admin dari aplikasi ALHUDA MOBILE) ---------- */
+  var heroAwal = document.getElementById('hero');
+  if (heroAwal) heroAwal.dataset.ok = 1; // tunggu banner.json sebentar agar tidak berkedip
+  var pasangHero = function (L, v) {
+    var h = document.getElementById('hero'); if (!h) return;
+    if (L && L.length) {
+      var nh = h.cloneNode(false); nh.removeAttribute('data-ok');
+      nh.innerHTML = L.slice(0, 8).map(function (b, k) {
+        var alt = String(b.judul || 'Banner ' + (k + 1)).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
+        return '<img class="sl' + (k ? '' : ' on') + '" src="img/' + encodeURIComponent(b.file) + (v ? '?v=' + v : '') + '" alt="' + alt + '"' + (k ? ' loading="lazy"' : '') + '>';
+      }).join('');
+      h.parentNode.replaceChild(nh, h); h = nh;
+    }
+    if (!h.dataset.ok || h.dataset.ok === '1' && !h.querySelector('.dots')) { h.dataset.ok = 2; pasangSlider(h); }
+  };
+  var tmo = setTimeout(function () { pasangHero(null); }, 1500);
+  fetch('img/banner.json', { cache: 'no-cache' }).then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (j) { clearTimeout(tmo); pasangHero(j && j.banner, j && j.v); })
+    .catch(function () { clearTimeout(tmo); pasangHero(null); });
   pasangSemua();
   window.addEventListener('resize', function () { document.querySelectorAll('article').forEach(pasangLipat); });
 
