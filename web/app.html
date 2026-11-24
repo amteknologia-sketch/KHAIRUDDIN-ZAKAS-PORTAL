@@ -3,7 +3,7 @@
 <head>
 <base target="_top">
 <meta charset="utf-8">
-<meta name="alhuda-app" content="2.13.1">
+<meta name="alhuda-app" content="2.14.0">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>ALHUDA MOBILE</title>
 <style>
@@ -515,6 +515,13 @@ html.desk .login .lmain>.muted:last-child{display:none}
 .syncic.kirim.jalan .ar{animation:naik 1s ease-in-out infinite}.syncic.kirim.tunda{opacity:.7}.syncic.kirim.tunda .ar{animation:none}
 .syncic.kirim.gagal{background:#ef4444}.syncic.kirim.ok{background:rgba(255,255,255,.28)}
 @keyframes naik{0%{transform:translateY(3px);opacity:0}40%{opacity:1}100%{transform:translateY(-4px);opacity:0}}
+.ksb{padding:16px 18px}.ksb .nm{font-size:22px}
+.ksgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ksp{display:flex;gap:8px;align-items:center;cursor:pointer;min-width:0}.ksp .s{font-size:11.5px;color:var(--muted);font-weight:600}.ksp .t{font-weight:700;font-size:13.5px}
+.pillx.jk{background:#fef3c7;color:#92400e;display:inline-flex;align-items:center;gap:4px}.pillx.jk .i{width:12px;height:12px}
+.ksini{border:1.5px solid var(--pri)}.ksjam{font-size:12px;font-weight:700;color:var(--pri2);background:var(--soft);border-radius:8px;padding:4px 7px;white-space:nowrap}
+.ksbar{height:6px;background:var(--chip);border-radius:4px;overflow:hidden;margin-top:6px}.ksbar i{display:block;height:100%;background:var(--pri);border-radius:4px}
+.kst{flex:1;background:var(--chip);border-radius:12px;padding:8px 10px}.kst .s{font-size:11.5px;color:var(--muted)}.kst .b{font-size:15px}
+.vt{width:24px;height:24px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;flex:none}.vt.on{background:var(--pri2);border-color:var(--pri2);color:#fff}.vt .i{width:14px;height:14px}
 </style>
 </head>
 <body>
@@ -686,7 +693,7 @@ function rawApi(action, params, silent) {
  *  - Setiap perubahan membawa _cid unik → server tidak mencatat dua kali.
  * ============================================================= */
 const WRITE_RE = /\.(save|delete|send|kembali|naik)$/;
-const ONLINE_ONLY = { 'chat.arsip': 'Mengarsipkan chat', 'chat.bersihkan': 'Menghapus chat', 'chat.blokir': 'Memblokir pengguna', 'guruKhusus.set': 'Mengatur Guru Khusus', 'gh.save': 'Mengubah file di GitHub', 'gh.delete': 'Menghapus file di GitHub', 'gh.config.save': 'Mengatur GitHub', 'gh.banner.upload': 'Mengunggah banner', 'gh.banner.save': 'Mengatur banner', 'gh.banner.hapus': 'Menghapus banner', 'dev.login.save': 'Mengatur login pengembang', 'dev.tema.save': 'Mengatur tema aplikasi', 'sesi.save': 'Mengatur sesi', 'sesi.delete': 'Menghapus sesi', 'wali.save': 'Mengatur wali kelas', 'peran.save': 'Mengatur peran', 'peran.delete': 'Menghapus peran', 'peran.pulihkan': 'Memulihkan peran', 'admin.resetSandi': 'Reset kata sandi', 'admin.aktif': 'Mengunci / membuka akun', 'post.fotoTambah': 'Mengunggah foto', 'publik.ajukan': 'Mengajukan ke layar utama', 'publik.turunkan': 'Menurunkan dari layar utama', 'publik.putuskan': 'Verifikasi layar utama', 'publik.komentarPutuskan': 'Verifikasi komentar', 'profil.publik': 'Mengubah visibilitas akun', 'profil.password': 'Ganti kata sandi', 'profil.photo': 'Unggah foto profil', 'raport.pdf': 'Cetak PDF', 'iuran.pdf': 'Cetak PDF', 'tahunan.pdf': 'Cetak PDF', 'settings.save': 'Mengubah pengaturan aplikasi', 'logo.upload': 'Mengganti logo', 'logo.reset': 'Mengganti logo', 'profil.galeriAdd': 'Menambah foto galeri', 'profil.galeriDelete': 'Menghapus foto galeri', 'chat.file': 'Mengirim foto, video, atau dokumen', 'iuran.laporan': 'Cetak laporan PDF', 'tahunan.laporan': 'Cetak laporan PDF', 'grup.save': 'Menyimpan grup', 'grup.keluar': 'Keluar dari grup', 'chat.forward': 'Meneruskan pesan', 'chat.edit': 'Mengedit pesan', 'chat.hapus': 'Menghapus pesan', 'haris.save': 'Menyimpan daftar haris', 'haris.delete': 'Menghapus kelompok haris', 'asrama.save': 'Menyimpan asrama', 'asrama.delete': 'Menghapus asrama', 'asrama.dokAdd': 'Mengunggah dokumentasi', 'asrama.dokDelete': 'Menghapus dokumentasi', 'kabilah.save': 'Menyimpan kabilah', 'kabilah.delete': 'Menghapus kabilah', 'post.save': 'Menyimpan postingan', 'post.delete': 'Menghapus postingan', 'post.bagikan': 'Membagikan postingan', 'pengajuan.terima': 'Menerima santri baru', 'pengajuan.tolak': 'Menolak pengajuan', 'verif.save': 'Menyimpan data verifikasi', 'verif.upload': 'Mengunggah dokumen', 'verif.hapusFile': 'Menghapus dokumen', 'kelas.save': 'Menyimpan kelas', 'kelas.delete': 'Menghapus kelas' };
+const ONLINE_ONLY = { 'kelasSaya.vote': 'Voting pengurus', 'kelasSaya.voteReset': 'Mengulang voting', 'kelasSaya.kasSave': 'Mencatat kas', 'kelasSaya.kasDelete': 'Menghapus kas', 'kelasSaya.piketSave': 'Mengatur piket', 'kelasSaya.petugasAbsen': 'Menunjuk petugas absen', 'kelasPost.umum': 'Mengatur postingan kelas', 'chat.arsip': 'Mengarsipkan chat', 'chat.bersihkan': 'Menghapus chat', 'chat.blokir': 'Memblokir pengguna', 'guruKhusus.set': 'Mengatur Guru Khusus', 'gh.save': 'Mengubah file di GitHub', 'gh.delete': 'Menghapus file di GitHub', 'gh.config.save': 'Mengatur GitHub', 'gh.banner.upload': 'Mengunggah banner', 'gh.banner.save': 'Mengatur banner', 'gh.banner.hapus': 'Menghapus banner', 'dev.login.save': 'Mengatur login pengembang', 'dev.tema.save': 'Mengatur tema aplikasi', 'sesi.save': 'Mengatur sesi', 'sesi.delete': 'Menghapus sesi', 'wali.save': 'Mengatur wali kelas', 'peran.save': 'Mengatur peran', 'peran.delete': 'Menghapus peran', 'peran.pulihkan': 'Memulihkan peran', 'admin.resetSandi': 'Reset kata sandi', 'admin.aktif': 'Mengunci / membuka akun', 'post.fotoTambah': 'Mengunggah foto', 'publik.ajukan': 'Mengajukan ke layar utama', 'publik.turunkan': 'Menurunkan dari layar utama', 'publik.putuskan': 'Verifikasi layar utama', 'publik.komentarPutuskan': 'Verifikasi komentar', 'profil.publik': 'Mengubah visibilitas akun', 'profil.password': 'Ganti kata sandi', 'profil.photo': 'Unggah foto profil', 'raport.pdf': 'Cetak PDF', 'iuran.pdf': 'Cetak PDF', 'tahunan.pdf': 'Cetak PDF', 'settings.save': 'Mengubah pengaturan aplikasi', 'logo.upload': 'Mengganti logo', 'logo.reset': 'Mengganti logo', 'profil.galeriAdd': 'Menambah foto galeri', 'profil.galeriDelete': 'Menghapus foto galeri', 'chat.file': 'Mengirim foto, video, atau dokumen', 'iuran.laporan': 'Cetak laporan PDF', 'tahunan.laporan': 'Cetak laporan PDF', 'grup.save': 'Menyimpan grup', 'grup.keluar': 'Keluar dari grup', 'chat.forward': 'Meneruskan pesan', 'chat.edit': 'Mengedit pesan', 'chat.hapus': 'Menghapus pesan', 'haris.save': 'Menyimpan daftar haris', 'haris.delete': 'Menghapus kelompok haris', 'asrama.save': 'Menyimpan asrama', 'asrama.delete': 'Menghapus asrama', 'asrama.dokAdd': 'Mengunggah dokumentasi', 'asrama.dokDelete': 'Menghapus dokumentasi', 'kabilah.save': 'Menyimpan kabilah', 'kabilah.delete': 'Menghapus kabilah', 'post.save': 'Menyimpan postingan', 'post.delete': 'Menghapus postingan', 'post.bagikan': 'Membagikan postingan', 'pengajuan.terima': 'Menerima santri baru', 'pengajuan.tolak': 'Menolak pengajuan', 'verif.save': 'Menyimpan data verifikasi', 'verif.upload': 'Mengunggah dokumen', 'verif.hapusFile': 'Menghapus dokumen', 'kelas.save': 'Menyimpan kelas', 'kelas.delete': 'Menghapus kelas' };
 S.online = true;
 function isOnline() { try { if (BR && BR.isOnline) return !!BR.isOnline(); } catch (e) {} return navigator.onLine !== false; }
 function uname() { return (S.B && S.B.user && S.B.user.username) || store.get('alhuda_uname') || '_'; }
@@ -1487,10 +1494,10 @@ PAGES.beranda = async function () {
   const ann = d.pengumuman[0];
   let h = '<div class="banner"><div class="row" style="align-items:flex-start;position:relative;z-index:1">' + avatar(u) +
     '<div class="grow"><div class="hi">Ahlan wa Sahlan,</div><div class="nm">' + esc(u.nama) + vb(u) + '</div><div class="un">@' + esc(u.username) + '</div></div></div>' +
-    '<div class="tags"><span class="tag">' + (isSantri() ? 'Santri' : 'Dewan Guru') + '</span>' + peran.map(p => '<span class="tag">' + esc(p) + '</span>').join('') + (d.guruKhusus ? '<span class="tag gk">' + ic('grad') + ' Guru Khusus</span>' : '') + '</div>' +
+    '<div class="tags"><span class="tag">' + (isSantri() ? 'Santri' : 'Dewan Guru') + '</span>' + peran.map(p => '<span class="tag">' + esc(p) + '</span>').join('') + (d.guruKhusus ? '<span class="tag gk">' + ic('grad') + ' Guru Khusus</span>' : '') + (d.jabatanKelas ? '<span class="tag gk">' + ic('flag') + ' ' + esc(d.jabatanKelas) + '</span>' : '') + (d.petugasAbsen ? '<span class="tag gk">' + ic('check') + ' Petugas Absen</span>' : '') + '</div>' +
     '<div class="dt">' + ic('cal') + esc(tanggal) + '</div></div>';
   h += '<div class="quick">' +
-    qa('cal', 'Roster Pelajaran', 'openRoster()') + qa('chat', 'Room Chat', 'openChat()', d.unread) +
+    (isSantri() ? qa('users', 'Kelas Saya', 'openKelasSaya()') : qa('cal', 'Roster Pelajaran', 'openRoster()')) + qa('chat', 'Room Chat', 'openChat()', d.unread) +
     qa('repeat', esc(istilah()), "go('absen');S.ui.absTab='mengulang';refresh()") + qa('post', 'Postingan', 'openPostingan()', jmlBaru('post')) + '</div>';
   if (ann) h += '<div class="sec"><h3>Pengumuman Terbaru</h3><button class="link" onclick="openPengumuman()">Lihat semua</button></div>' +
     '<div class="card ann"><div class="h">' + ic('bell') + esc(ann.judul) + '</div><div style="margin:6px 0 4px;line-height:1.45">' + esc(ann.isi) + '</div><div class="muted small">' + tgl(ann.tanggal) + ' • ' + esc(ann.oleh) + '</div></div>';
@@ -2255,6 +2262,7 @@ PAGES.peraturan = async function () {
     ['shield', 'Verifikasi Data Saya', u.v ? 'Data sudah lengkap & terverifikasi' : (isSantri() ? 'Lengkapi data diri, orang tua & dokumen' : 'Lengkapi data diri & dokumen'), 'openVerif()'], ['edit', 'Biodata Pengguna', 'Ubah foto, data diri, privasi & galeri', 'openBiodata()'], ['palette', 'Tema Aplikasi', temaKunci() ? 'Diatur oleh Pengembang Aplikasi' : 'Terang, gelap, pink, merah, putih, biru', 'openTema()'], ['lock', 'Keamanan & Kata Sandi', 'Ganti kata sandi akun', 'openPassword()']];
   if (P().pengumuman) m.push(['mega', 'Kelola Pengumuman', 'Buat & ubah pengumuman', 'openPengumuman()']);
   if (isAdminApp() || P().users || P().settings) m.push(['shield', 'Akses Khusus Admin', 'Keamanan akun, data pengguna, kelas & lembaga, tampilan & pengaturan', 'openAksesAdmin()']);
+  if (!isSantri() && (S.B.kelasKelola || []).length) m.push(['users', 'Halaman Kelas', 'Kas, piket, voting pengurus & postingan kelas santri', 'pilihHalamanKelas()']);
   if (P().dev) m.push(['gear', 'Akses Pengembang', 'Tema, Tentang Aplikasi, sebutan lembaga, login khusus & alamat server', 'openAksesDev()']);
   m.push(['repeat', 'Antrean Offline', Q.mine().length ? Q.mine().length + ' perubahan belum terkirim' : 'Semua perubahan sudah terkirim', 'openQueue()']);
   m.push(['ig', 'Instagram Dayah', '@' + igDayah() + ' • ketuk untuk menjelajahi', 'bukaIGDayah()']);
@@ -2298,7 +2306,7 @@ async function pProfil(un) {
   const san = d.tipe === 'Santri';
   let h = '<div class="card phead"><div class="row" style="align-items:center;gap:14px">' + avatar(d, 'sm').replace('av sm', 'av sm" style="width:72px;height:72px;font-size:24px') +
     '<div class="grow" style="min-width:0"><div class="b" style="font-size:17px;line-height:1.25">' + esc(d.nama) + (d.verif ? VBADGE : '') + '</div><div class="small muted">@' + esc(d.username) + '</div>' +
-    '<div style="margin-top:4px"><span class="pillx">' + (san ? 'Santri' : 'Dewan Guru') + '</span>' + (san && d.kelas ? '<span class="pillx">' + esc(d.kelas) + '</span>' : '') + (d.guruKhusus ? '<span class="pillx gk">' + ic('grad') + ' Guru Khusus</span>' : '') + (d.aktif === 'Tidak' ? '<span class="st no">Nonaktif</span>' : '') + '</div></div>' +
+    '<div style="margin-top:4px"><span class="pillx">' + (san ? 'Santri' : 'Dewan Guru') + '</span>' + (san && d.kelas ? '<span class="pillx">' + esc(d.kelas) + '</span>' : '') + (d.guruKhusus ? '<span class="pillx gk">' + ic('grad') + ' Guru Khusus</span>' : '') + (d.jabatanKelas ? '<span class="pillx gk">' + ic('flag') + ' ' + esc(d.jabatanKelas) + '</span>' : '') + (d.petugasAbsen ? '<span class="pillx gk">' + ic('check') + ' Petugas Absen</span>' : '') + (d.aktif === 'Tidak' ? '<span class="st no">Nonaktif</span>' : '') + '</div></div>' +
     (!d.self ? '<button class="pchat" onclick="chatWith(\'' + esc(d.username) + '\')" title="Room Chat">' + ic('chat') + '</button>' : '') + '</div></div>';
   h += '<div class="card plist">' +
     row(san ? 'NIS' : esc(d.jenis_nomor), '', dash(d.nis_nip)) +
@@ -2320,6 +2328,7 @@ async function pProfil(un) {
   else { S.ui.galeri = d.galeri; h += '<div class="galeri">' + d.galeri.map((g, i) => '<button onclick="lihatFoto(' + i + ')"><img src="' + esc(g.url) + '" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.opacity=.2"></button>').join('') + '</div>'; }
   // tombol aksi
   const btns = [];
+  if (san && d.bolehPetugasAbsen && d.kelas) btns.push('<button class="btn sec grow" onclick="aturPetugasAbsen(\'' + esc(d.username) + '\',' + !d.petugasAbsen + ')">' + ic('check') + (d.petugasAbsen ? ' Cabut Petugas Absen' : ' Jadikan Petugas Absen') + '</button>');
   if (san && d.bolehGuruKhusus) btns.push('<button class="btn sec grow" onclick="aturGuruKhusus(\'' + esc(d.username) + '\',' + !d.guruKhusus + ')">' + ic('grad') + (d.guruKhusus ? ' Cabut Guru Khusus' : ' Jadikan Guru Khusus') + '</button>');
   if (P().users && d.username !== me().username) btns.push('<button class="btn sec grow" onclick="openVerif(\'' + esc(d.username) + '\')">' + ic('shield') + ' Data Verifikasi</button>');
   if ((d.self || isAdminApp()) && d.publik !== undefined) btns.push('<button class="btn sec grow" onclick="aturAkunPublik(' + !!d.publik + (d.self ? '' : ',\'' + esc(d.username) + '\'') + ')">' + ic(d.publik ? 'globe' : 'lock') + (d.publik ? ' Akun Publik' : ' Akun Terbatas') + '</button>');
@@ -3377,12 +3386,12 @@ async function catatanLagi(btn) {
 /* =============================================================
  *  POSTINGAN
  * ============================================================= */
-function openPostingan() { tandaiDilihat('post'); S.ui.post = null; push('Postingan', pPostingan, { sub: 'Berbagi kabar, foto, video & dokumen' }); }
+function openPostingan() { tandaiDilihat('post'); S.ui.post = null; S.ui.feedKelas = null; push('Postingan', pPostingan, { sub: 'Berbagi kabar, foto, video & dokumen' }); }
 async function pPostingan() {
-  if (!S.ui.post) { const t = loading(4); const r = await api('post.list', { offset: 0, limit: 15 }); if (!alive(t)) return; S.ui.post = { items: r.items, more: r.more }; }
+  if (!S.ui.post) { const t = loading(4); const r = await api('post.list', { offset: 0, limit: 15, kelasPost: S.ui.feedKelas || undefined }); if (!alive(t)) return; S.ui.post = { items: r.items, more: r.more }; }
   const P0 = S.ui.post;
-  view('<div class="card pnew" onclick="postForm(null)">' + avatar(me(), 'sm') + '<div class="grow muted">Apa yang ingin Anda bagikan?</div><span class="ic">' + ic('image') + '</span></div>' +
-    (P0.items.length ? P0.items.map((x, i) => postHtml(x, i)).join('') : '<div class="card">' + empty('Belum ada postingan. Jadilah yang pertama berbagi!', 'post') + '</div>') +
+  view('<div class="card pnew" onclick="postForm(null)">' + avatar(me(), 'sm') + '<div class="grow muted">' + (S.ui.feedKelas ? 'Bagikan sesuatu untuk ' + esc(S.ui.feedKelas) + '…' : 'Apa yang ingin Anda bagikan?') + '</div><span class="ic">' + ic('image') + '</span></div>' +
+    (P0.items.length ? P0.items.map((x, i) => postHtml(x, i)).join('') : '<div class="card">' + empty(S.ui.feedKelas ? 'Belum ada postingan kelas. Postingan di sini hanya terlihat oleh anggota kelas.' : 'Belum ada postingan. Jadilah yang pertama berbagi!', 'post') + '</div>') +
     (P0.more ? '<button class="btn sec full" onclick="postLagi(this)">Muat lebih banyak</button>' : ''));
 }
 function postHtml(x, i) {
@@ -3390,14 +3399,14 @@ function postHtml(x, i) {
   let media = '';
   if (a) {
     if (a.jenis === 'foto') media = fotoSlider(x.fotos && x.fotos.length ? x.fotos : [a.id]);
-    else if (a.jenis === 'video') media = '<div class="pmed att vid2">' + videoTag(videoUrl(a.id), a.id, false) + '</div>';
+    else if (a.jenis === 'video') media = '<div class="pmed att vid2">' + (x.kelasPost && S.ui.feedKelas ? videoTag(videoUrl(a.id), a.id, true).replace('<video ', '<video muted loop ') : videoTag(videoUrl(a.id), a.id, false)) + '</div>';
     else { const ext = (String(a.nama || '').split('.').pop() || 'DOK').slice(0, 4).toUpperCase();
       media = '<div class="pdoc" onclick="openExt(driveView(\'' + esc(a.id) + '\'))"><span class="di">' + esc(ext) + '</span><span class="grow"><b>' + esc(a.nama) + '</b><span class="small muted">' + esc(ukuran(a.ukuran)) + ' • Ketuk untuk membuka</span></span></div>'; }
   }
   return '<div class="card post" id="post-' + esc(x.id) + '"><div class="row">' + '<span onclick="openProfil(\'' + esc(x.username) + '\')" style="cursor:pointer">' + avatar(x, 'sm') + '</span>' +
     '<div class="grow"><div class="b" style="cursor:pointer" onclick="openProfil(\'' + esc(x.username) + '\')">' + esc(x.nama) + vb(x.username) + '</div>' +
-    '<div class="small muted">' + esc(tgl(x.waktu) + ', ' + jam(x.waktu)) + (x.diedit ? ' • diedit' : '') + (x.milik ? ' • ' + ic('eye') + ' ' + esc(x.privasiLabel) : '') + pbChip(x) + '</div></div>' +
-    (x.milik || x.bolehHapus || isAdminApp() ? '<button class="ibtn" onclick="postMenu(' + i + ')" aria-label="Menu">' + ic('more') + '</button>' : '') + '</div>' +
+    '<div class="small muted">' + esc(tgl(x.waktu) + ', ' + jam(x.waktu)) + (x.diedit ? ' • diedit' : '') + (x.kelasPost ? (S.ui.feedKelas ? (x.umum ? ' • <span class="pillx jk">' + ic('globe') + ' Umum</span>' : ' • ' + ic('eye') + ' Anggota kelas') : ' • <span class="pillx jk">' + esc(x.kelasPost) + '</span>') : (x.milik ? ' • ' + ic('eye') + ' ' + esc(x.privasiLabel) : '')) + pbChip(x) + '</div></div>' +
+    (x.milik || x.bolehHapus || x.bolehUmum || isAdminApp() ? '<button class="ibtn" onclick="postMenu(' + i + ')" aria-label="Menu">' + ic('more') + '</button>' : '') + '</div>' +
     media + (x.teks ? '<div class="ptxt tjus">' + teksRapi(x.teks) + '</div>' : '') +
     '<div class="pact"><button class="' + (x.liked ? 'on' : '') + '" onclick="postSuka(' + i + ',this)">' + ic('heart') + '<span>' + (x.likes || '') + ' Suka</span></button>' +
     '<button onclick="postKomentar(' + i + ')">' + ic('comment') + '<span>' + (x.komentar || '') + ' Komentar</span></button>' +
@@ -3435,7 +3444,7 @@ setInterval(() => {
 function postRender(i) { const e = $('#post-' + S.ui.post.items[i].id); if (e) { const t = document.createElement('div'); t.innerHTML = postHtml(S.ui.post.items[i], i); e.replaceWith(t.firstChild); } }
 async function postLagi(btn) {
   busy(btn, true);
-  try { const r = await rawApi('post.list', { offset: S.ui.post.items.length, limit: 15 }); const ids = {}; S.ui.post.items.forEach(x => ids[x.id] = 1);
+  try { const r = await rawApi('post.list', { offset: S.ui.post.items.length, limit: 15, kelasPost: S.ui.feedKelas || undefined }); const ids = {}; S.ui.post.items.forEach(x => ids[x.id] = 1);
     S.ui.post.items = S.ui.post.items.concat(r.items.filter(x => !ids[x.id])); S.ui.post.more = r.more; const v = $('#view'), y = v.scrollTop; pPostingan(); v.scrollTop = y; }
   catch (e) { toast(e.message, 'err'); busy(btn, false); }
 }
@@ -3450,6 +3459,7 @@ function postMenu(i) {
   const b = (icn, l, fn, cls) => '<button class="mitem ' + (cls || '') + '" onclick="closeSheet();' + fn + '">' + ic(icn) + '<span>' + l + '</span></button>';
   const pb = x.milik || isAdminApp();
   sheet('Postingan', '<div class="mlist">' + (x.milik ? b('edit', 'Edit postingan', 'postForm(' + i + ')') : '') +
+    (x.kelasPost && x.bolehUmum ? b(x.umum ? 'eyeoff' : 'eye', x.umum ? 'Sembunyikan dari umum (khusus anggota kelas)' : 'Tampilkan untuk umum (Postingan utama)', 'postUmum(' + i + ',' + !x.umum + ')') : '') +
     (pb ? b('globe', !x.publik || x.publik.status === 'Ditolak' ? 'Ajukan tampil di Layar Utama (publik)' : 'Perbarui banner Layar Utama', 'ajukanPublik(' + i + ')') : '') +
     (pb && x.publik && x.publik.status !== 'Ditolak' ? b('x', 'Turunkan dari Layar Utama', 'turunkanPublik(' + i + ')') : '') + (x.bolehHapus ? b('trash', 'Hapus postingan', 'postHapus(' + i + ')', 'red') : '') + '</div>');
 }
@@ -3470,18 +3480,20 @@ function postForm(i) {
     '<div class="row" style="gap:8px;margin:10px 0 14px">' +
       ['foto:image:Foto:image/*', 'video:video:Video:video/*', 'dokumen:file:Dokumen:' + DOK_ACCEPT].map(z => { const q = z.split(':'); return '<label class="btn sec sm grow" style="cursor:pointer">' + ic(q[1]) + ' ' + q[2] + '<input type="file" class="hide" accept="' + q.slice(3).join(':') + '" ' + (q[0] === 'foto' ? ' multiple' : '') + ' onchange="postPilihFile(this,\'' + q[0] + '\')"></label>'; }).join('') + '</div>' +
     '<div class="small muted" style="margin:-6px 0 12px">Foto bisa lebih dari satu (maks. 10). Lebih dari 1 foto akan tampil bergeser otomatis.</div>' +
+    (S.ui.feedKelas ? '<label class="row" style="gap:10px;margin:0 0 6px;cursor:pointer"><input type="checkbox" id="pum"' + (x.umum ? ' checked' : '') + ' style="width:18px;height:18px;accent-color:var(--pri2)"><span><b>Tampilkan untuk umum</b><br><span class="small muted">Juga muncul di Postingan utama. Bila tidak dicentang, hanya anggota ' + esc(S.ui.feedKelas) + ' yang melihat.</span></span></label><div class="hide">' : '') +
     '<div class="f"><label>Siapa yang boleh melihat?</label><div class="seg2">' +
       '<label class="' + (khusus ? '' : 'on') + '"><input type="radio" name="pp" value="semua"' + (khusus ? '' : ' checked') + ' onchange="postPrivasi()"> Semua pengguna</label>' +
       '<label class="' + (khusus ? 'on' : '') + '"><input type="radio" name="pp" value="khusus"' + (khusus ? ' checked' : '') + ' onchange="postPrivasi()"> Pilih tertentu</label></div></div>' +
     '<div id="ppk" class="' + (khusus ? '' : 'hide') + '">' + cekSatu('ppg', 'Dewan Guru', !!t.guru) +
       '<div class="small muted" style="margin:10px 0 6px">Kelas (santri di kelas ini)</div>' + cekKelas('ppkl', t.kelas || []) +
-      '<div class="small muted" style="margin:12px 0 6px">Daftar santri tertentu</div>' + daftarPilih('ppu', { tipe: 'Santri', terpilih: t.users || [] }) + '</div>' +
+      '<div class="small muted" style="margin:12px 0 6px">Daftar santri tertentu</div>' + daftarPilih('ppu', { tipe: 'Santri', terpilih: t.users || [] }) + '</div>' + (S.ui.feedKelas ? '</div>' : '') +
     '<button class="btn full" id="psv" style="margin-top:12px">' + ic('send') + ' ' + (i === null ? 'Posting' : 'Simpan') + '</button>');
   $('#psv', d).onclick = async e => {
     const khusus = ($('input[name=pp]:checked', d) || {}).value === 'khusus';
     const p = { id: i === null ? undefined : x.id, teks: val('pteks'), privasi: khusus ? 'khusus' : 'semua',
       target: { guru: $('#ppg', d).checked, kelas: $$('#ppkl input', d).filter(z => z.checked).map(z => z.value), users: ambilPilih('ppu', d) } };
-    if (khusus && !p.target.guru && !p.target.kelas.length && !p.target.users.length) return toast('Pilih siapa saja yang boleh melihat.', 'err');
+    if (S.ui.feedKelas) { p.kelasPost = S.ui.feedKelas; p.umum = !!($('#pum', d) && $('#pum', d).checked); p.privasi = 'semua'; delete p.target; }
+    else if (khusus && !p.target.guru && !p.target.kelas.length && !p.target.users.length) return toast('Pilih siapa saja yang boleh melihat.', 'err');
     const hapusUtama = !!($('#phl', d) && $('#phl', d).checked);
     let tambahan = S.ui.pfoto.slice();
     const adaFotoUtama = x.lampiran && x.lampiran.jenis === 'foto' && !hapusUtama;
@@ -3499,7 +3511,7 @@ function postForm(i) {
       const r = await rawApi('post.save', p, true);
       for (let k = 0; k < tambahan.length; k++) { job.info = 'Mengunggah foto ' + (k + 2) + '/' + jmlFoto + '…'; await rawApi('post.fotoTambah', { id: r.id || x.id, data: tambahan[k].data, nama: tambahan[k].nama }, true); }
       return r;
-    }, () => { store.set('alhuda_draf_post', null); if (jmlFoto) toast(baru ? 'Postingan berhasil dibagikan.' : 'Postingan berhasil disimpan.', 'ok'); },
+    }, () => { store.set('alhuda_draf_post', null); S.ui.post = null; if (jmlFoto) toast(baru ? 'Postingan berhasil dibagikan.' : 'Postingan berhasil disimpan.', 'ok'); },
     () => { if (baru && p.teks) store.set('alhuda_draf_post', p.teks); });
   };
 }
@@ -5147,6 +5159,205 @@ async function aturGuruKhusus(un, aktif, paksa) {
     if (m) { if (await ask('Santri ini masih mengajar ' + m[1] + ' jadwal di roster. Cabut status Guru Khusus dan hapus jadwal tersebut dari roster?', 'Cabut & hapus jadwal')) aturGuruKhusus(un, false, true); }
     else toast(e.message, 'err');
   }
+}
+
+/* =============================================================
+ *  KELAS SAYA (santri) — roster kelas, kas, piket, postingan kelas, chat kelas, voting pengurus
+ * ============================================================= */
+function openKelasSaya(kelas) { S.ui.ksKelas = kelas || (isSantri() ? me().kelas : ''); S.ui.ks = null; push('Kelas Saya', pKelasSaya, { sub: S.ui.ksKelas || 'Kelas' }); }
+/** Guru / admin: pilih kelas yang dikelola. */
+function pilihHalamanKelas() {
+  const L = S.B.kelasKelola || [];
+  if (!L.length) return toast('Anda bukan wali kelas.', 'err');
+  if (L.length === 1) return openKelasSaya(L[0]);
+  sheet('Halaman Kelas', '<div class="mlist">' + L.map(k => '<button class="mitem" onclick="closeSheet();openKelasSaya(\'' + esc(k) + '\')">' + ic('users') + ' ' + esc(k) + '</button>').join('') + '</div>');
+}
+async function ksMuat(paksa) {
+  if (S.ui.ks && !paksa) return S.ui.ks;
+  S.ui.ks = await api('kelasSaya.info', { kelas: isSantri() ? undefined : S.ui.ksKelas });
+  return S.ui.ks;
+}
+function ksAvatar(x) { return avatar({ nama: x.nama, foto: x.foto, username: x.username }, 'sm'); }
+async function pKelasSaya() {
+  if (isSantri() && !me().kelas) return view('<div class="card">' + empty('Anda belum terdaftar di kelas mana pun. Hubungi Kabag Pendidikan.', 'users') + '</div>');
+  const t = loading(4); let d;
+  try { d = await ksMuat(true); } catch (e) { if (alive(t)) view('<div class="card">' + empty(e.message, 'info') + '</div>'); return; }
+  if (!alive(t)) return;
+  const pg = d.jabatan.map(j => { const x = d.pengurus[j]; return '<div class="ksp" ' + (x ? 'onclick="openProfil(\'' + esc(x.username) + '\')"' : 'onclick="openVoting()"') + '>' +
+    (x ? ksAvatar(x) : '<div class="av sm" style="background:var(--chip);color:var(--muted)">?</div>') + '<div class="grow" style="min-width:0"><div class="s">' + esc(j) + '</div><div class="t ell">' + (x ? esc(x.nama) : '<span class="muted">Belum terpilih</span>') + '</div></div></div>'; }).join('');
+  let h = '<div class="banner ksb"><div style="position:relative;z-index:1"><div class="hi">Kelas Saya</div><div class="nm">' + esc(d.kelas) + '</div>' +
+    '<div class="un">' + d.anggota.length + ' santri' + (d.wali ? ' • Wali kelas: ' + esc(d.wali.nama) : '') + '</div></div></div>';
+  h += '<div class="quick">' + qa('cal', 'Roster Kelas', 'openRosterKelas()') + qa('coins', 'Kas', 'openKas()') + qa('repeat', 'Piket', 'openPiket()') + qa('post', 'Postingan Kelas', 'openPostinganKelas()') + '</div>';
+  h += '<div class="quick" style="grid-template-columns:1fr 1fr;margin-top:8px">' + qa('chat', 'Chat Kelas', 'bukaChatKelas()') + qa('flag', 'Voting Pengurus', 'openVoting()') + '</div>';
+  if (d.sayaPetugas) h += '<button class="notif-btn" onclick="openAbsenKelas()"><span class="ic">' + ic('check') + '</span><span class="grow" style="text-align:left"><span class="b" style="display:block;font-size:14px">Absen Kelas</span><span class="small muted">Anda ditunjuk sebagai petugas absen kelas ini</span></span>' + ic('right') + '</button>';
+  h += '<div class="sec"><h3>Pengurus Kelas</h3><button class="link" onclick="openVoting()">Voting</button></div><div class="card ksgrid">' + pg + '</div>';
+  if (d.petugasAbsen.length) h += '<div class="small muted" style="margin:-4px 4px 12px">Petugas absen: ' + d.petugasAbsen.map(x => esc(x.nama)).join(', ') + '</div>';
+  const jab = {}; d.jabatan.forEach(j => { const x = d.pengurus[j]; if (x) jab[x.username.toLowerCase()] = j; });
+  h += '<div class="sec"><h3>Anggota Kelas (' + d.anggota.length + ')</h3></div><div class="card"><div class="list">' + d.anggota.map(x =>
+    '<div class="it" onclick="openProfil(\'' + esc(x.username) + '\')">' + ksAvatar(x) + '<div class="grow" style="min-width:0"><div class="t ell">' + esc(x.nama) + vb(x.username) + '</div><div class="s">@' + esc(x.username) + '</div></div>' +
+      (jab[x.username.toLowerCase()] ? '<span class="pillx jk">' + esc(jab[x.username.toLowerCase()]) + '</span>' : '') + '</div>').join('') + '</div></div>';
+  view(h);
+}
+function bukaChatKelas() { const d = S.ui.ks; if (!d) return; S.ui.grupNama = S.ui.grupNama || {}; S.ui.grupNama[d.grupChat] = { nama: 'Chat ' + (/^kelas/i.test(d.kelas) ? '' : 'Kelas ') + d.kelas, anggota: d.anggota.length + (d.wali ? 1 : 0) }; chatWith(d.grupChat); }
+
+/* ---------- roster kelas ---------- */
+function openRosterKelas() { push('Roster Kelas', pRosterKelas, { sub: S.ui.ks.kelas }); }
+function pRosterKelas() {
+  const d = S.ui.ks, urutHari = ['Sabtu', 'Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+  const ses = {}; (S.B.sesi || []).forEach((s, i) => ses[s.kode] = i);
+  let h = '';
+  const hariTampil = urutHari.slice(urutHari.indexOf(d.hariIni) < 0 ? 0 : urutHari.indexOf(d.hariIni)).concat(urutHari.slice(0, Math.max(0, urutHari.indexOf(d.hariIni))));
+  hariTampil.forEach(hr => {
+    const L = d.roster.filter(r => r.hari === hr || r.hari === 'Setiap Hari').sort((a, b) => (ses[a.sesi] ?? 99) - (ses[b.sesi] ?? 99));
+    const ini = hr === d.hariIni;
+    h += '<div class="sec"><h3>' + esc(hr) + (ini ? ' <span class="pillx" style="background:var(--pri2);color:#fff">Hari ini</span>' : '') + '</h3></div><div class="card' + (ini ? ' ksini' : '') + '">' +
+      (L.length ? '<div class="list">' + L.map(r => '<div class="it" style="cursor:default"><div class="ksjam">' + esc(r.jam) + '</div><div class="grow" style="min-width:0"><div class="t">' + esc(r.mapel) + '</div><div class="s">' + esc(r.guruNama) + ' • Sesi ' + esc(r.sesi) + '</div></div>' +
+        (ini && d.sayaPetugas ? '<button class="btn sm" onclick="openAbsenKelas(\'' + esc(r.sesi) + '\')">Absen</button>' : '') + '</div>').join('') + '</div>' : '<div class="small muted">Tidak ada pelajaran.</div>') + '</div>';
+  });
+  if (!d.roster.length) h = '<div class="card">' + empty('Roster kelas ini belum diisi oleh Kabag Pendidikan.', 'cal') + '</div>';
+  view(h);
+}
+
+/* ---------- absen oleh petugas kelas ---------- */
+function openAbsenKelas(sesi) {
+  const d = S.ui.ks; S.ui.abs = { kelas: d.kelas, sesi: sesi || '', tanggal: todayStr() };
+  push('Absen Kelas', pAbsenKelas, { sub: d.kelas + ' • petugas absen' });
+}
+async function pAbsenKelas() {
+  const d = S.ui.ks, a = S.ui.abs, urutSesi = (S.B.sesi || []).map(s => s.kode);
+  const hariIni = d.roster.filter(r => r.hari === d.hariIni || r.hari === 'Setiap Hari').sort((x, y) => urutSesi.indexOf(x.sesi) - urutSesi.indexOf(y.sesi));
+  const opsi = hariIni.length ? hariIni.map(r => [r.sesi, r.jam + ' • ' + r.mapel]) : sesiFor(d.kelas).map(s => [s.kode, s.jam]);
+  if (!a.sesi || !opsi.some(o => o[0] === a.sesi)) a.sesi = opsi.length ? opsi[0][0] : '';
+  let h = '<div class="card"><div class="row"><div class="f grow"><label>Tanggal</label>' + inp('at', a.tanggal, 'type="date" onchange="S.ui.abs.tanggal=this.value;refresh()"') + '</div></div>' +
+    fld('Sesi / pelajaran', sel('as', opsi, a.sesi, 'onchange="S.ui.abs.sesi=this.value;refresh()"')) + '</div>';
+  if (!a.sesi) return view(h + '<div class="card">' + empty('Belum ada sesi untuk kelas ini.', 'cal') + '</div>');
+  const t = loading(3); let f;
+  try { f = await api('absen.form', { jenis: 'Santri', tanggal: a.tanggal, kelas: a.kelas, sesi: a.sesi }); } catch (e) { if (alive(t)) view(h + '<div class="card">' + empty(e.message, 'info') + '</div>'); return; }
+  if (!alive(t)) return;
+  S.ui.absItems = {}; f.items.forEach(x => S.ui.absItems[x.username] = x.status);
+  S.ui.absMeta = { jenis: 'Santri', mapel: f.mapel };
+  h += '<div class="sec"><h3>' + (f.mapel ? esc(f.mapel) + ' • ' : '') + f.items.length + ' santri</h3><button class="link" onclick="semuaHadir()">Semua Hadir</button></div>';
+  h += '<div class="card"><div class="list">' + f.items.map((x, i) => '<div class="it" style="cursor:default"><div class="grow"><div class="t ell">' + (i + 1) + '. ' + esc(x.nama) + '</div></div>' +
+    '<div class="tg" data-u="' + esc(x.username) + '">' + ['H', 'I', 'S', 'A'].map(sx => '<button class="' + sx + (x.status === sx ? ' on' : '') + '" onclick="setAbs(this,\'' + sx + '\')">' + sx + '</button>').join('') + '</div></div>').join('') + '</div></div>';
+  h += '<div class="muted small" style="margin:-4px 4px 10px">H = Hadir • I = Izin • S = Sakit • A = Alpa</div><button class="btn full" onclick="simpanAbsen(this)">Simpan Absensi</button>';
+  view(h);
+}
+
+/* ---------- kas kelas ---------- */
+function openKas() { S.ui.kasTab = S.ui.kasTab || 'anggota'; push('Kas Kelas', pKas, { sub: S.ui.ks.kelas }); }
+async function pKas() {
+  const t = loading(4); let d;
+  try { d = await api('kelasSaya.kas', { kelas: isSantri() ? undefined : S.ui.ks.kelas }); } catch (e) { if (alive(t)) view('<div class="card">' + empty(e.message, 'info') + '</div>'); return; }
+  if (!alive(t)) return;
+  S.ui.kas = d;
+  const st = (l, v, w) => '<div class="kst"><div class="s">' + l + '</div><div class="b" style="color:' + w + '">' + rp(v) + '</div></div>';
+  let h = '<div class="card"><div class="small muted">Saldo Kas Kelas</div><div style="font-size:26px;font-weight:800;color:var(--pri2);margin:2px 0 10px">' + rp(d.saldo) + '</div>' +
+    '<div class="row" style="gap:8px">' + st('Total Pemasukan', d.masuk, '#047857') + st('Total Pengeluaran', d.keluar, '#b91c1c') + '</div></div>';
+  h += seg('kasTab', [['anggota', 'Catatan Anggota'], ['riwayat', 'Riwayat']], 'refresh()');
+  if (uiState('kasTab', 'anggota') === 'anggota') {
+    const maks = Math.max(1, ...d.anggota.map(a => a.total));
+    h += '<div class="card"><div class="list">' + d.anggota.sort((a, b) => b.total - a.total || a.nama.localeCompare(b.nama)).map(a => '<div class="it" style="cursor:default"><div class="grow" style="min-width:0"><div class="t ell">' + esc(a.nama) + '</div>' +
+      '<div class="ksbar"><i style="width:' + Math.round(a.total / maks * 100) + '%"></i></div></div><div class="b" style="white-space:nowrap">' + rp(a.total) + '</div></div>').join('') + '</div></div>';
+  } else {
+    h += '<div class="card"><div class="list">' + (d.riwayat.length ? d.riwayat.map((r, i) => '<div class="it"' + (d.bolehUbah ? ' onclick="kasForm(' + i + ')"' : ' style="cursor:default"') + '>' +
+      '<div class="av sm" style="background:' + (r.jenis === 'Keluar' ? '#fee2e2;color:#b91c1c' : '#d1fae5;color:#047857') + '">' + (r.jenis === 'Keluar' ? '−' : '+') + '</div>' +
+      '<div class="grow" style="min-width:0"><div class="t ell">' + esc(r.keterangan || (r.anggotaNama ? 'Setoran ' + r.anggotaNama : 'Pemasukan')) + '</div><div class="s">' + tgl(r.tanggal) + (r.anggotaNama ? ' • ' + esc(r.anggotaNama) : '') + ' • dicatat ' + esc(r.olehNama) + '</div></div>' +
+      '<div class="b" style="white-space:nowrap;color:' + (r.jenis === 'Keluar' ? '#b91c1c' : '#047857') + '">' + (r.jenis === 'Keluar' ? '−' : '+') + rp(r.jumlah) + '</div></div>').join('') : empty('Belum ada catatan kas.', 'coins')) + '</div></div>';
+  }
+  if (!d.bolehUbah) h += '<div class="small muted" style="padding:0 4px">Kas dicatat oleh bendahara / ketua kelas.</div>';
+  view(h);
+  if (d.bolehUbah) fab(() => kasForm(null));
+}
+function kasForm(i) {
+  const d = S.ui.kas, r = i === null ? { jenis: 'Masuk', tanggal: todayStr(), jumlah: '', keterangan: '', anggota: '' } : d.riwayat[i];
+  const s = sheet(i === null ? 'Catat Kas' : 'Ubah Catatan Kas',
+    fld('Jenis', sel('kj', [['Masuk', 'Pemasukan (setoran / dana masuk)'], ['Keluar', 'Pengeluaran']], r.jenis, 'onchange="$(\'#kaw\').classList.toggle(\'hide\',this.value===\'Keluar\')"')) +
+    '<div id="kaw" class="' + (r.jenis === 'Keluar' ? 'hide' : '') + '">' + fld('Dari anggota (opsional)', sel('ka', [['', '— Bukan setoran anggota —']].concat(d.anggota.map(a => [a.username, a.nama])), r.anggota || '')) + '</div>' +
+    '<div class="row" style="gap:8px"><div class="grow">' + fld('Jumlah (Rp)', inp('kn', r.jumlah, 'type="number" min="1" inputmode="numeric"')) + '</div><div class="grow">' + fld('Tanggal', inp('kt', r.tanggal, 'type="date"')) + '</div></div>' +
+    fld('Keterangan', inp('kk', r.keterangan, 'maxlength="200" placeholder="Mis. Iuran kas minggu ke-1 / Beli spidol"')) +
+    '<button class="btn full" id="ksv">Simpan</button>' + (i === null ? '' : '<button class="btn red full" style="margin-top:8px" id="kdl">Hapus</button>'));
+  $('#ksv', s).onclick = () => {
+    const p = { kelas: d.kelas, id: i === null ? undefined : r.id, jenis: val('kj'), anggota: val('ka'), jumlah: Number(val('kn')), tanggal: val('kt'), keterangan: val('kk') };
+    if (!(p.jumlah > 0)) return toast('Isi jumlah.', 'err');
+    if (p.jenis === 'Keluar' && !p.keterangan) return toast('Isi keterangan pengeluaran.', 'err');
+    if (!wajibOnline('Mencatat kas')) return;
+    closeSheet(); toast('Kas dicatat.', 'ok');
+    latar('Kas kelas', () => rawApi('kelasSaya.kasSave', p, true));
+  };
+  if ($('#kdl', s)) $('#kdl', s).onclick = async () => {
+    if (!(await ask('Hapus catatan kas ini?', 'Hapus'))) return;
+    closeSheet(); latar('Hapus catatan kas', () => rawApi('kelasSaya.kasDelete', { id: r.id }, true));
+  };
+}
+
+/* ---------- piket harian ---------- */
+function openPiket() { push('Piket Kelas', pPiket, { sub: S.ui.ks.kelas }); }
+async function pPiket() {
+  let d = S.ui.piketLokal; S.ui.piketLokal = null;
+  const t = loading(4);
+  if (!d) try { d = await api('kelasSaya.piket', { kelas: isSantri() ? undefined : S.ui.ks.kelas }); } catch (e) { if (alive(t)) view('<div class="card">' + empty(e.message, 'info') + '</div>'); return; }
+  if (!alive(t)) return;
+  S.ui.piket = d;
+  const i0 = Math.max(0, d.urutan.indexOf(d.hariIni)), urut = d.urutan.slice(i0).concat(d.urutan.slice(0, i0));
+  view(urut.map(hr => { const L = d.hari[hr] || [], ini = hr === d.hariIni;
+    return '<div class="card' + (ini ? ' ksini' : '') + '"><div class="row" style="margin-bottom:' + (L.length ? 8 : 0) + 'px"><div class="b grow">' + esc(hr) + (ini ? ' <span class="pillx" style="background:var(--pri2);color:#fff">Hari ini</span>' : '') + '</div>' +
+      (d.bolehUbah ? '<button class="ibtn" onclick="piketForm(\'' + hr + '\')">' + ic('edit') + '</button>' : '') + '</div>' +
+      (L.length ? '<div class="row" style="flex-wrap:wrap;gap:6px">' + L.map(x => '<span class="pillx">' + esc(x.nama) + '</span>').join('') + '</div>' : '<div class="small muted">Belum ada petugas piket.</div>') + '</div>'; }).join('') +
+    (d.bolehUbah ? '' : '<div class="small muted" style="padding:0 4px">Jadwal piket diatur oleh ketua, wakil atau sekretaris kelas.</div>'));
+}
+function piketForm(hr) {
+  const d = S.ui.piket, ada = {}; (d.hari[hr] || []).forEach(x => ada[x.username.toLowerCase()] = 1);
+  const s = sheet('Piket ' + hr, '<div class="list" style="max-height:52vh;overflow:auto">' + S.ui.ks.anggota.map(a => '<label class="it" style="cursor:pointer"><input type="checkbox" value="' + esc(a.username) + '"' + (ada[a.username.toLowerCase()] ? ' checked' : '') + ' style="width:18px;height:18px;accent-color:var(--pri2)"><div class="grow">' + esc(a.nama) + '</div></label>').join('') + '</div>' +
+    '<button class="btn full" style="margin-top:12px" id="pkv">Simpan</button>');
+  $('#pkv', s).onclick = () => {
+    const users = $$('input[type=checkbox]', s).filter(x => x.checked).map(x => x.value);
+    if (!wajibOnline('Mengatur piket')) return;
+    d.hari[hr] = S.ui.ks.anggota.filter(a => users.indexOf(a.username) >= 0).map(a => ({ username: a.username, nama: a.nama }));
+    closeSheet(); S.ui.piketLokal = d; refresh();
+    latar('Piket ' + hr, () => rawApi('kelasSaya.piketSave', { kelas: d.kelas, hari: hr, users: users }, true));
+  };
+}
+
+/* ---------- voting pengurus ---------- */
+function openVoting() { push('Voting Pengurus', pVoting, { sub: S.ui.ks.kelas + ' • tahun ajaran ' + S.ui.ks.periode }); }
+function pVoting() {
+  const d = S.ui.ks, nm = {}; d.anggota.forEach(a => nm[a.username.toLowerCase()] = a);
+  let h = '<div class="card hcard small">' + ic('flag') + ' Setiap anggota kelas memilih satu calon untuk tiap jabatan. Yang mendapat <b>suara terbanyak</b> terpilih. Satu orang hanya memegang satu jabatan; pilihan dapat diubah kapan saja.</div>';
+  d.jabatan.forEach(j => {
+    const S1 = d.suara[j] || {}, tot = Object.keys(S1).reduce((a, k) => a + S1[k].n, 0), saya = (d.pilihanSaya[j] || '').toLowerCase(), juara = d.pengurus[j];
+    const L = d.anggota.map(a => ({ a: a, n: (S1[a.username.toLowerCase()] || {}).n || 0 })).sort((x, y) => y.n - x.n || x.a.nama.localeCompare(y.a.nama));
+    h += '<div class="sec"><h3>' + esc(j) + '</h3>' + (juara ? '<span class="pillx jk">' + esc(juara.nama) + '</span>' : '') + '</div><div class="card"><div class="list">' + L.map(x => {
+      const un = x.a.username, pilih = un.toLowerCase() === saya;
+      return '<div class="it"' + (d.bolehVote ? ' onclick="pilihCalon(\'' + esc(j) + '\',\'' + esc(pilih ? '' : un) + '\')"' : ' style="cursor:default"') + '>' + ksAvatar(x.a) +
+        '<div class="grow" style="min-width:0"><div class="t ell">' + esc(x.a.nama) + (juara && juara.username === un ? ' 👑' : '') + '</div><div class="ksbar"><i style="width:' + (tot ? Math.round(x.n / tot * 100) : 0) + '%"></i></div></div>' +
+        '<div class="small b" style="min-width:52px;text-align:right">' + x.n + ' suara</div>' + (d.bolehVote ? '<span class="vt' + (pilih ? ' on' : '') + '">' + (pilih ? ic('check') : '') + '</span>' : '') + '</div>';
+    }).join('') + '</div><div class="small muted" style="margin-top:6px">' + tot + ' suara masuk' + (d.bolehVote ? (saya ? ' • pilihan Anda: ' + esc((nm[saya] || {}).nama || saya) + ' (ketuk lagi untuk batal)' : ' • ketuk nama untuk memilih') : '') + '</div></div>';
+  });
+  if (d.bolehKelola) h += '<button class="btn red full" onclick="resetVoting()">' + ic('repeat') + ' Ulangi Voting (hapus semua suara)</button>';
+  view(h);
+}
+async function pilihCalon(j, un) {
+  try { S.ui.ks = await rawApi('kelasSaya.vote', { jabatan: j, calon: un }); toast(un ? 'Suara Anda untuk ' + j + ' tersimpan.' : 'Pilihan dibatalkan.', 'ok'); refresh(); }
+  catch (e) { toast(e.message, 'err'); }
+}
+async function resetVoting() {
+  if (!(await ask('Hapus semua suara voting pengurus kelas ' + S.ui.ks.kelas + ' tahun ajaran ini?', 'Hapus suara'))) return;
+  try { await rawApi('kelasSaya.voteReset', { kelas: S.ui.ks.kelas }); await ksMuat(true); toast('Voting diulang.', 'ok'); refresh(); } catch (e) { toast(e.message, 'err'); }
+}
+
+/* ---------- postingan kelas ---------- */
+function openPostinganKelas() { S.ui.feedKelas = S.ui.ks.kelas; S.ui.post = null; push('Postingan Kelas', pPostingan, { sub: S.ui.ks.kelas + ' • hanya anggota kelas' }); }
+async function postUmum(i, umum) {
+  const x = S.ui.post.items[i];
+  try { await rawApi('kelasPost.umum', { id: x.id, umum: umum }); x.umum = umum; postRender(i); toast(umum ? 'Postingan ditampilkan di Postingan utama.' : 'Postingan kembali khusus anggota kelas.', 'ok'); S.fetchedAt = {}; }
+  catch (e) { toast(e.message, 'err'); }
+}
+
+/* ---------- profil: petugas absen ---------- */
+async function aturPetugasAbsen(un, aktif) {
+  if (aktif && !(await ask('Tunjuk ' + userName(un) + ' sebagai petugas absen kelasnya? Ia dapat mengabsen santri kelasnya pada semua sesi tanpa menunggu guru.', 'Tunjuk'))) return;
+  try { await rawApi('kelasSaya.petugasAbsen', { username: un, aktif: aktif }); S.fetchedAt = {}; toast(aktif ? 'Ditunjuk sebagai petugas absen.' : 'Petugas absen dicabut.', 'ok'); refresh(); }
+  catch (e) { toast(e.message, 'err'); }
 }
 
 /* ---------- mulai ---------- */
