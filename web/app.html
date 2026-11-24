@@ -3,7 +3,7 @@
 <head>
 <base target="_top">
 <meta charset="utf-8">
-<meta name="alhuda-app" content="2.11.0">
+<meta name="alhuda-app" content="2.12.0">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>ALHUDA MOBILE</title>
 <style>
@@ -509,6 +509,8 @@ html.desk .login .lmain>.muted:last-child{display:none}
 /* Roster: hari multi-pilih */
 .checks label.on{border-color:var(--pri2);background:var(--soft)}
 .ghrow .btn{height:40px;margin:0;flex:1 1 0}
+.tag.gk,.pillx.gk{background:#fef3c7;color:#92400e;display:inline-flex;align-items:center;gap:4px}.tag.gk .i,.pillx.gk .i{width:13px;height:13px}
+.gkc .gkb{display:inline-flex;align-items:center;gap:6px;background:#fef3c7;color:#92400e;border-radius:10px;padding:6px 10px;font-weight:700;font-size:13px;margin:0 6px 6px 0}
 </style>
 </head>
 <body>
@@ -573,6 +575,8 @@ const IC = {
   heart:'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
   comment:'<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"/>',
   share:'<circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.6-4.4M8.2 13.2l7.6 4.4"/>',
+  archive:'<rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8M10 12h4"/>',
+  ban:'<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>',
   more:'<circle cx="12" cy="5" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="12" cy="19" r="1.3"/>',
   wa:'<path d="M4 20l1.3-4A8 8 0 1 1 8.6 19z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-1.8-1.8l.8-1-1-2z"/>',
   wifioff:'<path d="M3 3l18 18M8.5 16.4a5 5 0 0 1 7 0M5 12.9a10 10 0 0 1 4.2-2.6M14.8 10.3A10 10 0 0 1 19 12.9M2 9.3a15 15 0 0 1 4.5-2.8M12 5a15 15 0 0 1 10 4.3"/><circle cx="12" cy="20" r=".8"/>'
@@ -676,7 +680,7 @@ function rawApi(action, params, silent) {
  *  - Setiap perubahan membawa _cid unik → server tidak mencatat dua kali.
  * ============================================================= */
 const WRITE_RE = /\.(save|delete|send|kembali|naik)$/;
-const ONLINE_ONLY = { 'gh.save': 'Mengubah file di GitHub', 'gh.delete': 'Menghapus file di GitHub', 'gh.config.save': 'Mengatur GitHub', 'gh.banner.upload': 'Mengunggah banner', 'gh.banner.save': 'Mengatur banner', 'gh.banner.hapus': 'Menghapus banner', 'dev.login.save': 'Mengatur login pengembang', 'dev.tema.save': 'Mengatur tema aplikasi', 'sesi.save': 'Mengatur sesi', 'sesi.delete': 'Menghapus sesi', 'wali.save': 'Mengatur wali kelas', 'peran.save': 'Mengatur peran', 'peran.delete': 'Menghapus peran', 'peran.pulihkan': 'Memulihkan peran', 'admin.resetSandi': 'Reset kata sandi', 'admin.aktif': 'Mengunci / membuka akun', 'post.fotoTambah': 'Mengunggah foto', 'publik.ajukan': 'Mengajukan ke layar utama', 'publik.turunkan': 'Menurunkan dari layar utama', 'publik.putuskan': 'Verifikasi layar utama', 'publik.komentarPutuskan': 'Verifikasi komentar', 'profil.publik': 'Mengubah visibilitas akun', 'profil.password': 'Ganti kata sandi', 'profil.photo': 'Unggah foto profil', 'raport.pdf': 'Cetak PDF', 'iuran.pdf': 'Cetak PDF', 'tahunan.pdf': 'Cetak PDF', 'settings.save': 'Mengubah pengaturan aplikasi', 'logo.upload': 'Mengganti logo', 'logo.reset': 'Mengganti logo', 'profil.galeriAdd': 'Menambah foto galeri', 'profil.galeriDelete': 'Menghapus foto galeri', 'chat.file': 'Mengirim foto, video, atau dokumen', 'iuran.laporan': 'Cetak laporan PDF', 'tahunan.laporan': 'Cetak laporan PDF', 'grup.save': 'Menyimpan grup', 'grup.keluar': 'Keluar dari grup', 'chat.forward': 'Meneruskan pesan', 'chat.edit': 'Mengedit pesan', 'chat.hapus': 'Menghapus pesan', 'haris.save': 'Menyimpan daftar haris', 'haris.delete': 'Menghapus kelompok haris', 'asrama.save': 'Menyimpan asrama', 'asrama.delete': 'Menghapus asrama', 'asrama.dokAdd': 'Mengunggah dokumentasi', 'asrama.dokDelete': 'Menghapus dokumentasi', 'kabilah.save': 'Menyimpan kabilah', 'kabilah.delete': 'Menghapus kabilah', 'post.save': 'Menyimpan postingan', 'post.delete': 'Menghapus postingan', 'post.bagikan': 'Membagikan postingan', 'pengajuan.terima': 'Menerima santri baru', 'pengajuan.tolak': 'Menolak pengajuan', 'verif.save': 'Menyimpan data verifikasi', 'verif.upload': 'Mengunggah dokumen', 'verif.hapusFile': 'Menghapus dokumen', 'kelas.save': 'Menyimpan kelas', 'kelas.delete': 'Menghapus kelas' };
+const ONLINE_ONLY = { 'chat.arsip': 'Mengarsipkan chat', 'chat.bersihkan': 'Menghapus chat', 'chat.blokir': 'Memblokir pengguna', 'guruKhusus.set': 'Mengatur Guru Khusus', 'gh.save': 'Mengubah file di GitHub', 'gh.delete': 'Menghapus file di GitHub', 'gh.config.save': 'Mengatur GitHub', 'gh.banner.upload': 'Mengunggah banner', 'gh.banner.save': 'Mengatur banner', 'gh.banner.hapus': 'Menghapus banner', 'dev.login.save': 'Mengatur login pengembang', 'dev.tema.save': 'Mengatur tema aplikasi', 'sesi.save': 'Mengatur sesi', 'sesi.delete': 'Menghapus sesi', 'wali.save': 'Mengatur wali kelas', 'peran.save': 'Mengatur peran', 'peran.delete': 'Menghapus peran', 'peran.pulihkan': 'Memulihkan peran', 'admin.resetSandi': 'Reset kata sandi', 'admin.aktif': 'Mengunci / membuka akun', 'post.fotoTambah': 'Mengunggah foto', 'publik.ajukan': 'Mengajukan ke layar utama', 'publik.turunkan': 'Menurunkan dari layar utama', 'publik.putuskan': 'Verifikasi layar utama', 'publik.komentarPutuskan': 'Verifikasi komentar', 'profil.publik': 'Mengubah visibilitas akun', 'profil.password': 'Ganti kata sandi', 'profil.photo': 'Unggah foto profil', 'raport.pdf': 'Cetak PDF', 'iuran.pdf': 'Cetak PDF', 'tahunan.pdf': 'Cetak PDF', 'settings.save': 'Mengubah pengaturan aplikasi', 'logo.upload': 'Mengganti logo', 'logo.reset': 'Mengganti logo', 'profil.galeriAdd': 'Menambah foto galeri', 'profil.galeriDelete': 'Menghapus foto galeri', 'chat.file': 'Mengirim foto, video, atau dokumen', 'iuran.laporan': 'Cetak laporan PDF', 'tahunan.laporan': 'Cetak laporan PDF', 'grup.save': 'Menyimpan grup', 'grup.keluar': 'Keluar dari grup', 'chat.forward': 'Meneruskan pesan', 'chat.edit': 'Mengedit pesan', 'chat.hapus': 'Menghapus pesan', 'haris.save': 'Menyimpan daftar haris', 'haris.delete': 'Menghapus kelompok haris', 'asrama.save': 'Menyimpan asrama', 'asrama.delete': 'Menghapus asrama', 'asrama.dokAdd': 'Mengunggah dokumentasi', 'asrama.dokDelete': 'Menghapus dokumentasi', 'kabilah.save': 'Menyimpan kabilah', 'kabilah.delete': 'Menghapus kabilah', 'post.save': 'Menyimpan postingan', 'post.delete': 'Menghapus postingan', 'post.bagikan': 'Membagikan postingan', 'pengajuan.terima': 'Menerima santri baru', 'pengajuan.tolak': 'Menolak pengajuan', 'verif.save': 'Menyimpan data verifikasi', 'verif.upload': 'Mengunggah dokumen', 'verif.hapusFile': 'Menghapus dokumen', 'kelas.save': 'Menyimpan kelas', 'kelas.delete': 'Menghapus kelas' };
 S.online = true;
 function isOnline() { try { if (BR && BR.isOnline) return !!BR.isOnline(); } catch (e) {} return navigator.onLine !== false; }
 function uname() { return (S.B && S.B.user && S.B.user.username) || store.get('alhuda_uname') || '_'; }
@@ -1266,7 +1270,7 @@ function badgeBaru() {
     $$('.qa[onclick="' + z[1] + '"]').forEach(btn => { let b = $('.badge', btn); if (!n) { if (b) b.remove(); return; } if (!b) { b = document.createElement('span'); b.className = 'badge'; btn.appendChild(b); } b.textContent = n > 99 ? '99+' : n; });
   });
 }
-function setNotifN(n) { S.notifN = n; badgeLonceng(); }
+function setNotifN(n) { S.notifN = isSantri() ? 0 : n; badgeLonceng(); }
 function setNotifSaya(n) { S.notifSaya = n; badgeLonceng(); }
 function jmlLonceng() { return (S.notifN || 0) + (S.notifSaya || 0); }
 function badgeLonceng() { const n = jmlLonceng(), b = $('#nfBadge'); if (b) { b.textContent = n > 99 ? '99+' : (n || ''); b.classList.toggle('hide', !n); } }
@@ -1277,7 +1281,7 @@ function topBar() {
   const chatBtn = '<button class="ib" onclick="openPemberitahuan()" aria-label="Pemberitahuan Hari Ini">' + ic('bell') + '<span class="badge' + (jmlLonceng() ? '' : ' hide') + '" id="nfBadge">' + (jmlLonceng() > 99 ? '99+' : (jmlLonceng() || '')) + '</span></button>' +
     '<button class="ib" onclick="openChat()" aria-label="Room Chat">' + ic('chat') + (S.unread ? '<span class="badge">' + (S.unread > 99 ? '99+' : S.unread) + '</span>' : '') + '</button>';
   $('#top').innerHTML = top
-    ? '<button class="ib" onclick="back()">' + ic('back') + '</button><div class="tt"><div class="t1">' + esc(top.title) + '</div><div class="t2">' + esc(top.sub || appName()) + '</div></div>' + syncHtml() + (top.aksi || (top.noChat ? '' : chatBtn))
+    ? '<button class="ib" onclick="back()">' + ic('back') + '</button><div class="tt"' + (top.onTitle ? ' onclick="' + top.onTitle + '" style="cursor:pointer" role="button"' : '') + '><div class="t1">' + esc(top.title) + '</div><div class="t2">' + esc(top.sub || appName()) + '</div></div>' + syncHtml() + (top.aksi || (top.noChat ? '' : chatBtn))
     : '<div class="tt"><div class="t1">' + esc(appName()) + '</div><div class="t2">' + esc(sub) + '</div></div>' + syncHtml() + chatBtn;
   $$('#nav button').forEach(b => b.classList.toggle('on', b.dataset.t === S.tab));
 }
@@ -1336,7 +1340,11 @@ const opt = (v, label, sel) => '<option value="' + esc(v) + '"' + (String(v) ===
 const sel = (id, opts, val, attrs) => '<select class="in" id="' + id + '" ' + (attrs || '') + '>' + opts.map(o => Array.isArray(o) ? opt(o[0], o[1], val) : opt(o, o, val)).join('') + '</select>';
 const val = id => { const e = $('#' + id); return e ? e.value.trim() : ''; };
 function kelasOpts(withAll) { return (withAll ? [['', withAll]] : []).concat(S.B.kelas.map(k => k.nama)); }
-function guruOpts(blank) { return (blank ? [['', blank]] : []).concat(S.B.users.filter(u => u.tipe === 'Guru').sort((a, b) => a.nama.localeCompare(b.nama)).map(u => [u.username, u.nama])); }
+function guruOpts(blank, denganSantri) {
+  const L = (blank ? [['', blank]] : []).concat(S.B.users.filter(u => u.tipe === 'Guru').sort((a, b) => a.nama.localeCompare(b.nama)).map(u => [u.username, u.nama]));
+  if (denganSantri) S.B.users.filter(u => u.tipe === 'Santri' && u.guruKhusus).sort((a, b) => a.nama.localeCompare(b.nama)).forEach(u => L.push([u.username, u.nama + ' — Santri ' + (u.kelas || '') + ' (Guru Khusus)']));
+  return L;
+}
 /** Pemilih santri dengan PENCARIAN (nama, username, kelas). Nilai terpilih ada di input tersembunyi #id. */
 const PICK_CB = {};
 const PICK_KELAS = {};
@@ -1423,7 +1431,7 @@ PAGES.beranda = async function () {
   const ann = d.pengumuman[0];
   let h = '<div class="banner"><div class="row" style="align-items:flex-start;position:relative;z-index:1">' + avatar(u) +
     '<div class="grow"><div class="hi">Ahlan wa Sahlan,</div><div class="nm">' + esc(u.nama) + vb(u) + '</div><div class="un">@' + esc(u.username) + '</div></div></div>' +
-    '<div class="tags"><span class="tag">' + (isSantri() ? 'Santri' : 'Dewan Guru') + '</span>' + peran.map(p => '<span class="tag">' + esc(p) + '</span>').join('') + '</div>' +
+    '<div class="tags"><span class="tag">' + (isSantri() ? 'Santri' : 'Dewan Guru') + '</span>' + peran.map(p => '<span class="tag">' + esc(p) + '</span>').join('') + (d.guruKhusus ? '<span class="tag gk">' + ic('grad') + ' Guru Khusus</span>' : '') + '</div>' +
     '<div class="dt">' + ic('cal') + esc(tanggal) + '</div></div>';
   h += '<div class="quick">' +
     qa('cal', 'Roster Pelajaran', 'openRoster()') + qa('chat', 'Room Chat', 'openChat()', d.unread) +
@@ -1436,6 +1444,7 @@ PAGES.beranda = async function () {
     '<span class="grow" style="text-align:left"><span class="b" style="display:block;font-size:14px">Pengajuan Santri Baru</span><span class="small muted">' + (d.pengajuan ? d.pengajuan + ' pengajuan menunggu persetujuan' : 'Tidak ada pengajuan baru') + '</span></span>' + ic('right') + '</button>';
   if (d.verifSaya === false) h += '<button class="notif-btn vf" onclick="openVerif()"><span class="ic">' + ic('shield') + '</span><span class="grow" style="text-align:left"><span class="b" style="display:block;font-size:14px">Lengkapi Verifikasi Data</span><span class="small muted">Dapatkan centang biru di samping nama Anda</span></span>' + ic('right') + '</button>';
   if (d.haris && d.haris.saya) h += harisCard(d.haris);
+  if (d.guruKhusus) h += guruKhususCard(d.guruKhusus);
   setNotifN(d.notifHariIni ? d.notifHariIni.total || 0 : 0);
   if (d.notifSaya !== undefined) setNotifSaya(d.notifSaya);
   if (d.baru) setBaru(d.baru);
@@ -1620,8 +1629,8 @@ async function rosterForm(i) {
       (mapelList.length ? sel('fms', [['', '— Pilih mata pelajaran —']].concat(mapelList).concat([['__baru', '＋ Mata pelajaran lain (ketik)']]), adaMapel ? (mapelList.find(x => x.toLowerCase() === String(g.mapel || '').trim().toLowerCase()) || '') : '__baru',
         'onchange="$(\'#fmw\').classList.toggle(\'hide\', this.value!==\'__baru\'); if(this.value===\'__baru\') $(\'#fm\').focus()"') : '') +
       '<div id="fmw" class="' + (mapelList.length && adaMapel ? 'hide' : '') + '" style="margin-top:' + (mapelList.length ? '8px' : '0') + '">' + inp('fm', adaMapel ? '' : (g.mapel || ''), 'placeholder="Ketik nama mata pelajaran"') + '</div>') +
-    fld('Guru Kelas', sel('fg', guruOpts('— Pilih guru terdaftar —'), g.guru || '')) +
-    '<div class="muted small" style="margin:-4px 0 14px">Hanya guru yang sudah memiliki akun yang dapat dipilih.</div>' +
+    fld('Guru Kelas', sel('fg', guruOpts('— Pilih guru terdaftar —', true), g.guru || '')) +
+    '<div class="muted small" style="margin:-4px 0 14px">Hanya guru yang memiliki akun, atau santri yang ditandai <b>Guru Khusus</b> di profilnya, yang dapat dipilih.</div>' +
     '<button class="btn full" id="fsv">Simpan</button>' + (g.rows.length ? '<button class="btn red full" style="margin-top:8px" id="fdl">Hapus</button>' : ''));
   window.fillSesi = () => { $('#fs').innerHTML = sesiFor(val('fk')).map(s => opt(s.kode, s.jam, g.sesi)).join(''); };
   fillSesi();
@@ -1681,10 +1690,11 @@ function penggantiForm(i) {
 function absenDari(i) { const r = REG[i]; S.ui.absTab = 'santri'; S.ui.absMode = 'input'; S.ui.abs = { kelas: r.kelas, sesi: r.sesi, tanggal: todayStr() }; go('absen'); }
 
 /* ---------- Pemberitahuan (khusus guru) ---------- */
-function openPemberitahuan() { S.ui.notifHari = 7; S.ui.nfMode = S.ui.nfMode || 'saya'; push('Pemberitahuan', pPemberitahuan, { sub: 'Untuk saya & catatan santri hari ini', noChat: false }); }
-function nfSeg() { return seg('nfMode', [['saya', 'Untuk Saya' + (S.notifSaya ? ' (' + S.notifSaya + ')' : '')], ['dayah', 'Catatan Santri' + (S.notifN ? ' (' + S.notifN + ')' : '')]], 'refresh()'); }
+function openPemberitahuan() { S.ui.notifHari = 7; S.ui.nfMode = isSantri() ? 'saya' : (S.ui.nfMode || 'saya'); push('Pemberitahuan', pPemberitahuan, { sub: isSantri() ? 'Pemberitahuan untuk saya' : 'Untuk saya & catatan santri hari ini', noChat: false }); }
+function nfSeg() { if (isSantri()) return ''; return seg('nfMode', [['saya', 'Untuk Saya' + (S.notifSaya ? ' (' + S.notifSaya + ')' : '')], ['dayah', 'Catatan Santri' + (S.notifN ? ' (' + S.notifN + ')' : '')]], 'refresh()'); }
 const NF_IC = { suka: ['heart', '#e11d48'], komentar: ['comment', '#2563eb'], bagikan: ['share', '#7c3aed'], ngaji: ['book', '#b45309'], pulang: ['bus', '#0891b2'], keluar: ['door', '#0d9488'], pelanggaran: ['flag', '#dc2626'] };
 async function pPemberitahuan() {
+  if (isSantri()) S.ui.nfMode = 'saya';   // santri hanya melihat pemberitahuan miliknya
   if (uiState('nfMode', 'saya') !== 'saya') return pPemberitahuanDayah();
   const t = loading(5); const d = await api('notif.saya'); if (!alive(t)) return;
   let h = nfSeg(), hari = '';
@@ -2231,11 +2241,11 @@ async function pProfil(un) {
   const san = d.tipe === 'Santri';
   let h = '<div class="card phead"><div class="row" style="align-items:center;gap:14px">' + avatar(d, 'sm').replace('av sm', 'av sm" style="width:72px;height:72px;font-size:24px') +
     '<div class="grow" style="min-width:0"><div class="b" style="font-size:17px;line-height:1.25">' + esc(d.nama) + (d.verif ? VBADGE : '') + '</div><div class="small muted">@' + esc(d.username) + '</div>' +
-    '<div style="margin-top:4px"><span class="pillx">' + (san ? 'Santri' : 'Dewan Guru') + '</span>' + (san && d.kelas ? '<span class="pillx">' + esc(d.kelas) + '</span>' : '') + (d.aktif === 'Tidak' ? '<span class="st no">Nonaktif</span>' : '') + '</div></div>' +
+    '<div style="margin-top:4px"><span class="pillx">' + (san ? 'Santri' : 'Dewan Guru') + '</span>' + (san && d.kelas ? '<span class="pillx">' + esc(d.kelas) + '</span>' : '') + (d.guruKhusus ? '<span class="pillx gk">' + ic('grad') + ' Guru Khusus</span>' : '') + (d.aktif === 'Tidak' ? '<span class="st no">Nonaktif</span>' : '') + '</div></div>' +
     (!d.self ? '<button class="pchat" onclick="chatWith(\'' + esc(d.username) + '\')" title="Room Chat">' + ic('chat') + '</button>' : '') + '</div></div>';
   h += '<div class="card plist">' +
     row(san ? 'NIS' : esc(d.jenis_nomor), '', dash(d.nis_nip)) +
-    (san ? row('Kelas', '', dash(d.kelas)) : row('Kabag / Peran', '', d.kabag ? d.kabag.split(',').map(x => '<span class="pillx">' + esc(x.trim()) + '</span>').join('') : dash('')) + (d.mengajar ? row('Mengajar', '', esc(d.mengajar)) : '')) +
+    (san ? row('Kelas', '', dash(d.kelas)) + (d.guruKhusus ? row('Mengajar', '', d.mengajarLabel && d.mengajarLabel.length ? d.mengajarLabel.map(x => '<span class="pillx gk">' + esc(x) + '</span>').join('') : '<span class="muted">Belum ada jadwal di roster</span>') : '') : row('Kabag / Peran', '', d.kabag ? d.kabag.split(',').map(x => '<span class="pillx">' + esc(x.trim()) + '</span>').join('') : dash('')) + (d.mengajar ? row('Mengajar', '', esc(d.mengajar)) : '')) +
     row('Asal', '', dash(d.asal)) +
     row('No. WA', 'wa', dash(d.wa), d.wa ? '<button class="pbtn wa" onclick="openExt(\'' + esc(waLink(d.wa)) + '\')">' + ic('chat') + ' Chat WA</button>' : '') +
     row('Instagram', 'ig', d.ig ? '@' + esc(igHandle(d.ig)) : dash(''), d.ig ? '<button class="pbtn ig" onclick="openExt(\'https://instagram.com/' + esc(igHandle(d.ig)) + '\')">' + ic('user') + ' Buka IG</button>' : '');
@@ -2253,6 +2263,7 @@ async function pProfil(un) {
   else { S.ui.galeri = d.galeri; h += '<div class="galeri">' + d.galeri.map((g, i) => '<button onclick="lihatFoto(' + i + ')"><img src="' + esc(g.url) + '" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.opacity=.2"></button>').join('') + '</div>'; }
   // tombol aksi
   const btns = [];
+  if (san && d.bolehGuruKhusus) btns.push('<button class="btn sec grow" onclick="aturGuruKhusus(\'' + esc(d.username) + '\',' + !d.guruKhusus + ')">' + ic('grad') + (d.guruKhusus ? ' Cabut Guru Khusus' : ' Jadikan Guru Khusus') + '</button>');
   if (P().users && d.username !== me().username) btns.push('<button class="btn sec grow" onclick="openVerif(\'' + esc(d.username) + '\')">' + ic('shield') + ' Data Verifikasi</button>');
   if ((d.self || isAdminApp()) && d.publik !== undefined) btns.push('<button class="btn sec grow" onclick="aturAkunPublik(' + !!d.publik + (d.self ? '' : ',\'' + esc(d.username) + '\'') + ')">' + ic(d.publik ? 'globe' : 'lock') + (d.publik ? ' Akun Publik' : ' Akun Terbatas') + '</button>');
   if (d.bolehEdit) btns.push('<button class="btn grow" onclick="openEditProfil(\'' + esc(d.username) + '\')">' + ic('edit') + (d.self ? ' Edit Profil' : ' Edit Profil (Pengembang)') + '</button>');
@@ -2486,34 +2497,41 @@ function openTentang() {
 function openChat() { push('Room Chat', pChat, { sub: 'Pesan pribadi antar pengguna' }); }
 async function pChat() {
   const t = loading(6);
-  const list = await api('chat.contacts');
+  let list = await api('chat.contacts');
   if (!alive(t)) return;
   if (!S.polls.pageContacts) S.polls.pageContacts = setInterval(() => { if (!document.hidden && !S.thread) api('chat.contacts', {}, true).catch(() => {}); }, 7000);
   S.ui.tamuNama = {}; list.filter(c => c.tamu).forEach(c => S.ui.tamuNama[c.username] = c.nama);
   S.ui.grupNama = {}; list.filter(c => c.grup).forEach(c => S.ui.grupNama[c.username] = { nama: c.nama, anggota: c.anggota, jenis: c.jenis });
+  const arsip = list.filter(c => c.arsip), lihatArsip = !!S.ui.lihatArsip;
+  if (lihatArsip) list = arsip; else list = list.filter(c => !c.arsip);
   const grups = list.filter(c => c.grup), orang = list.filter(c => !c.grup);
   const withMsg = orang.filter(c => c.last), others = orang.filter(c => !c.last);
   const row = c => '<div class="it" data-q="' + esc((c.nama + ' ' + (c.grup ? 'grup' : c.username) + ' ' + (c.kelas || '')).toLowerCase()) + '" onclick="chatWith(\'' + esc(c.username) + '\')">' + (c.grup ? avGrup(c.jenis) : c.sistem ? avSistem() : c.tamu ? '<div class="av sm avtamu">' + ic('user') + '</div>' : avatar(c, 'sm')) +
-    '<div class="grow"><div class="row"><div class="t grow ell">' + esc(c.nama) + (c.grup ? '' : vb(c)) + '</div>' + (c.last ? '<span class="small muted">' + (c.last.waktu.slice(0, 10) === todayStr() ? jam(c.last.waktu) : tgl(c.last.waktu)) + '</span>' : '') + '</div>' +
+    '<div class="grow"><div class="row"><div class="t grow ell">' + esc(c.nama) + (c.grup ? '' : vb(c)) + (c.blokir ? ' <span class="pillx" style="background:#fee2e2;color:#b91c1c">Diblokir</span>' : '') + '</div>' + (c.last ? '<span class="small muted">' + (c.last.waktu.slice(0, 10) === todayStr() ? jam(c.last.waktu) : tgl(c.last.waktu)) + '</span>' : '') + '</div>' +
     '<div class="row"><div class="s grow ell">' + (c.last ? (c.last.dariSaya ? 'Anda: ' : '') + esc(c.last.pesan) : esc(c.grup ? c.anggota + ' anggota' : c.tipe === 'Santri' ? c.kelas : (c.kabag || 'Dewan Guru'))) + '</div>' + (c.unread ? '<span class="ub">' + c.unread + '</span>' : '') + '</div></div></div>';
   view('<div class="row" style="gap:8px;margin-bottom:12px"><div class="search grow" style="margin:0">' + ic('search') + '<input class="in" placeholder="Cari nama atau grup..." oninput="filterList(this.value)"></div>' +
-    '<button class="btn sm" style="height:46px;border-radius:14px" onclick="buatGrup()">' + ic('users') + ' Buat Grup</button></div><div class="card"><div class="list" id="fl">' +
+    '<button class="btn sm" style="height:46px;border-radius:14px" onclick="buatGrup()">' + ic('users') + ' Buat Grup</button></div>' +
+    (lihatArsip ? '<button class="link" style="margin:0 4px 10px;display:flex;align-items:center;gap:6px" onclick="S.ui.lihatArsip=false;refresh()">' + ic('back') + ' Kembali ke semua chat</button>'
+      : arsip.length ? '<div class="card" style="margin-bottom:10px"><div class="list"><div class="it" onclick="S.ui.lihatArsip=true;refresh()"><div class="av sm" style="background:var(--chip);color:var(--pri2)">' + ic('archive') + '</div><div class="grow"><div class="t">Diarsipkan</div><div class="s">' + arsip.length + ' percakapan</div></div>' +
+        (arsip.reduce((a, c) => a + (c.unread || 0), 0) ? '<span class="ub">' + arsip.reduce((a, c) => a + (c.unread || 0), 0) + '</span>' : '') + ic('right') + '</div></div></div>' : '') +
+    '<div class="card"><div class="list" id="fl">' +
+    (lihatArsip && !list.length ? empty('Tidak ada chat yang diarsipkan.', 'archive') : '') +
     (grups.length ? '<div class="grp">Grup</div>' + grups.map(row).join('') : '') +
-    (withMsg.length ? '<div class="grp">Percakapan</div>' + withMsg.map(row).join('') : '') + '<div class="grp">Semua Pengguna</div>' + others.map(row).join('') + '</div></div>');
+    (withMsg.length ? '<div class="grp">' + (lihatArsip ? 'Diarsipkan' : 'Percakapan') + '</div>' + withMsg.map(row).join('') : '') + (others.length ? '<div class="grp">' + (lihatArsip ? 'Diarsipkan' : 'Semua Pengguna') + '</div>' + others.map(row).join('') : '') + '</div></div>');
 }
 function chatWith(un, namaGrup) {
   closeSheet();
   if (String(un).indexOf('g:') === 0) {
     const g = (S.ui.grupNama || {})[un] || {};
     const nama = namaGrup || g.nama || 'Grup';
-    push(nama, () => pThread(un), { sub: 'Grup' + (g.anggota ? ' • ' + g.anggota + ' anggota' : '') + ' • ketuk ⓘ untuk info', noNav: true, noChat: true,
-      aksi: '<button class="ib" onclick="infoGrup(\'' + esc(un) + '\')" aria-label="Info grup">' + ic('info') + '</button>' });
+    push(nama, () => pThread(un), { sub: 'Grup' + (g.anggota ? ' • ' + g.anggota + ' anggota' : '') + ' • ketuk untuk info grup', noNav: true, noChat: true,
+      onTitle: 'infoGrup(\'' + esc(un) + '\')', aksi: chatTitik(un) });
     return;
   }
-  if (String(un).indexOf('tamu:') === 0) { push(((S.ui.tamuNama || {})[un]) || 'Tamu', () => pThread(un), { sub: 'Tamu dari halaman depan • belum terdaftar', noNav: true, noChat: true }); return; }
-  if (un === SISTEM_CHAT) { push('Sistem Alhuda Mobile', () => pThread(un), { sub: 'Pesan otomatis aplikasi', noNav: true, noChat: true }); return; }
+  if (String(un).indexOf('tamu:') === 0) { push(((S.ui.tamuNama || {})[un]) || 'Tamu', () => pThread(un), { sub: 'Tamu dari halaman depan • belum terdaftar', noNav: true, noChat: true, aksi: chatTitik(un) }); return; }
+  if (un === SISTEM_CHAT) { push('Sistem Alhuda Mobile', () => pThread(un), { sub: 'Pesan otomatis aplikasi', noNav: true, noChat: true, aksi: chatTitik(un) }); return; }
   const nama = userName(un);
-  push(nama, () => pThread(un), { sub: 'Chat pribadi • @' + un, noNav: true, noChat: true });
+  push(nama, () => pThread(un), { sub: '@' + un + ' • ketuk untuk lihat profil', noNav: true, noChat: true, onTitle: 'openProfil(\'' + esc(un) + '\')', aksi: chatTitik(un) });
 }
 async function pThread(un) {
   const t = loading(3);
@@ -2542,6 +2560,7 @@ async function pThread(un) {
     '<textarea id="cm" placeholder="Tulis pesan..." rows="1"></textarea><button onclick="kirim()" aria-label="Kirim">' + ic('send') + '</button>';
   $('#app').appendChild(c);
   pasangGeser($('#msgs'));
+  chatCekAtur(un, t);
   $('#cm').addEventListener('input', e => { e.target.style.height = '42px'; e.target.style.height = Math.min(110, e.target.scrollHeight) + 'px'; });
   S.polls.thread = setInterval(() => pollThread(t), 3000);
   pollUnread();
@@ -4982,6 +5001,87 @@ async function ghHapusToken(btn) {
   busy(btn, true);
   try { await rawApi('gh.config.save', { repo: val('ghr'), branch: val('ghbr'), folder: val('ghfo'), situs: val('ghsi'), hapusToken: true }); toast('Token dihapus.', 'ok'); refresh(); }
   catch (e) { toast(e.message, 'err'); busy(btn, false); }
+}
+
+/* =============================================================
+ *  v2.12.0 — menu ⋮ Room Chat (arsip, hapus chat, blokir) & Santri Guru Khusus
+ * ============================================================= */
+const eqi = (a, b) => String(a || "").toLowerCase() === String(b || "").toLowerCase();
+function chatTitik(un) { return '<button class="ib" onclick="chatMenu(\'' + esc(un) + '\')" aria-label="Menu chat">' + ic('more') + '</button>'; }
+const jenisChat = un => String(un).indexOf('g:') === 0 ? 'grup' : String(un).indexOf('tamu:') === 0 ? 'tamu' : un === SISTEM_CHAT ? 'sistem' : 'orang';
+/** Status arsip / blokir percakapan; bila diblokir, kolom pesan diganti keterangan. */
+async function chatCekAtur(un, t) {
+  S.ui.chatAtur = S.ui.chatAtur || {};
+  if (S.ui.chatAtur[un]) chatTerapkanAtur(un);
+  try { const a = await rawApi('chat.atur.get', { with: un }, true); S.ui.chatAtur[un] = a; if (S.thread && S.thread.t === t) chatTerapkanAtur(un); } catch (e) {}
+}
+function chatTerapkanAtur(un) {
+  const a = (S.ui.chatAtur || {})[un], c = $('#composer'); if (!a || !c || !S.thread || S.thread.with !== un) return;
+  if (a.blokir) {
+    c.className = 'composer sysbar'; c.dataset.blokir = 1;
+    c.innerHTML = ic('ban') + '<span class="grow">Anda memblokir <b>' + esc(userName(un)) + '</b>. Pesan darinya tidak ditampilkan.</span><button class="btn sm" style="white-space:nowrap;flex:none;width:auto;min-width:0;padding:0 14px;border-radius:12px;font-size:13px" onclick="chatBlokir(\'' + esc(un) + '\',false)">Buka blokir</button>';
+  } else if (c.dataset.blokir) refresh();
+}
+function chatMenu(un) {
+  const j = jenisChat(un), a = (S.ui.chatAtur || {})[un] || {};
+  const it = (icon, label, fn, merah) => '<button class="mitem"' + (merah ? ' style="color:#b91c1c"' : '') + ' onclick="closeSheet();' + fn + '">' + ic(icon) + ' ' + label + '</button>';
+  const nama = j === 'grup' ? ((S.ui.grupNama || {})[un] || {}).nama || 'Grup' : j === 'tamu' ? ((S.ui.tamuNama || {})[un] || 'Tamu') : j === 'sistem' ? 'Sistem Alhuda Mobile' : userName(un);
+  sheet(nama, '<div class="mlist">' +
+    (j === 'orang' ? it('user', 'Lihat profil', 'openProfil(\'' + esc(un) + '\')') : '') +
+    (j === 'grup' ? it('info', 'Info grup', 'infoGrup(\'' + esc(un) + '\')') : '') +
+    it('archive', a.arsip ? 'Keluarkan dari arsip' : 'Arsipkan chat', 'chatArsip(\'' + esc(un) + '\',' + !a.arsip + ')') +
+    it('trash', 'Hapus chat', 'chatBersihkan(\'' + esc(un) + '\')', true) +
+    (j === 'orang' ? it('ban', a.blokir ? 'Buka blokir' : 'Blokir pengguna', 'chatBlokir(\'' + esc(un) + '\',' + !a.blokir + ')', !a.blokir) : '') +
+    '</div><div class="small muted" style="margin-top:10px">Arsip, hapus chat, dan blokir hanya berlaku untuk Anda.</div>');
+}
+function chatSetAtur(un, a) { S.ui.chatAtur = S.ui.chatAtur || {}; S.ui.chatAtur[un] = a; S.fetchedAt = {}; }
+async function chatArsip(un, arsip) {
+  try {
+    chatSetAtur(un, await rawApi('chat.arsip', { with: un, arsip: arsip }));
+    editCache('chat.contacts', () => true, v => v.map(c => eqi(c.username, un) ? Object.assign({}, c, { arsip: arsip }) : c));
+    toast(arsip ? 'Chat diarsipkan. Lihat di bagian "Diarsipkan" pada Room Chat.' : 'Chat dikeluarkan dari arsip.', 'ok');
+    if (arsip && S.thread && S.thread.with === un) back();
+  } catch (e) { toast(e.message, 'err'); }
+}
+async function chatBersihkan(un) {
+  if (!(await ask('Hapus semua pesan di percakapan ini? Pesan hanya hilang dari tampilan Anda; lawan bicara tetap dapat melihatnya.', 'Hapus chat'))) return;
+  try {
+    chatSetAtur(un, await rawApi('chat.bersihkan', { with: un }));
+    editCache('chat.thread', x => eqi(x.with, un), () => []);
+    editCache('chat.contacts', () => true, v => v.map(c => eqi(c.username, un) ? Object.assign({}, c, { last: null, unread: 0 }) : c));
+    toast('Chat dihapus.', 'ok');
+    if (S.thread && S.thread.with === un) refresh();
+  } catch (e) { toast(e.message, 'err'); }
+}
+async function chatBlokir(un, blokir) {
+  if (blokir && !(await ask('Blokir ' + userName(un) + '? Anda tidak akan menerima pesan darinya, dan tidak dapat mengirim pesan kepadanya sampai blokir dibuka.', 'Blokir'))) return;
+  try {
+    chatSetAtur(un, await rawApi('chat.blokir', { with: un, blokir: blokir }));
+    editCache('chat.contacts', () => true, v => v.map(c => eqi(c.username, un) ? Object.assign({}, c, { blokir: blokir }) : c));
+    toast(blokir ? 'Pengguna diblokir.' : 'Blokir dibuka.', 'ok');
+    if (S.thread && S.thread.with === un) { if (blokir) chatTerapkanAtur(un); else refresh(); }
+  } catch (e) { toast(e.message, 'err'); }
+}
+
+/* ---------- Santri Guru Khusus ---------- */
+function guruKhususCard(g) {
+  const L = g.mengajar || [];
+  return '<div class="sec"><h3>' + ic('grad') + ' Tugas Mengajar</h3><button class="link" onclick="openRoster()">Roster</button></div><div class="card gkc">' +
+    (g.label && g.label.length ? '<div>' + g.label.map(x => '<span class="gkb">' + ic('grad') + esc(x) + '</span>').join('') + '</div>' : '<div class="small muted">Anda ditandai sebagai <b>Guru Khusus</b>. Jadwal mengajar akan tampil setelah ditambahkan di roster.</div>') +
+    (L.length ? '<div class="list" style="margin-top:4px">' + L.map(r => '<div class="it" style="cursor:default;padding:8px 0"><div class="grow"><div class="t">' + esc(r.mapel) + ' • ' + esc(r.kelas) + '</div><div class="s">' + esc(r.hari || 'Setiap Hari') + ' • ' + esc(r.jam) + '</div></div></div>').join('') + '</div>' : '') + '</div>';
+}
+async function aturGuruKhusus(un, aktif, paksa) {
+  if (aktif && !paksa && !(await ask('Tandai ' + userName(un) + ' sebagai Guru Khusus? Santri ini dapat dipilih sebagai pengajar di Roster Pelajaran.', 'Tandai'))) return;
+  try {
+    await rawApi('guruKhusus.set', { username: un, aktif: aktif, paksa: !!paksa });
+    const x = S.B.users.find(v => eqi(v.username, un)); if (x) x.guruKhusus = aktif;
+    cset(ckey('boot', {}), S.B, 'boot', {}); S.fetchedAt = {};
+    toast(aktif ? 'Ditandai sebagai Guru Khusus.' : 'Status Guru Khusus dicabut.', 'ok'); refresh();
+  } catch (e) {
+    const m = String(e.message).match(/^PAKAI:(\d+)/);
+    if (m) { if (await ask('Santri ini masih mengajar ' + m[1] + ' jadwal di roster. Cabut status Guru Khusus dan hapus jadwal tersebut dari roster?', 'Cabut & hapus jadwal')) aturGuruKhusus(un, false, true); }
+    else toast(e.message, 'err');
+  }
 }
 
 /* ---------- mulai ---------- */
