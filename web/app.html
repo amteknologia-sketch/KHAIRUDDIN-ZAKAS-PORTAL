@@ -1067,7 +1067,7 @@ async function showLogin() {
     '<div class="card daftar-cta"><div class="grow"><div class="b">Belum punya akun?</div><div class="small muted">Calon santri dapat mendaftar secara online.</div></div><button class="btn sec" onclick="formDaftar()">' + ic('edit') + ' Daftar Santri Baru</button></div>' +
     '<div class="muted small" style="text-align:center;margin-top:18px">© 2026 DAMAS.Media_Centre</div></div>';
   tataLogin(); pubMulai();
-  { let n = 0, tm; $('#lg').addEventListener('click', () => { clearTimeout(tm); tm = setTimeout(() => n = 0, 1500); if (++n >= 5) { n = 0; openServer(); } }); }
+  { let n = 0, tm; $('#lg').addEventListener('click', () => { clearTimeout(tm); tm = setTimeout(() => n = 0, 1500); if (++n >= 5) { n = 0; mintaDevServer(); } }); }
   $('#lp').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
   if (!isOnline()) toast('Anda sedang offline. Login pertama kali memerlukan internet.', 'err');
   setTimeout(showInstallBar, 600);
@@ -4662,6 +4662,37 @@ async function loginDevSimpan(btn) {
 }
 
 /* ---------- alamat server (URL Web App) ---------- */
+/* Ketuk logo 5× di halaman login → wajib username & kata sandi pengembang sebelum alamat server ditampilkan.
+   Disimpan hanya sebagai sidik SHA-256 (bukan teks asli), sehingga tetap berfungsi walau server belum terhubung. */
+const DEV_GERBANG = 'dc4942f2f4a69546c56f6b6b9539d203f07e7a30d147cdfc08aef49aa92e785d';
+async function sha256Hex(t) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, '0')).join(''); }
+function mintaDevServer() {
+  const kunci = Number(store.get('alhuda_gerbang_kunci') || 0);
+  if (kunci > Date.now()) return toast('Terlalu banyak percobaan. Coba lagi ' + Math.ceil((kunci - Date.now()) / 60000) + ' menit lagi.', 'err');
+  const d = sheet('Khusus Pengembang Aplikasi', '<div class="small muted" style="margin-bottom:12px">Masukkan username & kata sandi Pengembang Aplikasi untuk membuka pengaturan alamat server.</div>' +
+    fld('Username', inp('gdu', '', 'autocapitalize="none" autocomplete="off"')) +
+    fld('Kata sandi', '<div class="pw"><input class="in" id="gdp" type="password" autocomplete="off"><button class="eye" type="button" onclick="togglePw(\'gdp\',this)">' + ic('eye') + '</button></div>') +
+    '<button class="btn full" id="gdok">' + ic('lock') + ' Lanjut</button>');
+  const cek = async e => {
+    const u = val('gdu').toLowerCase(), pw = $('#gdp').value; if (!u || !pw) return toast('Username dan kata sandi wajib diisi.', 'err');
+    busy($('#gdok'), true);
+    let ok = false;
+    try { ok = (await sha256Hex('alhuda-dev|' + u + '|' + pw)) === DEV_GERBANG; } catch (z) {}
+    if (!ok && (API_URL || NATIVE || HAS_GAS) && isOnline()) { // akun Pengembang Aplikasi di server juga diterima
+      try { const r = await api('login', { username: u, password: pw }, true); ok = !!(r && r.perms && r.perms.dev); } catch (z) {}
+    }
+    busy($('#gdok'), false);
+    if (!ok) {
+      const n = Number(store.get('alhuda_gerbang_gagal') || 0) + 1;
+      if (n >= 5) { store.set('alhuda_gerbang_kunci', String(Date.now() + 5 * 60000)); store.set('alhuda_gerbang_gagal', null); closeSheet(); return toast('Salah 5 kali. Dikunci 5 menit.', 'err'); }
+      store.set('alhuda_gerbang_gagal', String(n)); return toast('Username atau kata sandi pengembang salah.', 'err');
+    }
+    store.set('alhuda_gerbang_gagal', null); closeSheet(); openServer();
+  };
+  $('#gdok', d).onclick = cek;
+  $('#gdp', d).addEventListener('keydown', e => { if (e.key === 'Enter') cek(); });
+  setTimeout(() => { try { $('#gdu').focus(); } catch (e) {} }, 300);
+}
 function hostServer(u) { const m = String(u || '').match(/\/macros\/s\/([\w-]{6})[\w-]*\/exec/); return m ? 'Web App …' + m[1] + '…/exec' : String(u || '').replace(/^https:\/\//, '').slice(0, 40); }
 function formServer(id) {
   return '<div class="noganti">' + fld('URL Web App', '<textarea class="in" id="' + id + '" style="min-height:76px;font-size:13px" autocapitalize="none" spellcheck="false" placeholder="https://script.google.com/macros/s/…/exec">' + esc(urlServerLokal() || API_URL || '') + '</textarea>') +
