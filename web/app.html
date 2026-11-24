@@ -3,7 +3,7 @@
 <head>
 <base target="_top">
 <meta charset="utf-8">
-<meta name="alhuda-app" content="2.10.0">
+<meta name="alhuda-app" content="2.11.0">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>ALHUDA MOBILE</title>
 <style>
@@ -508,6 +508,7 @@ html.desk .login .lmain>.muted:last-child{display:none}
 @media (max-width:1100px){html.desk .login .hd{padding:40px}html.desk .login h1{font-size:30px}}
 /* Roster: hari multi-pilih */
 .checks label.on{border-color:var(--pri2);background:var(--soft)}
+.ghrow .btn{height:40px;margin:0;flex:1 1 0}
 </style>
 </head>
 <body>
@@ -675,7 +676,7 @@ function rawApi(action, params, silent) {
  *  - Setiap perubahan membawa _cid unik → server tidak mencatat dua kali.
  * ============================================================= */
 const WRITE_RE = /\.(save|delete|send|kembali|naik)$/;
-const ONLINE_ONLY = { 'dev.login.save': 'Mengatur login pengembang', 'dev.tema.save': 'Mengatur tema aplikasi', 'sesi.save': 'Mengatur sesi', 'sesi.delete': 'Menghapus sesi', 'wali.save': 'Mengatur wali kelas', 'peran.save': 'Mengatur peran', 'peran.delete': 'Menghapus peran', 'peran.pulihkan': 'Memulihkan peran', 'admin.resetSandi': 'Reset kata sandi', 'admin.aktif': 'Mengunci / membuka akun', 'post.fotoTambah': 'Mengunggah foto', 'publik.ajukan': 'Mengajukan ke layar utama', 'publik.turunkan': 'Menurunkan dari layar utama', 'publik.putuskan': 'Verifikasi layar utama', 'publik.komentarPutuskan': 'Verifikasi komentar', 'profil.publik': 'Mengubah visibilitas akun', 'profil.password': 'Ganti kata sandi', 'profil.photo': 'Unggah foto profil', 'raport.pdf': 'Cetak PDF', 'iuran.pdf': 'Cetak PDF', 'tahunan.pdf': 'Cetak PDF', 'settings.save': 'Mengubah pengaturan aplikasi', 'logo.upload': 'Mengganti logo', 'logo.reset': 'Mengganti logo', 'profil.galeriAdd': 'Menambah foto galeri', 'profil.galeriDelete': 'Menghapus foto galeri', 'chat.file': 'Mengirim foto, video, atau dokumen', 'iuran.laporan': 'Cetak laporan PDF', 'tahunan.laporan': 'Cetak laporan PDF', 'grup.save': 'Menyimpan grup', 'grup.keluar': 'Keluar dari grup', 'chat.forward': 'Meneruskan pesan', 'chat.edit': 'Mengedit pesan', 'chat.hapus': 'Menghapus pesan', 'haris.save': 'Menyimpan daftar haris', 'haris.delete': 'Menghapus kelompok haris', 'asrama.save': 'Menyimpan asrama', 'asrama.delete': 'Menghapus asrama', 'asrama.dokAdd': 'Mengunggah dokumentasi', 'asrama.dokDelete': 'Menghapus dokumentasi', 'kabilah.save': 'Menyimpan kabilah', 'kabilah.delete': 'Menghapus kabilah', 'post.save': 'Menyimpan postingan', 'post.delete': 'Menghapus postingan', 'post.bagikan': 'Membagikan postingan', 'pengajuan.terima': 'Menerima santri baru', 'pengajuan.tolak': 'Menolak pengajuan', 'verif.save': 'Menyimpan data verifikasi', 'verif.upload': 'Mengunggah dokumen', 'verif.hapusFile': 'Menghapus dokumen', 'kelas.save': 'Menyimpan kelas', 'kelas.delete': 'Menghapus kelas' };
+const ONLINE_ONLY = { 'gh.save': 'Mengubah file di GitHub', 'gh.delete': 'Menghapus file di GitHub', 'gh.config.save': 'Mengatur GitHub', 'gh.banner.upload': 'Mengunggah banner', 'gh.banner.save': 'Mengatur banner', 'gh.banner.hapus': 'Menghapus banner', 'dev.login.save': 'Mengatur login pengembang', 'dev.tema.save': 'Mengatur tema aplikasi', 'sesi.save': 'Mengatur sesi', 'sesi.delete': 'Menghapus sesi', 'wali.save': 'Mengatur wali kelas', 'peran.save': 'Mengatur peran', 'peran.delete': 'Menghapus peran', 'peran.pulihkan': 'Memulihkan peran', 'admin.resetSandi': 'Reset kata sandi', 'admin.aktif': 'Mengunci / membuka akun', 'post.fotoTambah': 'Mengunggah foto', 'publik.ajukan': 'Mengajukan ke layar utama', 'publik.turunkan': 'Menurunkan dari layar utama', 'publik.putuskan': 'Verifikasi layar utama', 'publik.komentarPutuskan': 'Verifikasi komentar', 'profil.publik': 'Mengubah visibilitas akun', 'profil.password': 'Ganti kata sandi', 'profil.photo': 'Unggah foto profil', 'raport.pdf': 'Cetak PDF', 'iuran.pdf': 'Cetak PDF', 'tahunan.pdf': 'Cetak PDF', 'settings.save': 'Mengubah pengaturan aplikasi', 'logo.upload': 'Mengganti logo', 'logo.reset': 'Mengganti logo', 'profil.galeriAdd': 'Menambah foto galeri', 'profil.galeriDelete': 'Menghapus foto galeri', 'chat.file': 'Mengirim foto, video, atau dokumen', 'iuran.laporan': 'Cetak laporan PDF', 'tahunan.laporan': 'Cetak laporan PDF', 'grup.save': 'Menyimpan grup', 'grup.keluar': 'Keluar dari grup', 'chat.forward': 'Meneruskan pesan', 'chat.edit': 'Mengedit pesan', 'chat.hapus': 'Menghapus pesan', 'haris.save': 'Menyimpan daftar haris', 'haris.delete': 'Menghapus kelompok haris', 'asrama.save': 'Menyimpan asrama', 'asrama.delete': 'Menghapus asrama', 'asrama.dokAdd': 'Mengunggah dokumentasi', 'asrama.dokDelete': 'Menghapus dokumentasi', 'kabilah.save': 'Menyimpan kabilah', 'kabilah.delete': 'Menghapus kabilah', 'post.save': 'Menyimpan postingan', 'post.delete': 'Menghapus postingan', 'post.bagikan': 'Membagikan postingan', 'pengajuan.terima': 'Menerima santri baru', 'pengajuan.tolak': 'Menolak pengajuan', 'verif.save': 'Menyimpan data verifikasi', 'verif.upload': 'Mengunggah dokumen', 'verif.hapusFile': 'Menghapus dokumen', 'kelas.save': 'Menyimpan kelas', 'kelas.delete': 'Menghapus kelas' };
 S.online = true;
 function isOnline() { try { if (BR && BR.isOnline) return !!BR.isOnline(); } catch (e) {} return navigator.onLine !== false; }
 function uname() { return (S.B && S.B.user && S.B.user.username) || store.get('alhuda_uname') || '_'; }
@@ -4244,6 +4245,7 @@ function pAksesAdmin() {
   if (P().users) akad.push(['grad', 'Daftar Kelas & Nama Lembaga', 'Tambah, ubah, hapus kelas • ubah nama lembaga (mis. ' + esc(lbl('Wustha')) + ' → SMP)', 'openKelolaKelas()']);
   if (P().settings) tampil.push(['mosque', 'Tentang Dayah & Instagram', 'Teks Tentang Dayah, alamat, lokasi & Instagram di halaman depan', 'openEditDepan()']);
   if (isAdminApp() || P().dev) tampil.push(['palette', 'Logo Aplikasi & Kop Surat', 'Logo dayah, ' + esc(lbl('Wustha')) + ' & ' + esc(lbl('Ulya')) + ' untuk kop raport', 'openLogo()']);
+  if (isAdminApp()) tampil.push(['globe', 'Halaman Home & Banner (GitHub)', 'Unggah, ubah & hapus file di folder home serta banner situs', 'openGitHub()']);
   if (isAdminApp()) tampil.push(['globe', 'Layar Utama Publik', 'Verifikasi postingan & komentar tamu di halaman depan', 'openLayarUtama()']);
   if (P().settings) lain.push(['gear', 'Pengaturan Aplikasi', 'Tahun ajaran, nominal iuran, kop surat, teks pesan', 'openSettings()']);
   view('<div class="card hcard small" style="display:flex;gap:10px;align-items:flex-start">' + ic('shield') + '<span>Menu ini hanya terlihat oleh Admin' + (P().dev ? ' & Pengembang Aplikasi' : '') + '. Perubahan langsung berlaku untuk semua pengguna.</span></div>' +
@@ -4538,6 +4540,7 @@ function pAksesDev() {
       ['lock', 'Login Khusus Pengembang', 'Masuk tanpa akun di sheet Users • sandi disimpan di Script Properties', 'openLoginDev()'],
       ['globe', 'Alamat Server (URL Web App)', HAS_GAS ? 'Dibuka langsung dari Apps Script' : esc(hostServer(API_URL) || 'Belum diatur') + (urlServerLokal() ? ' • diatur di perangkat ini' : ' • bawaan'), 'openServer()']]) +
     g('Semua Akses', [
+      ['globe', 'Halaman Home & Banner (GitHub)', 'File di folder home, banner situs & token GitHub', 'openGitHub()'],
       ['shield', 'Akses Khusus Admin', 'Akun, data pengguna, sesi, wali kelas, peran, kelas & halaman depan', 'openAksesAdmin()'],
       ['gear', 'Pengaturan Aplikasi (lengkap)', 'Semua isian di sheet Pengaturan, termasuk nominal iuran', 'openSettings()']]));
 }
@@ -4751,6 +4754,234 @@ async function simpanServer(btn, id) {
 async function resetServer() {
   if (!(await ask('Kembalikan ke server bawaan aplikasi? Anda akan keluar dari akun.', 'Kembalikan'))) return;
   pindahServer('');
+}
+
+/* =============================================================
+ *  HALAMAN HOME & BANNER DI GITHUB (Tahap 4)
+ *  Token GitHub disimpan di server (Script Properties) — aplikasi tidak pernah menerimanya.
+ * ============================================================= */
+function openGitHub() { S.ui.ghDir = ''; push('Halaman Home & Banner', pGitHub, { sub: 'Kelola folder home di GitHub' }); }
+function ghUkuran(b) { return b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : b >= 1024 ? Math.round(b / 1024) + ' KB' : b + ' B'; }
+const GH_TEKS = /\.(html?|css|js|json|txt|xml|md|svg|webmanifest)$/i, GH_GBR = /\.(jpe?g|png|webp|gif|ico|svg)$/i;
+async function pGitHub() {
+  const t = loading(4);
+  let c;
+  try { c = await rawApi('gh.config.get'); } catch (e) { if (alive(t)) view('<div class="card">' + empty(e.message, 'info') + '</div>'); return; }
+  if (!alive(t)) return;
+  S.ui.ghc = c;
+  let md = uiState('ghMode', c.adaToken ? 'banner' : 'atur'); if (!c.adaToken) md = S.ui.ghMode = 'atur';
+  const head = seg('ghMode', [['banner', 'Banner'], ['file', 'File Home'], ['atur', 'Pengaturan GitHub']], 'refresh()');
+  if (md === 'atur') return view(head + ghAturHtml(c));
+  const t2 = loading(4);
+  try {
+    if (md === 'banner') { const d = await rawApi('gh.banner.list'); if (alive(t2)) { view(head + ghBannerHtml(d)); $$('img[data-x]').forEach(ghThumb); } }
+    else { const d = await rawApi('gh.list', { dir: S.ui.ghDir || '' }); if (alive(t2)) view(head + ghFileHtml(d)); }
+  } catch (e) { if (alive(t2)) view(head + '<div class="card">' + empty(e.message, 'info') + '</div>'); }
+}
+const GH_INFO = '<div class="card hcard small">' + ic('info') + ' Setiap perubahan langsung tersimpan (commit) di GitHub, lalu situs diterbitkan ulang otomatis dalam ±1–2 menit.</div>';
+
+/* ---------- banner ---------- */
+function ghBannerHtml(d) {
+  S.ui.ghb = d.banner;
+  const L = d.banner, v = Date.now();
+  return GH_INFO + '<div class="sec"><h3>Banner Halaman Home (' + L.length + '/' + d.maks + ')</h3></div>' +
+    L.map((b, i) => '<div class="card" style="padding:10px">' +
+      '<div style="position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:var(--chip);display:grid;place-items:center;margin-bottom:8px">' +
+        '<img data-rel="' + esc(b.rel) + '" src="' + (b.situs ? esc(b.situs) + '?t=' + v : '') + '" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" onerror="ghThumb(this)"' + (b.situs ? '' : ' data-x="1"') + '>' +
+        '<span class="small muted" style="padding:10px;text-align:center">' + esc(b.file) + '<br>(pratinjau tampil setelah situs terbit)</span>' +
+        '<span style="position:absolute;top:8px;left:8px;background:rgba(0,0,0,.55);color:#fff;border-radius:8px;padding:2px 8px;font-size:12px;font-weight:700">' + (i + 1) + '</span></div>' +
+      '<div class="row" style="gap:6px;align-items:center"><div class="grow" style="min-width:0"><div class="t ell b">' + esc(b.judul || 'Tanpa judul') + '</div><div class="s small muted">img/' + esc(b.file) + '</div></div>' +
+        '<button class="btn sec sm" ' + (i ? '' : 'disabled ') + 'onclick="ghBannerGeser(' + i + ',-1)" title="Naik">▲</button>' +
+        '<button class="btn sec sm" ' + (i < L.length - 1 ? '' : 'disabled ') + 'onclick="ghBannerGeser(' + i + ',1)" title="Turun">▼</button></div>' +
+      '<div class="row ghrow" style="gap:6px;margin-top:8px">' +
+        '<button class="btn sec sm grow" onclick="ghBannerJudul(' + i + ')">' + ic('edit') + ' Judul</button>' +
+        '<button class="btn sec sm grow" onclick="ghPilihBanner(' + i + ')">' + ic('image') + ' Ganti</button>' +
+        '<button class="btn red sm grow" onclick="ghBannerHapus(' + i + ')">' + ic('trash') + ' Hapus</button></div></div>').join('') +
+    (L.length < d.maks ? '<button class="btn full" onclick="ghPilihBanner(-1)">' + ic('plus') + ' Tambah Banner</button>' : '<div class="small muted" style="text-align:center">Banner sudah maksimal ' + d.maks + '.</div>') +
+    '<div class="small muted" style="padding:8px 4px">Gambar otomatis dipotong ke rasio <b>16:9</b> (1600×900) & dikompres JPG. Banner berganti tiap 4 detik di halaman Home.</div>';
+}
+/** Pratinjau banner: dari situs; bila belum terbit / tidak terjangkau → ambil langsung dari GitHub. */
+async function ghThumb(img) {
+  if (img.dataset.gh) return img.remove(); img.dataset.gh = 1;
+  try { const r = await rawApi('gh.read', { rel: img.dataset.rel }, true); img.src = r.data; } catch (e) { img.remove(); }
+}
+/** Potong tengah ke 16:9, 1600×900, JPG. */
+function potong169(file) {
+  return new Promise((res, rej) => {
+    const rd = new FileReader();
+    rd.onload = () => { const img = new Image(); img.onload = () => {
+      const W = 1600, H = 900, r = W / H; let sw = img.width, sh = img.height, sx = 0, sy = 0;
+      if (sw / sh > r) { sw = sh * r; sx = (img.width - sw) / 2; } else { sh = sw / r; sy = (img.height - sh) / 2; }
+      const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, W, H);
+      x.drawImage(img, sx, sy, sw, sh, 0, 0, W, H); res(c.toDataURL('image/jpeg', .85)); };
+      img.onerror = () => rej(new Error('File bukan gambar yang valid.')); img.src = rd.result; };
+    rd.onerror = () => rej(new Error('File tidak dapat dibaca.')); rd.readAsDataURL(file);
+  });
+}
+function ghPilihBanner(i) {
+  const f = document.createElement('input'); f.type = 'file'; f.accept = 'image/*';
+  f.onchange = async () => {
+    if (!f.files[0]) return;
+    let data; try { data = await potong169(f.files[0]); } catch (e) { return toast(e.message, 'err'); }
+    const lama = i >= 0 ? S.ui.ghb[i] : null;
+    const d = sheet(lama ? 'Ganti Gambar Banner ' + (i + 1) : 'Tambah Banner', '<img src="' + data + '" style="width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;margin-bottom:12px">' +
+      fld('Judul / keterangan (untuk Google & pembaca layar)', inp('ghbj', lama ? lama.judul : '', 'maxlength="120" placeholder="Mis. Pendaftaran santri baru dibuka"')) +
+      '<button class="btn full" id="ghbu">' + ic('dl') + ' Unggah ke GitHub</button>');
+    $('#ghbu', d).onclick = async e => {
+      busy(e.target, true);
+      try { await rawApi('gh.banner.upload', { data: data, judul: val('ghbj'), file: lama ? lama.file : '' }); closeSheet(); toast(lama ? 'Gambar banner diganti.' : 'Banner ditambahkan.', 'ok'); refresh(); }
+      catch (z) { toast(z.message, 'err'); busy(e.target, false); }
+    };
+  };
+  f.click();
+}
+async function ghBannerSimpanUrut(L, msg) {
+  try { await rawApi('gh.banner.save', { banner: L.map(b => ({ file: b.file, judul: b.judul })) }); toast(msg, 'ok'); } catch (e) { toast(e.message, 'err'); }
+  refresh();
+}
+function ghBannerGeser(i, a) { const L = S.ui.ghb.slice(), j = i + a; if (j < 0 || j >= L.length) return; [L[i], L[j]] = [L[j], L[i]]; ghBannerSimpanUrut(L, 'Urutan banner disimpan.'); }
+function ghBannerJudul(i) {
+  const b = S.ui.ghb[i];
+  const d = sheet('Judul Banner ' + (i + 1), fld('Judul / keterangan', inp('ghbt', b.judul, 'maxlength="120"')) + '<button class="btn full" id="ghbts">Simpan</button>');
+  $('#ghbts', d).onclick = e => { busy(e.target, true); const L = S.ui.ghb.map(x => Object.assign({}, x)); L[i].judul = val('ghbt'); closeSheet(); ghBannerSimpanUrut(L, 'Judul disimpan.'); };
+}
+async function ghBannerHapus(i) {
+  const b = S.ui.ghb[i];
+  if (S.ui.ghb.length <= 1) return toast('Minimal harus ada 1 banner.', 'err');
+  if (!(await ask('Hapus banner ' + (i + 1) + ' (' + b.file + ') dari GitHub?', 'Hapus'))) return;
+  try { await rawApi('gh.banner.hapus', { file: b.file }); toast('Banner dihapus.', 'ok'); } catch (e) { toast(e.message, 'err'); }
+  refresh();
+}
+
+/* ---------- file di folder home ---------- */
+function ghFileHtml(d) {
+  S.ui.ghf = d.items;
+  const dir = d.dir || '', parts = dir ? dir.split('/') : [];
+  const crumb = '<div class="row" style="gap:4px;flex-wrap:wrap;margin:0 2px 10px;font-size:13px"><button class="link" onclick="ghKe(\'\')">' + esc(d.folder || 'home') + '</button>' +
+    parts.map((s, i) => ' / <button class="link" onclick="ghKe(\'' + esc(parts.slice(0, i + 1).join('/')) + '\')">' + esc(s) + '</button>').join('') + '</div>';
+  const fic = x => x.tipe === 'dir' ? 'file' : GH_GBR.test(x.nama) ? 'image' : /\.mp4$/i.test(x.nama) ? 'video' : 'file';
+  return GH_INFO + crumb + '<div class="card"><div class="list">' + (d.items.length ? d.items.map((x, i) =>
+    '<div class="it" onclick="' + (x.tipe === 'dir' ? 'ghKe(\'' + esc(x.rel) + '\')' : 'ghBuka(' + i + ')') + '"><div class="av sm" style="background:' + (x.tipe === 'dir' ? '#fef3c7;color:#92400e' : 'var(--soft);color:var(--pri2)') + '">' + (x.tipe === 'dir' ? '📁' : ic(fic(x))) + '</div>' +
+      '<div class="grow" style="min-width:0"><div class="t ell">' + esc(x.nama) + '</div><div class="s">' + (x.tipe === 'dir' ? 'Folder' : ghUkuran(x.ukuran)) + '</div></div>' + ic('right') + '</div>').join('')
+    : empty(d.kosong ? 'Folder belum ada di GitHub. Unggah file untuk membuatnya.' : 'Folder kosong.', 'file')) + '</div></div>' +
+    '<div class="row" style="gap:8px"><button class="btn grow" onclick="ghUnggah()">' + ic('plus') + ' Unggah File</button><button class="btn sec grow" onclick="ghBaru()">' + ic('edit') + ' File / Folder Baru</button></div>' +
+    '<div class="small muted" style="padding:8px 4px">Maks. 5 MB per file. Jenis: html, css, js, json, txt, xml, svg, jpg, png, webp, gif, ico, pdf, mp4, font. File di folder <b>home</b> terbit di alamat situs yang sama, mis. home/img/a.jpg → ' + esc((S.ui.ghc.situs || 'https://situs-anda').replace(/\/+$/, '')) + '/img/a.jpg</div>';
+}
+function ghKe(dir) { S.ui.ghDir = dir; refresh(); }
+const ghGabung = (dir, nama) => (dir ? dir + '/' : '') + nama;
+function ghNamaAman(n) { return String(n || '').trim().replace(/\s+/g, '-').replace(/[^A-Za-z0-9._-]/g, ''); }
+function ghBuka(i) {
+  const x = S.ui.ghf[i], teks = GH_TEKS.test(x.nama), gbr = GH_GBR.test(x.nama), utama = x.rel === 'home.html';
+  const d = sheet(x.nama, '<div class="small muted" style="margin-bottom:12px">' + esc((S.ui.ghc.folder || 'home') + '/' + x.rel) + ' • ' + ghUkuran(x.ukuran) + '</div>' +
+    '<div id="ghpv"></div><div class="mlist">' +
+    (teks ? '<button class="mitem" id="ghed">' + ic('edit') + ' Lihat & Ubah Isi</button>' : '') +
+    (gbr && !teks ? '<button class="mitem" id="ghlh">' + ic('eye') + ' Lihat Gambar</button>' : '') +
+    (x.situs ? '<button class="mitem" id="ghop">' + ic('globe') + ' Buka di Situs</button>' : '') +
+    '<button class="mitem" id="ghgt">' + ic('dl') + ' Ganti dengan File Lain</button>' +
+    '<button class="mitem" id="ghhp" style="color:#b91c1c">' + ic('trash') + ' Hapus File</button></div>');
+  if ($('#ghed', d)) $('#ghed', d).onclick = () => { closeSheet(); ghEditor(x.rel); };
+  if ($('#ghlh', d)) $('#ghlh', d).onclick = async e => { busy(e.target, true); try { const r = await rawApi('gh.read', { rel: x.rel }); $('#ghpv').innerHTML = '<img src="' + r.data + '" style="width:100%;border-radius:12px;margin-bottom:10px">'; e.target.remove(); } catch (z) { toast(z.message, 'err'); busy(e.target, false); } };
+  if ($('#ghop', d)) $('#ghop', d).onclick = () => openExt(x.situs);
+  $('#ghgt', d).onclick = () => { closeSheet(); ghUnggah(x.rel); };
+  $('#ghhp', d).onclick = async () => {
+    if (!(await ask('Hapus ' + x.rel + ' dari GitHub?' + (utama ? ' Ini halaman HOME UTAMA — situs akan kosong!' : ''), 'Hapus'))) return;
+    if (utama && !(await ask('Yakin menghapus home.html? Halaman Home tidak akan bisa dibuka sampai diunggah lagi.', 'Ya, hapus'))) return;
+    closeSheet();
+    try { await rawApi('gh.delete', { rel: x.rel, paksa: utama }); toast('File dihapus.', 'ok'); } catch (z) { toast(z.message, 'err'); }
+    refresh();
+  };
+}
+function ghUnggah(ganti) {
+  const f = document.createElement('input'); f.type = 'file';
+  f.onchange = async () => {
+    const file = f.files[0]; if (!file) return;
+    if (file.size > 5 * 1024 * 1024) return toast('Ukuran file maksimal 5 MB.', 'err');
+    const nama = ganti ? ganti.split('/').pop() : ghNamaAman(file.name);
+    const d = sheet(ganti ? 'Ganti File' : 'Unggah File', '<div class="small muted" style="margin-bottom:10px">' + esc(file.name) + ' • ' + ghUkuran(file.size) + '</div>' +
+      (ganti ? '<div class="card hcard small">' + ic('info') + ' Menimpa <b>' + esc(ganti) + '</b>. Nama file tetap sama.</div>' :
+        fld('Folder tujuan', inp('ghud', S.ui.ghDir || '', 'placeholder="(folder utama home)" autocapitalize="none"')) + fld('Nama file', inp('ghun', nama, 'autocapitalize="none"'))) +
+      (/^image\/(jpeg|png|webp)$/.test(file.type) ? '<label class="row" style="gap:10px;margin:4px 0 12px;cursor:pointer"><input type="checkbox" id="ghuk" checked style="width:18px;height:18px;accent-color:var(--pri2)"><span>Kompres gambar (maks. 1920 px, JPG)</span></label>' : '') +
+      '<button class="btn full" id="ghus">' + ic('dl') + ' Unggah ke GitHub</button>');
+    $('#ghus', d).onclick = async e => {
+      let rel = ganti || ghGabung(val('ghud').replace(/^\/+|\/+$/g, ''), ghNamaAman(val('ghun')));
+      if (!ganti && !ghNamaAman(val('ghun'))) return toast('Nama file wajib diisi.', 'err');
+      busy(e.target, true);
+      try {
+        let data;
+        if ($('#ghuk') && $('#ghuk').checked) { data = await kompres(file, 1920, .85); if (!ganti) rel = rel.replace(/\.(png|webp|jpeg)$/i, '.jpg'); }
+        else data = await bacaDataUrl(file);
+        const r = await rawApi('gh.save', { rel: rel, data: data });
+        closeSheet(); toast(r.baru ? 'File diunggah.' : 'File diganti.', 'ok');
+        if (!ganti) S.ui.ghDir = rel.split('/').slice(0, -1).join('/');
+        refresh();
+      } catch (z) { toast(z.message, 'err'); busy(e.target, false); }
+    };
+  };
+  f.click();
+}
+function ghBaru() {
+  const d = sheet('File / Folder Baru', '<div class="small muted" style="margin-bottom:10px">Folder baru terbentuk otomatis saat file pertama disimpan di dalamnya. Contoh: <b>berita/kegiatan.html</b></div>' +
+    fld('Nama file (boleh dengan folder)', inp('ghbn', ghGabung(S.ui.ghDir || '', ''), 'autocapitalize="none" placeholder="mis. css/gaya.css"')) +
+    '<button class="btn full" id="ghbs">' + ic('edit') + ' Buat & Ubah Isi</button>');
+  $('#ghbs', d).onclick = () => {
+    const rel = val('ghbn').replace(/^\/+/, '').split('/').map(ghNamaAman).filter(Boolean).join('/');
+    if (!GH_TEKS.test(rel)) return toast('File baru harus berupa teks: .html, .css, .js, .json, .txt, .xml, .md, .svg', 'err');
+    closeSheet(); ghEditor(rel, true);
+  };
+}
+function ghEditor(rel, baru) {
+  push(rel.split('/').pop(), async function () {
+    const t = loading(3); let isi = '';
+    if (!baru) { try { isi = (await rawApi('gh.read', { rel: rel })).teks; } catch (e) { if (alive(t)) view('<div class="card">' + empty(e.message, 'info') + '</div>'); return; } }
+    if (!alive(t)) return;
+    view('<div class="small muted" style="margin:0 4px 8px">' + esc((S.ui.ghc.folder || 'home') + '/' + rel) + (baru ? ' • file baru' : '') + '</div>' +
+      '<textarea class="in" id="ghtx" spellcheck="false" autocapitalize="none" style="min-height:62vh;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.5;white-space:pre;overflow:auto;tab-size:2">' + esc(isi) + '</textarea>' +
+      '<button class="btn full" style="margin-top:10px" id="ghts">' + ic('check') + ' Simpan ke GitHub</button>');
+    $('#ghts').onclick = async e => {
+      busy(e.target, true);
+      try { await rawApi('gh.save', { rel: rel, teks: $('#ghtx').value }); S.dirty = false; toast('Tersimpan di GitHub. Situs diperbarui ±1–2 menit lagi.', 'ok'); baru = false; }
+      catch (z) { toast(z.message, 'err'); }
+      busy(e.target, false);
+    };
+  }, { sub: 'Ubah isi file' });
+}
+
+/* ---------- pengaturan GitHub ---------- */
+function ghAturHtml(c) {
+  return '<div class="card hcard small" style="display:flex;gap:10px;align-items:flex-start">' + ic('lock') + '<span>Token GitHub disimpan <b>di server (Script Properties)</b>, tidak di Google Sheet, dan <b>tidak pernah dikirim ke aplikasi</b>. Hanya Admin & Pengembang Aplikasi yang dapat mengaturnya.</span></div>' +
+    '<div class="card">' +
+    fld('Repositori GitHub (pemilik/nama)', inp('ghr', c.repo, 'placeholder="amteknologia-sketch/PORTAL-ALHUDA-MOBILE" autocapitalize="none"')) +
+    '<div class="row" style="gap:8px"><div class="grow">' + fld('Branch', inp('ghbr', c.branch || 'main', 'autocapitalize="none"')) + '</div><div class="grow">' + fld('Folder', inp('ghfo', c.folder || 'home', 'autocapitalize="none"')) + '</div></div>' +
+    fld('Alamat situs (untuk pratinjau)', inp('ghsi', c.situs, 'placeholder="https://alhudamalikussaleh.web.id" autocapitalize="none"')) +
+    fld('Token GitHub', '<div class="pw"><input class="in" id="ghtk" type="password" autocomplete="off" autocapitalize="none" placeholder="' + (c.adaToken ? 'Tersimpan (…' + esc(c.tokenAkhir) + ') — kosongkan bila tidak diganti' : 'github_pat_…') + '"><button class="eye" type="button" onclick="togglePw(\'ghtk\',this)">' + ic('eye') + '</button></div>') +
+    '<div id="ghuji"></div>' +
+    '<button class="btn full" onclick="ghAturSimpan(this)">' + ic('check') + ' Simpan & Uji Koneksi</button>' +
+    (c.adaToken ? '<button class="btn red full" style="margin-top:8px" onclick="ghHapusToken(this)">' + ic('trash') + ' Hapus Token</button>' : '') + '</div>' +
+    '<div class="sec"><h3>Cara membuat token</h3></div><div class="card small" style="line-height:1.7"><ol style="margin:0;padding-left:18px">' +
+      '<li>Buka <b>github.com → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token</b>.</li>' +
+      '<li>Expiration: pilih masa berlaku (mis. 1 tahun).</li>' +
+      '<li>Repository access: <b>Only select repositories</b> → pilih repositori aplikasi.</li>' +
+      '<li>Permissions → Repository permissions → <b>Contents: Read and write</b>. Selain itu biarkan "No access".</li>' +
+      '<li>Generate token, salin (diawali <b>github_pat_</b>), tempel di atas, lalu Simpan.</li></ol></div>';
+}
+async function ghAturSimpan(btn) {
+  const p = { repo: val('ghr'), branch: val('ghbr'), folder: val('ghfo'), situs: val('ghsi'), token: $('#ghtk').value.trim() };
+  if (!p.token) delete p.token;
+  busy(btn, true);
+  try {
+    const r = await rawApi('gh.config.save', p);
+    S.ui.ghc = r; $('#ghtk').value = '';
+    $('#ghuji').innerHTML = r.uji ? '<div class="card vok small" style="margin-bottom:10px">' + ic('check') + ' Terhubung ke <b>' + esc(r.uji.nama) + '</b>' + (r.uji.pribadi ? ' (repositori privat)' : '') + ' dengan izin menulis.</div>' : '';
+    toast('Pengaturan GitHub disimpan.', 'ok');
+    if (r.adaToken && r.uji) setTimeout(() => { S.ui.ghMode = 'banner'; refresh(); }, 1200);
+  } catch (e) { $('#ghuji').innerHTML = '<div class="card vwarn small" style="margin-bottom:10px">' + ic('info') + ' ' + esc(e.message) + '</div>'; }
+  busy(btn, false);
+}
+async function ghHapusToken(btn) {
+  if (!(await ask('Hapus token GitHub dari server? Halaman Home tidak bisa dikelola dari aplikasi sampai token diisi lagi.', 'Hapus'))) return;
+  busy(btn, true);
+  try { await rawApi('gh.config.save', { repo: val('ghr'), branch: val('ghbr'), folder: val('ghfo'), situs: val('ghsi'), hapusToken: true }); toast('Token dihapus.', 'ok'); refresh(); }
+  catch (e) { toast(e.message, 'err'); busy(btn, false); }
 }
 
 /* ---------- mulai ---------- */
