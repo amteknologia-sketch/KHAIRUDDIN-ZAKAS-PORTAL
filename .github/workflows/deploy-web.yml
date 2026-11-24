@@ -4,7 +4,7 @@ name: Terbitkan Versi Web ALHUDA MOBILE
 on:
   push:
     branches: [ main, master ]
-    paths: [ 'web/**', 'apps-script/Index.html', '.github/workflows/deploy-web.yml' ]
+    paths: [ 'web/**', 'home/**', 'apps-script/Index.html', '.github/workflows/deploy-web.yml' ]
   workflow_dispatch:
 
 permissions:
@@ -35,7 +35,7 @@ jobs:
 
       - name: Salin halaman Home (folder home/) ke situs
         run: |
-          if [ -d home ]; then cp home/home.html web/home.html; mkdir -p web/img; cp -r home/img/. web/img/; fi
+          if [ -d home ]; then cp -rn home/. web/; fi   # semua isi folder home/ (tanpa menimpa file aplikasi di web/)
 
       - name: Perbarui versi cache Service Worker
         run: sed -i "s/alhuda-web-v[0-9a-z]*/alhuda-web-${GITHUB_SHA::8}/" web/sw.js
