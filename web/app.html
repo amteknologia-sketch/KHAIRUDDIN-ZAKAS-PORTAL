@@ -3,7 +3,7 @@
 <head>
 <base target="_top">
 <meta charset="utf-8">
-<meta name="alhuda-app" content="2.13.0">
+<meta name="alhuda-app" content="2.13.1">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>ALHUDA MOBILE</title>
 <style>
@@ -2150,11 +2150,12 @@ async function tInputNilai() {
   if (!kelasList.length) return '<div class="card">' + empty('Input nilai hanya untuk guru yang mengajar di kelas tersebut, wali kelas, Kabag Pendidikan, dan Admin.', 'cal') + '</div>';
   const n = S.ui.ni = S.ui.ni || { tahun_ajaran: S.B.settings.tahun_ajaran, semester: String(S.B.settings.semester) };
   if (!n.kelas || kelasList.indexOf(n.kelas) < 0) n.kelas = kelasList[0];
-  const mapels = await api('nilai.mapel', { kelas: n.kelas });
-  if (!n.mapel || (mapels.indexOf(n.mapel) < 0 && !n.mapelBaru)) n.mapel = mapels[0] || '';
+  const mapels = await api('nilai.mapel', { kelas: n.kelas });   // hanya mapel yang terpilih di roster kelas ini
+  if (!n.mapel || mapels.indexOf(n.mapel) < 0) n.mapel = mapels[0] || '';
+  n.mapelBaru = 0;
   let h = '<div class="card">' + fld('Kelas', sel('nk2', kelasList, n.kelas, 'onchange="S.ui.ni.kelas=this.value;S.ui.ni.mapel=null;refresh()"')) +
-    fld('Mata Pelajaran', mapels.length ? sel('nm2', mapels.concat(P().nilaiSemua ? [['__baru', '+ Mapel lain (ketik)']] : []), n.mapelBaru ? '__baru' : n.mapel, 'onchange="if(this.value===\'__baru\'){S.ui.ni.mapelBaru=1;S.ui.ni.mapel=\'\'}else{S.ui.ni.mapelBaru=0;S.ui.ni.mapel=this.value};refresh()"') : '<div class="muted small">Belum ada mapel di roster kelas ini.</div>') +
-    (n.mapelBaru || (!mapels.length && P().nilaiSemua) ? fld('Nama Mapel', inp('nmb', n.mapel || '', 'onchange="S.ui.ni.mapel=this.value;S.ui.ni.mapelBaru=1;refresh()" placeholder="Ketik lalu tekan Enter"')) : '') +
+    fld('Mata Pelajaran', mapels.length ? sel('nm2', mapels, n.mapel, 'onchange="S.ui.ni.mapel=this.value;refresh()"')
+      : '<div class="small muted" style="padding:6px 2px">Belum ada mata pelajaran di roster kelas ini.' + (P().roster ? ' <button class="link" onclick="openRoster()">Atur di Roster</button>' : '') + '</div>') +
     '<div class="row"><div class="grow">' + fld('Tahun Ajaran', inp('nta', n.tahun_ajaran, 'onchange="S.ui.ni.tahun_ajaran=this.value;refresh()"')) + '</div><div class="grow">' + fld('Semester', sel('nsm', [['1', 'Semester 1'], ['2', 'Semester 2']], n.semester, 'onchange="S.ui.ni.semester=this.value;refresh()"')) + '</div></div></div>';
   if (!n.mapel) return h;
   const grid = await api('nilai.grid', n);
