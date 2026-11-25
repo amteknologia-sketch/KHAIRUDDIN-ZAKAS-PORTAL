@@ -3,7 +3,7 @@
 <head>
 <base target="_top">
 <meta charset="utf-8">
-<meta name="alhuda-app" content="2.14.0">
+<meta name="alhuda-app" content="2.16.0">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>ALHUDA MOBILE</title>
 <style>
@@ -522,6 +522,12 @@ html.desk .login .lmain>.muted:last-child{display:none}
 .ksbar{height:6px;background:var(--chip);border-radius:4px;overflow:hidden;margin-top:6px}.ksbar i{display:block;height:100%;background:var(--pri);border-radius:4px}
 .kst{flex:1;background:var(--chip);border-radius:12px;padding:8px 10px}.kst .s{font-size:11.5px;color:var(--muted)}.kst .b{font-size:15px}
 .vt{width:24px;height:24px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;flex:none}.vt.on{background:var(--pri2);border-color:var(--pri2);color:#fff}.vt .i{width:14px;height:14px}
+.pbtns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.pbtns .btn{width:100%;min-width:0;min-height:48px;height:auto;padding:10px 12px;margin:0;white-space:normal;line-height:1.25;font-size:13.5px;justify-content:center;text-align:center;gap:6px}
+.pbtns .btn .i{flex:none}.pbtns .btn:not(.sec){grid-column:1/-1}
+.pbtns .btn.pfull{grid-column:1/-1}
+.rmp{gap:6px;align-items:center;min-height:30px}.ibtn.sm{width:30px;height:30px}.ibtn.sm .i{width:15px;height:15px}
+.ksgr{padding:2px 0 6px}.ksgr+.ksgr{border-top:1px dashed var(--line);padding-top:6px}
 </style>
 </head>
 <body>
@@ -693,7 +699,7 @@ function rawApi(action, params, silent) {
  *  - Setiap perubahan membawa _cid unik → server tidak mencatat dua kali.
  * ============================================================= */
 const WRITE_RE = /\.(save|delete|send|kembali|naik)$/;
-const ONLINE_ONLY = { 'kelasSaya.vote': 'Voting pengurus', 'kelasSaya.voteReset': 'Mengulang voting', 'kelasSaya.kasSave': 'Mencatat kas', 'kelasSaya.kasDelete': 'Menghapus kas', 'kelasSaya.piketSave': 'Mengatur piket', 'kelasSaya.petugasAbsen': 'Menunjuk petugas absen', 'kelasPost.umum': 'Mengatur postingan kelas', 'chat.arsip': 'Mengarsipkan chat', 'chat.bersihkan': 'Menghapus chat', 'chat.blokir': 'Memblokir pengguna', 'guruKhusus.set': 'Mengatur Guru Khusus', 'gh.save': 'Mengubah file di GitHub', 'gh.delete': 'Menghapus file di GitHub', 'gh.config.save': 'Mengatur GitHub', 'gh.banner.upload': 'Mengunggah banner', 'gh.banner.save': 'Mengatur banner', 'gh.banner.hapus': 'Menghapus banner', 'dev.login.save': 'Mengatur login pengembang', 'dev.tema.save': 'Mengatur tema aplikasi', 'sesi.save': 'Mengatur sesi', 'sesi.delete': 'Menghapus sesi', 'wali.save': 'Mengatur wali kelas', 'peran.save': 'Mengatur peran', 'peran.delete': 'Menghapus peran', 'peran.pulihkan': 'Memulihkan peran', 'admin.resetSandi': 'Reset kata sandi', 'admin.aktif': 'Mengunci / membuka akun', 'post.fotoTambah': 'Mengunggah foto', 'publik.ajukan': 'Mengajukan ke layar utama', 'publik.turunkan': 'Menurunkan dari layar utama', 'publik.putuskan': 'Verifikasi layar utama', 'publik.komentarPutuskan': 'Verifikasi komentar', 'profil.publik': 'Mengubah visibilitas akun', 'profil.password': 'Ganti kata sandi', 'profil.photo': 'Unggah foto profil', 'raport.pdf': 'Cetak PDF', 'iuran.pdf': 'Cetak PDF', 'tahunan.pdf': 'Cetak PDF', 'settings.save': 'Mengubah pengaturan aplikasi', 'logo.upload': 'Mengganti logo', 'logo.reset': 'Mengganti logo', 'profil.galeriAdd': 'Menambah foto galeri', 'profil.galeriDelete': 'Menghapus foto galeri', 'chat.file': 'Mengirim foto, video, atau dokumen', 'iuran.laporan': 'Cetak laporan PDF', 'tahunan.laporan': 'Cetak laporan PDF', 'grup.save': 'Menyimpan grup', 'grup.keluar': 'Keluar dari grup', 'chat.forward': 'Meneruskan pesan', 'chat.edit': 'Mengedit pesan', 'chat.hapus': 'Menghapus pesan', 'haris.save': 'Menyimpan daftar haris', 'haris.delete': 'Menghapus kelompok haris', 'asrama.save': 'Menyimpan asrama', 'asrama.delete': 'Menghapus asrama', 'asrama.dokAdd': 'Mengunggah dokumentasi', 'asrama.dokDelete': 'Menghapus dokumentasi', 'kabilah.save': 'Menyimpan kabilah', 'kabilah.delete': 'Menghapus kabilah', 'post.save': 'Menyimpan postingan', 'post.delete': 'Menghapus postingan', 'post.bagikan': 'Membagikan postingan', 'pengajuan.terima': 'Menerima santri baru', 'pengajuan.tolak': 'Menolak pengajuan', 'verif.save': 'Menyimpan data verifikasi', 'verif.upload': 'Mengunggah dokumen', 'verif.hapusFile': 'Menghapus dokumen', 'kelas.save': 'Menyimpan kelas', 'kelas.delete': 'Menghapus kelas' };
+const ONLINE_ONLY = { 'rosterAju.save': 'Mengajukan roster', 'rosterAju.putuskan': 'Memutuskan pengajuan roster', 'rosterAju.batal': 'Membatalkan pengajuan', 'kop.contoh': 'Cetak PDF', 'kop.upload': 'Mengunggah kop surat', 'kop.reset': 'Menghapus kop surat', 'dev.santriAdmin.set': 'Mengatur santri admin', 'kelasSaya.vote': 'Voting pengurus', 'kelasSaya.voteReset': 'Mengulang voting', 'kelasSaya.kasSave': 'Mencatat kas', 'kelasSaya.kasDelete': 'Menghapus kas', 'kelasSaya.piketSave': 'Mengatur piket', 'kelasSaya.petugasAbsen': 'Menunjuk petugas absen', 'kelasPost.umum': 'Mengatur postingan kelas', 'chat.arsip': 'Mengarsipkan chat', 'chat.bersihkan': 'Menghapus chat', 'chat.blokir': 'Memblokir pengguna', 'guruKhusus.set': 'Mengatur Guru Khusus', 'gh.save': 'Mengubah file di GitHub', 'gh.delete': 'Menghapus file di GitHub', 'gh.config.save': 'Mengatur GitHub', 'gh.banner.upload': 'Mengunggah banner', 'gh.banner.save': 'Mengatur banner', 'gh.banner.hapus': 'Menghapus banner', 'dev.login.save': 'Mengatur login pengembang', 'dev.tema.save': 'Mengatur tema aplikasi', 'sesi.save': 'Mengatur sesi', 'sesi.delete': 'Menghapus sesi', 'wali.save': 'Mengatur wali kelas', 'peran.save': 'Mengatur peran', 'peran.delete': 'Menghapus peran', 'peran.pulihkan': 'Memulihkan peran', 'admin.resetSandi': 'Reset kata sandi', 'admin.aktif': 'Mengunci / membuka akun', 'post.fotoTambah': 'Mengunggah foto', 'publik.ajukan': 'Mengajukan ke layar utama', 'publik.turunkan': 'Menurunkan dari layar utama', 'publik.putuskan': 'Verifikasi layar utama', 'publik.komentarPutuskan': 'Verifikasi komentar', 'profil.publik': 'Mengubah visibilitas akun', 'profil.password': 'Ganti kata sandi', 'profil.photo': 'Unggah foto profil', 'raport.pdf': 'Cetak PDF', 'iuran.pdf': 'Cetak PDF', 'tahunan.pdf': 'Cetak PDF', 'settings.save': 'Mengubah pengaturan aplikasi', 'logo.upload': 'Mengganti logo', 'logo.reset': 'Mengganti logo', 'profil.galeriAdd': 'Menambah foto galeri', 'profil.galeriDelete': 'Menghapus foto galeri', 'chat.file': 'Mengirim foto, video, atau dokumen', 'iuran.laporan': 'Cetak laporan PDF', 'tahunan.laporan': 'Cetak laporan PDF', 'grup.save': 'Menyimpan grup', 'grup.keluar': 'Keluar dari grup', 'chat.forward': 'Meneruskan pesan', 'chat.edit': 'Mengedit pesan', 'chat.hapus': 'Menghapus pesan', 'haris.save': 'Menyimpan daftar haris', 'haris.delete': 'Menghapus kelompok haris', 'asrama.save': 'Menyimpan asrama', 'asrama.delete': 'Menghapus asrama', 'asrama.dokAdd': 'Mengunggah dokumentasi', 'asrama.dokDelete': 'Menghapus dokumentasi', 'kabilah.save': 'Menyimpan kabilah', 'kabilah.delete': 'Menghapus kabilah', 'post.save': 'Menyimpan postingan', 'post.delete': 'Menghapus postingan', 'post.bagikan': 'Membagikan postingan', 'pengajuan.terima': 'Menerima santri baru', 'pengajuan.tolak': 'Menolak pengajuan', 'verif.save': 'Menyimpan data verifikasi', 'verif.upload': 'Mengunggah dokumen', 'verif.hapusFile': 'Menghapus dokumen', 'kelas.save': 'Menyimpan kelas', 'kelas.delete': 'Menghapus kelas' };
 S.online = true;
 function isOnline() { try { if (BR && BR.isOnline) return !!BR.isOnline(); } catch (e) {} return navigator.onLine !== false; }
 function uname() { return (S.B && S.B.user && S.B.user.username) || store.get('alhuda_uname') || '_'; }
@@ -1332,7 +1338,7 @@ function badgeBaru() {
     $$('.qa[onclick="' + z[1] + '"]').forEach(btn => { let b = $('.badge', btn); if (!n) { if (b) b.remove(); return; } if (!b) { b = document.createElement('span'); b.className = 'badge'; btn.appendChild(b); } b.textContent = n > 99 ? '99+' : n; });
   });
 }
-function setNotifN(n) { S.notifN = isSantri() ? 0 : n; badgeLonceng(); }
+function setNotifN(n) { S.notifN = isSantri() && !isAdminApp() ? 0 : n; badgeLonceng(); }
 function setNotifSaya(n) { S.notifSaya = n; badgeLonceng(); }
 function jmlLonceng() { return (S.notifN || 0) + (S.notifSaya || 0); }
 function badgeLonceng() { const n = jmlLonceng(), b = $('#nfBadge'); if (b) { b.textContent = n > 99 ? '99+' : (n || ''); b.classList.toggle('hide', !n); } }
@@ -1494,7 +1500,7 @@ PAGES.beranda = async function () {
   const ann = d.pengumuman[0];
   let h = '<div class="banner"><div class="row" style="align-items:flex-start;position:relative;z-index:1">' + avatar(u) +
     '<div class="grow"><div class="hi">Ahlan wa Sahlan,</div><div class="nm">' + esc(u.nama) + vb(u) + '</div><div class="un">@' + esc(u.username) + '</div></div></div>' +
-    '<div class="tags"><span class="tag">' + (isSantri() ? 'Santri' : 'Dewan Guru') + '</span>' + peran.map(p => '<span class="tag">' + esc(p) + '</span>').join('') + (d.guruKhusus ? '<span class="tag gk">' + ic('grad') + ' Guru Khusus</span>' : '') + (d.jabatanKelas ? '<span class="tag gk">' + ic('flag') + ' ' + esc(d.jabatanKelas) + '</span>' : '') + (d.petugasAbsen ? '<span class="tag gk">' + ic('check') + ' Petugas Absen</span>' : '') + '</div>' +
+    '<div class="tags"><span class="tag">' + (isSantri() ? 'Santri' : 'Dewan Guru') + '</span>' + peran.map(p => '<span class="tag">' + esc(p) + '</span>').join('') + (isSantri() && isAdminApp() ? '<span class="tag gk">' + ic('shield') + ' Admin</span>' : '') + (d.guruKhusus ? '<span class="tag gk">' + ic('grad') + ' Guru Khusus</span>' : '') + (d.jabatanKelas ? '<span class="tag gk">' + ic('flag') + ' ' + esc(d.jabatanKelas) + '</span>' : '') + (d.petugasAbsen ? '<span class="tag gk">' + ic('check') + ' Petugas Absen</span>' : '') + '</div>' +
     '<div class="dt">' + ic('cal') + esc(tanggal) + '</div></div>';
   h += '<div class="quick">' +
     (isSantri() ? qa('users', 'Kelas Saya', 'openKelasSaya()') : qa('cal', 'Roster Pelajaran', 'openRoster()')) + qa('chat', 'Room Chat', 'openChat()', d.unread) +
@@ -1503,6 +1509,8 @@ PAGES.beranda = async function () {
     '<div class="card ann"><div class="h">' + ic('bell') + esc(ann.judul) + '</div><div style="margin:6px 0 4px;line-height:1.45">' + esc(ann.isi) + '</div><div class="muted small">' + tgl(ann.tanggal) + ' • ' + esc(ann.oleh) + '</div></div>';
   if (d.publikMenunggu) h += '<button class="notif-btn adm" onclick="openLayarUtama()"><span class="ic">' + ic('globe') + '<span class="badge">' + d.publikMenunggu + '</span></span>' +
     '<span class="grow" style="text-align:left"><span class="b" style="display:block;font-size:14px">Layar Utama Publik</span><span class="small muted">' + d.publikMenunggu + ' postingan / komentar tamu menunggu verifikasi</span></span>' + ic('right') + '</button>';
+  if (d.rosterAju) h += '<button class="notif-btn adm" onclick="openAjuRoster()"><span class="ic">' + ic('cal') + '<span class="badge">' + d.rosterAju + '</span></span>' +
+    '<span class="grow" style="text-align:left"><span class="b" style="display:block;font-size:14px">Pengajuan Roster</span><span class="small muted">' + d.rosterAju + ' pengajuan dari pengurus kelas menunggu keputusan</span></span>' + ic('right') + '</button>';
   if (P().users && d.pengajuan) h += '<button class="notif-btn adm" onclick="openPengajuan()"><span class="ic">' + ic('users') + (d.pengajuan ? '<span class="badge">' + d.pengajuan + '</span>' : '') + '</span>' +
     '<span class="grow" style="text-align:left"><span class="b" style="display:block;font-size:14px">Pengajuan Santri Baru</span><span class="small muted">' + (d.pengajuan ? d.pengajuan + ' pengajuan menunggu persetujuan' : 'Tidak ada pengajuan baru') + '</span></span>' + ic('right') + '</button>';
   if (d.verifSaya === false) h += '<button class="notif-btn vf" onclick="openVerif()"><span class="ic">' + ic('shield') + '</span><span class="grow" style="text-align:left"><span class="b" style="display:block;font-size:14px">Lengkapi Verifikasi Data</span><span class="small muted">Dapatkan centang biru di samping nama Anda</span></span>' + ic('right') + '</button>';
@@ -1633,20 +1641,24 @@ async function pRoster() {
     const ent = rosterGrup(rows.filter(r => r.sesi === s.kode));
     h += '<div class="sess"><div class="row"><div class="jam grow">' + esc(s.jam) + '</div>' + (s.wali ? '<span class="pillx">Wali Kelas</span>' : '') + '<span class="pillx">' + esc(s.berlaku) + '</span></div>';
     if (!ent.length) h += '<div class="muted small" style="margin-top:4px">Belum diisi</div>';
-    ent.forEach(g => {
-      const r = g.utama;   // baris roster untuk hari ini (bila ada) — dipakai untuk Absen & Guru Pengganti
+    // pelajaran dengan guru (dan hari) yang sama disatukan; guru berbeda dipisah
+    rosterPerGuru(ent).forEach(G => {
+      const r = G.list[0].utama;   // baris roster untuk hari ini (bila ada) — dipakai untuk Absen & Guru Pengganti
       const mine = r.guru.toLowerCase() === me().username.toLowerCase();
-      const hariIni = g.rows.some(x => x.hari === 'Setiap Hari' || x.hari === namaHari());
-      h += '<div class="ent"><div class="grow"><div class="b">' + esc(r.mapel) + '</div><div class="small muted">' + esc(r.guruNama) + ' • ' + esc(g.hari.join(', ')) + '</div>' +
+      const hariIni = G.list.some(g => g.rows.some(x => x.hari === 'Setiap Hari' || x.hari === namaHari()));
+      h += '<div class="ent"><div class="grow" style="min-width:0">' + G.list.map(g => '<div class="row rmp"><div class="b grow">' + esc(g.mapel) + '</div>' +
+          (P().roster ? '<button class="ibtn sm" title="Edit ' + esc(g.mapel) + '" onclick="rosterForm(' + reg(g) + ')">' + ic('edit') + '</button>' : '') + '</div>').join('') +
+        '<div class="small muted">' + esc(G.guruNama) + ' • ' + esc(G.hari.join(', ')) + '</div>' +
         (r.penggantiNama ? '<span class="st I">Hari ini digantikan: ' + esc(r.penggantiNama) + '</span>' : '') + '</div>' +
         (mine ? '<button class="btn sm" onclick="absenDari(' + reg(r) + ')">Absen</button>' : '') +
-        ((mine || P().nilaiSemua) && hariIni && !isSantri() ? '<button class="ibtn" title="Guru Pengganti" onclick="penggantiForm(' + reg(r) + ')">' + ic('users') + '</button>' : '') +
-        (P().roster ? '<button class="ibtn" onclick="rosterForm(' + reg(g) + ')">' + ic('edit') + '</button>' : '') + '</div>';
+        ((mine || P().nilaiSemua) && hariIni && !isSantri() ? '<button class="ibtn" title="Guru Pengganti" onclick="penggantiForm(' + reg(r) + ')">' + ic('users') + '</button>' : '') + '</div>';
     });
+    if (P().roster) h += '<button class="link small" style="margin-top:6px" onclick="rosterTambahSesi(\'' + esc(k) + '\',\'' + esc(s.kode) + '\')">＋ Tambah pelajaran di sesi ini</button>';
     h += '</div>';
   });
   h += '<div class="sess" style="border-color:#a78bfa"><div class="jam">' + esc(jamIstilah()) + ' • ' + esc(istilah()) + '</div><div class="small muted" style="margin-top:4px">Lihat menu Absen & Izin → ' + esc(istilah()) + '.</div></div></div>';
   h += '<div class="muted small" style="padding:0 4px">Guru yang mengajar pada sesi 19.30 - 22.00 otomatis menjadi wali kelas.</div>';
+  if (!isSantri() && (P().nilaiSemua || isAdminApp())) h = '<button class="link" style="display:flex;align-items:center;gap:6px;margin:0 4px 10px" onclick="openAjuRoster()">' + ic('cal') + ' Pengajuan Roster dari pengurus kelas</button>' + h;
   view(h);
   if (P().roster) fab(() => rosterForm(null));
 }
@@ -1666,6 +1678,14 @@ function rosterGrup(rows) {
   });
   return out;
 }
+/** Setiap pelajaran ditampilkan terpisah (walaupun gurunya sama). Ubah ROSTER_SATUKAN = true untuk menyatukan pelajaran bila gurunya sama. */
+const ROSTER_SATUKAN = false;
+function rosterPerGuru(ent) {
+  const m = {}, out = [];
+  ent.forEach((g, i) => { const k = ROSTER_SATUKAN ? String(g.guru).toLowerCase() + '|' + g.hari.join(',') : 'm' + i; if (!m[k]) { m[k] = { guru: g.guru, guruNama: g.guruNama, hari: g.hari, list: [] }; out.push(m[k]); } m[k].list.push(g); });
+  return out;
+}
+function rosterTambahSesi(kelas, sesi) { rosterForm(reg({ kelas: kelas, sesi: sesi, hari: ['Setiap Hari'], rows: [] })); }
 function hariPilih(cb) {
   const box = cb.closest('.checks');
   if (cb.checked) $$('input', box).forEach(x => { if (x !== cb && (cb.value === 'Setiap Hari' || x.value === 'Setiap Hari')) x.checked = false; });
@@ -1753,11 +1773,11 @@ function penggantiForm(i) {
 function absenDari(i) { const r = REG[i]; S.ui.absTab = 'santri'; S.ui.absMode = 'input'; S.ui.abs = { kelas: r.kelas, sesi: r.sesi, tanggal: todayStr() }; go('absen'); }
 
 /* ---------- Pemberitahuan (khusus guru) ---------- */
-function openPemberitahuan() { S.ui.notifHari = 7; S.ui.nfMode = isSantri() ? 'saya' : (S.ui.nfMode || 'saya'); push('Pemberitahuan', pPemberitahuan, { sub: isSantri() ? 'Pemberitahuan untuk saya' : 'Untuk saya & catatan santri hari ini', noChat: false }); }
-function nfSeg() { if (isSantri()) return ''; return seg('nfMode', [['saya', 'Untuk Saya' + (S.notifSaya ? ' (' + S.notifSaya + ')' : '')], ['dayah', 'Catatan Santri' + (S.notifN ? ' (' + S.notifN + ')' : '')]], 'refresh()'); }
+function openPemberitahuan() { S.ui.notifHari = 7; S.ui.nfMode = isSantri() && !isAdminApp() ? 'saya' : (S.ui.nfMode || 'saya'); push('Pemberitahuan', pPemberitahuan, { sub: isSantri() && !isAdminApp() ? 'Pemberitahuan untuk saya' : 'Untuk saya & catatan santri hari ini', noChat: false }); }
+function nfSeg() { if (isSantri() && !isAdminApp()) return ''; return seg('nfMode', [['saya', 'Untuk Saya' + (S.notifSaya ? ' (' + S.notifSaya + ')' : '')], ['dayah', 'Catatan Santri' + (S.notifN ? ' (' + S.notifN + ')' : '')]], 'refresh()'); }
 const NF_IC = { suka: ['heart', '#e11d48'], komentar: ['comment', '#2563eb'], bagikan: ['share', '#7c3aed'], ngaji: ['book', '#b45309'], pulang: ['bus', '#0891b2'], keluar: ['door', '#0d9488'], pelanggaran: ['flag', '#dc2626'] };
 async function pPemberitahuan() {
-  if (isSantri()) S.ui.nfMode = 'saya';   // santri hanya melihat pemberitahuan miliknya
+  if (isSantri() && !isAdminApp()) S.ui.nfMode = 'saya';   // santri hanya melihat pemberitahuan miliknya
   if (uiState('nfMode', 'saya') !== 'saya') return pPemberitahuanDayah();
   const t = loading(5); const d = await api('notif.saya'); if (!alive(t)) return;
   let h = nfSeg(), hari = '';
@@ -2306,7 +2326,7 @@ async function pProfil(un) {
   const san = d.tipe === 'Santri';
   let h = '<div class="card phead"><div class="row" style="align-items:center;gap:14px">' + avatar(d, 'sm').replace('av sm', 'av sm" style="width:72px;height:72px;font-size:24px') +
     '<div class="grow" style="min-width:0"><div class="b" style="font-size:17px;line-height:1.25">' + esc(d.nama) + (d.verif ? VBADGE : '') + '</div><div class="small muted">@' + esc(d.username) + '</div>' +
-    '<div style="margin-top:4px"><span class="pillx">' + (san ? 'Santri' : 'Dewan Guru') + '</span>' + (san && d.kelas ? '<span class="pillx">' + esc(d.kelas) + '</span>' : '') + (d.guruKhusus ? '<span class="pillx gk">' + ic('grad') + ' Guru Khusus</span>' : '') + (d.jabatanKelas ? '<span class="pillx gk">' + ic('flag') + ' ' + esc(d.jabatanKelas) + '</span>' : '') + (d.petugasAbsen ? '<span class="pillx gk">' + ic('check') + ' Petugas Absen</span>' : '') + (d.aktif === 'Tidak' ? '<span class="st no">Nonaktif</span>' : '') + '</div></div>' +
+    '<div style="margin-top:4px"><span class="pillx">' + (san ? 'Santri' : 'Dewan Guru') + '</span>' + (san && d.kelas ? '<span class="pillx">' + esc(d.kelas) + '</span>' : '') + (d.santriAdmin ? '<span class="pillx gk">' + ic('shield') + ' Admin</span>' : '') + (d.guruKhusus ? '<span class="pillx gk">' + ic('grad') + ' Guru Khusus</span>' : '') + (d.jabatanKelas ? '<span class="pillx gk">' + ic('flag') + ' ' + esc(d.jabatanKelas) + '</span>' : '') + (d.petugasAbsen ? '<span class="pillx gk">' + ic('check') + ' Petugas Absen</span>' : '') + (d.aktif === 'Tidak' ? '<span class="st no">Nonaktif</span>' : '') + '</div></div>' +
     (!d.self ? '<button class="pchat" onclick="chatWith(\'' + esc(d.username) + '\')" title="Room Chat">' + ic('chat') + '</button>' : '') + '</div></div>';
   h += '<div class="card plist">' +
     row(san ? 'NIS' : esc(d.jenis_nomor), '', dash(d.nis_nip)) +
@@ -2328,6 +2348,7 @@ async function pProfil(un) {
   else { S.ui.galeri = d.galeri; h += '<div class="galeri">' + d.galeri.map((g, i) => '<button onclick="lihatFoto(' + i + ')"><img src="' + esc(g.url) + '" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.opacity=.2"></button>').join('') + '</div>'; }
   // tombol aksi
   const btns = [];
+  if (san && d.bolehSantriAdmin) btns.push('<button class="btn sec grow" onclick="aturSantriAdmin(\'' + esc(d.username) + '\',' + !d.santriAdmin + ')">' + ic('shield') + (d.santriAdmin ? ' Cabut Admin' : ' Jadikan Admin') + '</button>');
   if (san && d.bolehPetugasAbsen && d.kelas) btns.push('<button class="btn sec grow" onclick="aturPetugasAbsen(\'' + esc(d.username) + '\',' + !d.petugasAbsen + ')">' + ic('check') + (d.petugasAbsen ? ' Cabut Petugas Absen' : ' Jadikan Petugas Absen') + '</button>');
   if (san && d.bolehGuruKhusus) btns.push('<button class="btn sec grow" onclick="aturGuruKhusus(\'' + esc(d.username) + '\',' + !d.guruKhusus + ')">' + ic('grad') + (d.guruKhusus ? ' Cabut Guru Khusus' : ' Jadikan Guru Khusus') + '</button>');
   if (P().users && d.username !== me().username) btns.push('<button class="btn sec grow" onclick="openVerif(\'' + esc(d.username) + '\')">' + ic('shield') + ' Data Verifikasi</button>');
@@ -2335,7 +2356,11 @@ async function pProfil(un) {
   if (d.bolehEdit) btns.push('<button class="btn grow" onclick="openEditProfil(\'' + esc(d.username) + '\')">' + ic('edit') + (d.self ? ' Edit Profil' : ' Edit Profil (Pengembang)') + '</button>');
   if (d.bolehKelola) { S.ui.akun = { username: d.username, nama: d.nama, tipe: d.tipe, kelas: d.kelas, kabag: d.kabag, nis_nip: d.nis_nip, jenis_nomor: d.jenis_nomor === 'NIS' ? '' : d.jenis_nomor, asal: d.asal, aktif: d.aktif };
     btns.push('<button class="btn sec grow" onclick="userForm(reg(S.ui.akun))">' + ic('gear') + ' Kelola Akun</button>'); }
-  if (btns.length) h += '<div class="row" style="margin-top:14px">' + btns.join('') + '</div>';
+  if (btns.length) {   // tombol utama (Edit Profil) di atas selebar penuh, lainnya rapi 2 kolom
+    const utama = btns.filter(b => b.indexOf('class="btn grow"') >= 0), lain = btns.filter(b => b.indexOf('class="btn grow"') < 0);
+    if (lain.length % 2) lain[lain.length - 1] = lain[lain.length - 1].replace('class="btn sec grow"', 'class="btn sec grow pfull"');
+    h += '<div class="pbtns">' + utama.concat(lain).join('') + '</div>';
+  }
   if (d.self) h += '<div class="small muted" style="margin:10px 4px">Atur data mana yang Publik atau Privat di <b>Edit Profil</b>. Data privat tidak dapat dilihat pengguna lain, termasuk Admin.</div>';
   view(h);
 }
@@ -4341,6 +4366,7 @@ function pAksesAdmin() {
   if (P().users) akad.push(['grad', 'Daftar Kelas & Nama Lembaga', 'Tambah, ubah, hapus kelas • ubah nama lembaga (mis. ' + esc(lbl('Wustha')) + ' → SMP)', 'openKelolaKelas()']);
   if (P().settings) tampil.push(['mosque', 'Tentang Dayah & Instagram', 'Teks Tentang Dayah, alamat, lokasi & Instagram di halaman depan', 'openEditDepan()']);
   if (isAdminApp() || P().dev) tampil.push(['palette', 'Logo Aplikasi & Kop Surat', 'Logo dayah, ' + esc(lbl('Wustha')) + ' & ' + esc(lbl('Ulya')) + ' untuk kop raport', 'openLogo()']);
+  if (isAdminApp()) tampil.push(['file', 'Kop Surat', 'Gambar kop raport & laporan PDF: Yayasan/Salafi, Wustha, Ulya', 'openKopSurat()']);
   if (isAdminApp()) tampil.push(['globe', 'Halaman Home & Banner (GitHub)', 'Unggah, ubah & hapus file di folder home serta banner situs', 'openGitHub()']);
   if (isAdminApp()) tampil.push(['globe', 'Layar Utama Publik', 'Verifikasi postingan & komentar tamu di halaman depan', 'openLayarUtama()']);
   if (P().settings) lain.push(['gear', 'Pengaturan Aplikasi', 'Tahun ajaran, nominal iuran, kop surat, teks pesan', 'openSettings()']);
@@ -4633,6 +4659,7 @@ function pAksesDev() {
       ['info', 'Tentang Aplikasi', 'Nama aplikasi, versi, deskripsi, pemilik, pembuat & kontak', 'openTentangDev()'],
       ['edit', 'Sebutan Lembaga', 'Kata "' + esc(istilahLembaga()) + '" di seluruh aplikasi (mis. Pesantren / Pondok / Sekolah)', 'openIstilahLembaga()']]) +
     g('Keamanan & Server', [
+      ['shield', 'Santri sebagai Admin', 'Tunjuk / cabut santri yang mendapat akses Admin', 'openSantriAdmin()'],
       ['lock', 'Login Khusus Pengembang', 'Masuk tanpa akun di sheet Users • sandi disimpan di Script Properties', 'openLoginDev()'],
       ['globe', 'Alamat Server (URL Web App)', HAS_GAS ? 'Dibuka langsung dari Apps Script' : esc(hostServer(API_URL) || 'Belum diatur') + (urlServerLokal() ? ' • diatur di perangkat ini' : ' • bawaan'), 'openServer()']]) +
     g('Semua Akses', [
@@ -5210,11 +5237,21 @@ function pRosterKelas() {
   hariTampil.forEach(hr => {
     const L = d.roster.filter(r => r.hari === hr || r.hari === 'Setiap Hari').sort((a, b) => (ses[a.sesi] ?? 99) - (ses[b.sesi] ?? 99));
     const ini = hr === d.hariIni;
+    // per sesi; di dalam sesi pelajaran dengan guru yang sama disatukan, guru berbeda dipisah
+    const per = [], ps = {};
+    L.forEach(r => { if (!ps[r.sesi]) { ps[r.sesi] = { sesi: r.sesi, jam: r.jam, guru: [], gm: {} }; per.push(ps[r.sesi]); }
+      const S1 = ps[r.sesi], k = String(r.guru).toLowerCase() + (ROSTER_SATUKAN ? '' : '|' + String(r.mapel).toLowerCase());
+      if (!S1.gm[k]) { S1.gm[k] = { nama: r.guruNama, mapel: [], rows: [] }; S1.guru.push(S1.gm[k]); }
+      S1.gm[k].rows.push(Object.assign({}, r, { hari: hr }));
+      if (S1.gm[k].mapel.indexOf(r.mapel) < 0) S1.gm[k].mapel.push(r.mapel); });
     h += '<div class="sec"><h3>' + esc(hr) + (ini ? ' <span class="pillx" style="background:var(--pri2);color:#fff">Hari ini</span>' : '') + '</h3></div><div class="card' + (ini ? ' ksini' : '') + '">' +
-      (L.length ? '<div class="list">' + L.map(r => '<div class="it" style="cursor:default"><div class="ksjam">' + esc(r.jam) + '</div><div class="grow" style="min-width:0"><div class="t">' + esc(r.mapel) + '</div><div class="s">' + esc(r.guruNama) + ' • Sesi ' + esc(r.sesi) + '</div></div>' +
-        (ini && d.sayaPetugas ? '<button class="btn sm" onclick="openAbsenKelas(\'' + esc(r.sesi) + '\')">Absen</button>' : '') + '</div>').join('') + '</div>' : '<div class="small muted">Tidak ada pelajaran.</div>') + '</div>';
+      (per.length ? '<div class="list">' + per.map(x => '<div class="it" style="cursor:default;align-items:flex-start"><div class="ksjam">' + esc(x.jam) + '</div><div class="grow" style="min-width:0">' +
+        x.guru.map(G => '<div class="ksgr"' + (d.bolehAjuRoster ? ' onclick="ajuPilihan(' + reg(G.rows[0]) + ')" style="cursor:pointer"' : '') + '>' + G.mapel.map(mp => '<div class="t">' + esc(mp) + '</div>').join('') + '<div class="s">' + esc(G.nama) + '</div></div>').join('') + '</div>' +
+        (ini && d.sayaPetugas ? '<button class="btn sm" onclick="openAbsenKelas(\'' + esc(x.sesi) + '\')">Absen</button>' : '') + '</div>').join('') + '</div>' : '<div class="small muted">Tidak ada pelajaran.</div>') + '</div>';
   });
   if (!d.roster.length) h = '<div class="card">' + empty('Roster kelas ini belum diisi oleh Kabag Pendidikan.', 'cal') + '</div>';
+  if (d.bolehAjuRoster) h = '<div class="card hcard small" style="display:flex;gap:10px;align-items:center">' + ic('cal') + '<span class="grow">Sebagai pengurus kelas, Anda dapat <b>mengajukan</b> penambahan, perubahan, atau penghapusan pelajaran. Ketuk pelajaran untuk mengajukan perubahan.</span></div>' +
+    '<div class="row ghrow" style="gap:8px;margin-bottom:12px"><button class="btn sm" onclick="ajuForm(\'tambah\')">' + ic('plus') + ' Ajukan Pelajaran</button><button class="btn sec sm" onclick="openAjuRoster()">Pengajuan' + (d.ajuMenunggu ? ' (' + d.ajuMenunggu + ' menunggu)' : '') + '</button></div>' + h;
   view(h);
 }
 
@@ -5226,7 +5263,9 @@ function openAbsenKelas(sesi) {
 async function pAbsenKelas() {
   const d = S.ui.ks, a = S.ui.abs, urutSesi = (S.B.sesi || []).map(s => s.kode);
   const hariIni = d.roster.filter(r => r.hari === d.hariIni || r.hari === 'Setiap Hari').sort((x, y) => urutSesi.indexOf(x.sesi) - urutSesi.indexOf(y.sesi));
-  const opsi = hariIni.length ? hariIni.map(r => [r.sesi, r.jam + ' • ' + r.mapel]) : sesiFor(d.kelas).map(s => [s.kode, s.jam]);
+  const os = {}, opsi = [];
+  hariIni.forEach(r => { if (!os[r.sesi]) { os[r.sesi] = [r.sesi, r.jam + ' • ' + r.mapel]; opsi.push(os[r.sesi]); } else if (os[r.sesi][1].indexOf(r.mapel) < 0) os[r.sesi][1] += ', ' + r.mapel; });
+  if (!opsi.length) sesiFor(d.kelas).forEach(s => opsi.push([s.kode, s.jam]));
   if (!a.sesi || !opsi.some(o => o[0] === a.sesi)) a.sesi = opsi.length ? opsi[0][0] : '';
   let h = '<div class="card"><div class="row"><div class="f grow"><label>Tanggal</label>' + inp('at', a.tanggal, 'type="date" onchange="S.ui.abs.tanggal=this.value;refresh()"') + '</div></div>' +
     fld('Sesi / pelajaran', sel('as', opsi, a.sesi, 'onchange="S.ui.abs.sesi=this.value;refresh()"')) + '</div>';
@@ -5358,6 +5397,163 @@ async function aturPetugasAbsen(un, aktif) {
   if (aktif && !(await ask('Tunjuk ' + userName(un) + ' sebagai petugas absen kelasnya? Ia dapat mengabsen santri kelasnya pada semua sesi tanpa menunggu guru.', 'Tunjuk'))) return;
   try { await rawApi('kelasSaya.petugasAbsen', { username: un, aktif: aktif }); S.fetchedAt = {}; toast(aktif ? 'Ditunjuk sebagai petugas absen.' : 'Petugas absen dicabut.', 'ok'); refresh(); }
   catch (e) { toast(e.message, 'err'); }
+}
+
+/* ---------- Santri sebagai Admin (khusus Pengembang) ---------- */
+function openSantriAdmin() { push('Santri sebagai Admin', pSantriAdmin, { sub: 'Hanya dapat diatur oleh Pengembang Aplikasi' }); }
+async function pSantriAdmin() {
+  const t = loading(3); let L;
+  try { L = await rawApi('dev.santriAdmin.list'); } catch (e) { if (alive(t)) view('<div class="card">' + empty(e.message, 'info') + '</div>'); return; }
+  if (!alive(t)) return;
+  const ada = {}; L.forEach(x => ada[x.username.toLowerCase()] = 1);
+  const calon = S.B.users.filter(u => u.tipe === 'Santri' && !ada[u.username.toLowerCase()]).sort((a, b) => a.nama.localeCompare(b.nama));
+  view('<div class="card hcard small" style="display:flex;gap:10px;align-items:flex-start">' + ic('shield') + '<span>Santri yang ditunjuk di sini mendapat <b>semua akses Admin</b>. Admin biasa <b>tidak dapat</b> menjadikan santri sebagai admin, dan peran ini tidak hilang saat Admin mengubah data santri tersebut.</span></div>' +
+    '<div class="sec"><h3>Santri Admin (' + L.length + ')</h3></div><div class="card"><div class="list">' + (L.length ? L.map(x =>
+      '<div class="it"><span onclick="openProfil(\'' + esc(x.username) + '\')">' + avatar(x, 'sm') + '</span><div class="grow" style="min-width:0" onclick="openProfil(\'' + esc(x.username) + '\')"><div class="t ell">' + esc(x.nama) + '</div><div class="s">@' + esc(x.username) + (x.kelas ? ' • ' + esc(x.kelas) : '') + '</div></div>' +
+      '<button class="btn red sm" onclick="aturSantriAdmin(\'' + esc(x.username) + '\',false)">Cabut</button></div>').join('') : empty('Belum ada santri yang menjadi Admin.', 'shield')) + '</div></div>' +
+    '<div class="sec"><h3>Tunjuk Santri</h3></div><div class="card">' + fld('Pilih santri', sel('sad', [['', '— Pilih santri —']].concat(calon.map(u => [u.username, u.nama + (u.kelas ? ' — ' + u.kelas : '')])), '')) +
+    '<button class="btn full" onclick="aturSantriAdmin(val(\'sad\'),true)">' + ic('shield') + ' Jadikan Admin</button></div>');
+}
+async function aturSantriAdmin(un, aktif) {
+  if (!un) return toast('Pilih santri dulu.', 'err');
+  if (!(await ask((aktif ? 'Jadikan ' : 'Cabut peran Admin dari ') + userName(un) + (aktif ? ' sebagai Admin? Santri ini akan mendapat semua akses Admin.' : '?'), aktif ? 'Jadikan Admin' : 'Cabut'))) return;
+  try { await rawApi('dev.santriAdmin.set', { username: un, aktif: aktif }); S.fetchedAt = {}; toast(aktif ? 'Santri dijadikan Admin.' : 'Peran Admin dicabut.', 'ok'); refresh(); }
+  catch (e) { toast(e.message, 'err'); }
+}
+
+/* ---------- kop surat bergambar ---------- */
+const KOP_LBL = [['salafi', 'Yayasan / Salafi', 'Raport Salafi, laporan iuran, uang tahunan & laporan lainnya'], ['wustha', 'PDF Wustha', 'Raport santri PDF Wustha'], ['ulya', 'PDF Ulya', 'Raport santri PDF Ulya']];
+function openKopSurat() { push('Kop Surat', pKopSurat, { sub: 'Gambar kop pada raport & laporan PDF' }); }
+async function pKopSurat() {
+  const t = loading(3); let d;
+  try { d = await rawApi('kop.get'); } catch (e) { if (alive(t)) view('<div class="card">' + empty(e.message, 'info') + '</div>'); return; }
+  if (!alive(t)) return;
+  view('<div class="card hcard small">' + ic('info') + ' Unggah gambar kop (lebar, mis. 2500 × 600 px, PNG / JPG). Kop tampil selebar halaman, sejajar kiri & kanan. Sertakan garis bawah di dalam gambar kop. Ruang kosong putih di tepi gambar dipotong otomatis. Bila belum diunggah, PDF memakai kop teks.</div>' +
+    KOP_LBL.map(k => { const x = d[k[0]] || {}; return '<div class="sec"><h3>' + k[1] + '</h3>' + (x.ada ? '<span class="pillx" style="background:#d1fae5;color:#047857">Terpasang</span>' : '<span class="pillx">Kop teks</span>') + '</div>' +
+      '<div class="card"><div class="small muted" style="margin-bottom:8px">' + k[2] + '</div>' +
+      (x.ada ? '<div style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px;margin-bottom:10px"><img src="' + x.data + '" style="width:100%;display:block"></div>' : '') +
+      '<div class="row ghrow" style="gap:8px"><button class="btn sm grow" onclick="kopUnggah(\'' + k[0] + '\')">' + ic('image') + (x.ada ? ' Ganti Gambar' : ' Unggah Gambar') + '</button>' +
+      (x.ada ? '<button class="btn sec sm grow" onclick="kopContoh(\'' + k[0] + '\',this)">' + ic('file') + ' Contoh PDF</button><button class="btn red sm" style="flex:0 0 48px" onclick="kopHapus(\'' + k[0] + '\')">' + ic('trash') + '</button>' : '') + '</div></div>'; }).join(''));
+}
+/** Kecilkan ke lebar maks. 2000 px; latar transparan → putih; simpan JPG. */
+function kopSiapkan(file) {
+  return new Promise((res, rej) => {
+    const rd = new FileReader();
+    rd.onload = () => { const im = new Image(); im.onload = () => {
+      const W = Math.min(2000, im.width), H = Math.round(im.height * W / im.width);
+      const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d');
+      x.fillStyle = '#fff'; x.fillRect(0, 0, W, H); x.drawImage(im, 0, 0, W, H);
+      // potong ruang kosong putih di tepi agar logo & tulisan sejajar dengan garis kop
+      const px = x.getImageData(0, 0, W, H).data; let x0 = W, y0 = H, x1 = -1, y1 = -1;
+      for (let yy = 0; yy < H; yy++) for (let xx = 0; xx < W; xx++) { const i = (yy * W + xx) * 4; if (px[i] < 240 || px[i + 1] < 240 || px[i + 2] < 240) { if (xx < x0) x0 = xx; if (xx > x1) x1 = xx; if (yy < y0) y0 = yy; if (yy > y1) y1 = yy; } }
+      if (x1 < 0) return res(c.toDataURL('image/jpeg', .9));
+      const c2 = document.createElement('canvas'); c2.width = x1 - x0 + 1; c2.height = y1 - y0 + 1;
+      const x2 = c2.getContext('2d'); x2.fillStyle = '#fff'; x2.fillRect(0, 0, c2.width, c2.height); x2.drawImage(c, x0, y0, c2.width, c2.height, 0, 0, c2.width, c2.height);
+      res(c2.toDataURL('image/jpeg', .9)); };
+      im.onerror = () => rej(new Error('File bukan gambar yang valid.')); im.src = rd.result; };
+    rd.onerror = () => rej(new Error('File tidak dapat dibaca.')); rd.readAsDataURL(file);
+  });
+}
+function kopUnggah(jenis) {
+  const f = document.createElement('input'); f.type = 'file'; f.accept = 'image/png,image/jpeg,image/webp';
+  f.onchange = async () => {
+    if (!f.files[0] || !wajibOnline('Mengunggah kop surat')) return;
+    let data; try { data = await kopSiapkan(f.files[0]); } catch (e) { return toast(e.message, 'err'); }
+    toast('Kop sedang diunggah…', 'ok');
+    latar('Kop surat ' + jenis, () => rawApi('kop.upload', { jenis: jenis, data: data }, true), () => toast('Kop surat diperbarui.', 'ok'));
+  };
+  f.click();
+}
+async function kopHapus(jenis) {
+  if (!(await ask('Hapus gambar kop ini? PDF akan kembali memakai kop teks.', 'Hapus'))) return;
+  latar('Hapus kop ' + jenis, () => rawApi('kop.reset', { jenis: jenis }, true));
+}
+function kopContoh(jenis, btn) { pdf('kop.contoh', { jenis: jenis }, btn); }
+
+/* =============================================================
+ *  PENGAJUAN ROSTER (pengurus kelas → Kabag Pendidikan / Admin)
+ * ============================================================= */
+const AKSI_LBL = { tambah: 'Tambah pelajaran', ubah: 'Ubah pelajaran', hapus: 'Hapus pelajaran' };
+function openAjuRoster() { S.ui.raTab = S.ui.raTab || 'Menunggu'; push('Pengajuan Roster', pAjuRoster, { sub: isSantri() ? (me().kelas || '') + ' • diputuskan Kabag Pendidikan' : 'Dari pengurus kelas' }); }
+async function pAjuRoster() {
+  const t = loading(4); let d;
+  try { d = await rawApi('rosterAju.list', {}, true); } catch (e) { if (alive(t)) view('<div class="card">' + empty(e.message, 'info') + '</div>'); return; }
+  if (!alive(t)) return;
+  S.ui.ra = d;
+  const n = st => d.items.filter(x => x.status === st).length;
+  const tab = uiState('raTab', 'Menunggu');
+  let h = seg('raTab', [['Menunggu', 'Menunggu (' + n('Menunggu') + ')'], ['Diterima', 'Diterima'], ['Ditolak', 'Ditolak']], 'refresh()');
+  const L = d.items.map((x, i) => [x, i]).filter(a => a[0].status === tab);
+  h += L.length ? L.map(([x, i]) => '<div class="card">' +
+      '<div class="row" style="gap:8px;align-items:flex-start"><div class="grow" style="min-width:0"><div class="small muted">' + esc(AKSI_LBL[x.aksi] || x.aksi) + (d.bolehPutus ? ' • ' + esc(x.kelas) : '') + '</div>' +
+      '<div class="b" style="font-size:15.5px">' + esc(x.mapel) + '</div><div class="small">' + esc(x.guruNama) + '</div>' +
+      '<div class="small muted">' + esc(x.hari.join(', ')) + ' • ' + esc(x.jam) + '</div></div>' +
+      '<span class="st ' + (x.status === 'Diterima' ? 'H' : x.status === 'Ditolak' ? 'A' : 'I') + '">' + esc(x.status) + '</span></div>' +
+      (x.catatan ? '<div class="small" style="margin-top:6px;background:var(--chip);border-radius:8px;padding:6px 8px">“' + esc(x.catatan) + '”</div>' : '') +
+      '<div class="small muted" style="margin-top:6px">Diajukan ' + esc(x.olehNama) + (x.jabatan ? ' (' + esc(x.jabatan) + ')' : '') + ' • ' + esc(tgl(x.waktu) + ' ' + String(x.waktu || '').slice(11, 16)) + '</div>' +
+      (x.status !== 'Menunggu' ? '<div class="small" style="margin-top:4px">' + esc(x.status) + ' oleh ' + esc(x.diputusNama) + (x.alasan ? ' — ' + esc(x.alasan) : '') + '</div>' : '') +
+      (x.status === 'Menunggu' && d.bolehPutus ? '<div class="row ghrow" style="gap:8px;margin-top:10px"><button class="btn sm" onclick="ajuPutus(' + i + ',true,this)">' + ic('check') + ' Terima</button><button class="btn red sm" onclick="ajuPutus(' + i + ',false,this)">Tolak</button></div>' : '') +
+      (x.status === 'Menunggu' && !d.bolehPutus && x.oleh.toLowerCase() === me().username.toLowerCase() ? '<button class="link small" style="margin-top:8px" onclick="ajuBatal(' + i + ')">Batalkan pengajuan</button>' : '') +
+    '</div>').join('') : '<div class="card">' + empty(tab === 'Menunggu' ? 'Tidak ada pengajuan yang menunggu.' : 'Belum ada pengajuan ' + tab.toLowerCase() + '.', 'cal') + '</div>';
+  if (d.bolehAju) h += '<div class="small muted" style="padding:0 4px">Pengajuan dikirim ke Kabag Pendidikan & Admin. Hasilnya diberitahukan lewat chat dari Sistem Alhuda Mobile.</div>';
+  view(h);
+  if (d.bolehAju) fab(() => ajuForm('tambah'));
+}
+async function ajuForm(aksi, r) {
+  const kelas = me().kelas;
+  if (aksi === 'hapus') {
+    if (!(await ask('Ajukan penghapusan pelajaran ' + r.mapel + ' (' + r.hari + ', ' + r.jam + ') dari roster?', 'Ajukan'))) return;
+    try { await rawApi('rosterAju.save', { aksi: 'hapus', roster_id: r.id }); toast('Pengajuan dikirim ke Kabag Pendidikan.', 'ok'); S.ui.raTab = 'Menunggu'; openAjuRoster(); } catch (e) { toast(e.message, 'err'); }
+    return;
+  }
+  const mapelList = await daftarMapel([]);
+  const x = r || { sesi: '', hari: 'Setiap Hari', mapel: '', guru: '' };
+  const hariSel = String(x.hari || '').split(',').map(h => h.trim());
+  const d = sheet(aksi === 'ubah' ? 'Ajukan Perubahan' : 'Ajukan Pelajaran', '<div class="small muted" style="margin-bottom:10px">Roster ' + esc(kelas) + '. Pengajuan akan diperiksa Kabag Pendidikan / Admin.</div>' +
+    fld('Sesi / Jam', sel('ras', sesiFor(kelas).map(s => [s.kode, s.jam]), x.sesi)) +
+    '<div class="f"><label>Hari <span style="font-weight:500">(boleh lebih dari satu)</span></label><div class="checks" id="rah">' +
+      S.B.hari.map(h => { const on = hariSel.indexOf(h) >= 0; return '<label class="' + (on ? 'on' : '') + '"><input type="checkbox" value="' + esc(h) + '"' + (on ? ' checked' : '') + ' onchange="hariPilih(this)">' + esc(h) + '</label>'; }).join('') + '</div></div>' +
+    fld('Mata Pelajaran', (mapelList.length ? sel('ram', [['', '— Pilih —']].concat(mapelList).concat([['__baru', '＋ Mata pelajaran lain (ketik)']]), mapelList.indexOf(x.mapel) >= 0 ? x.mapel : (x.mapel ? '__baru' : ''), 'onchange="$(\'#ramw\').classList.toggle(\'hide\',this.value!==\'__baru\')"') : '') +
+      '<div id="ramw" class="' + (mapelList.length && (!x.mapel || mapelList.indexOf(x.mapel) >= 0) ? 'hide' : '') + '" style="margin-top:8px">' + inp('ramk', mapelList.indexOf(x.mapel) >= 0 ? '' : x.mapel, 'placeholder="Ketik nama mata pelajaran"') + '</div>') +
+    fld('Guru', sel('rag', guruOpts('— Pilih guru —', true), x.guru)) +
+    fld('Catatan untuk Kabag Pendidikan (opsional)', inp('rac', '', 'maxlength="300" placeholder="Mis. guru sudah bersedia mengajar"')) +
+    '<button class="btn full" id="rasv">' + ic('check') + ' Kirim Pengajuan</button>');
+  $('#rasv', d).onclick = async e => {
+    const hari = $$('#rah input', d).filter(c => c.checked).map(c => c.value);
+    const pilih = $('#ram', d) ? val('ram') : '__baru', mapel = pilih === '__baru' ? val('ramk') : pilih;
+    if (!hari.length) return toast('Pilih minimal satu hari.', 'err');
+    if (!mapel) return toast('Isi mata pelajaran.', 'err');
+    if (!val('rag')) return toast('Pilih guru.', 'err');
+    busy(e.target, true);
+    try { await rawApi('rosterAju.save', { aksi: aksi, roster_id: r ? r.id : '', sesi: val('ras'), hari: hari, mapel: mapel, guru: val('rag'), catatan: val('rac') }); closeSheet(); toast('Pengajuan dikirim ke Kabag Pendidikan.', 'ok'); S.ui.raTab = 'Menunggu';
+      if (S.stack.length && S.stack[S.stack.length - 1].title === 'Pengajuan Roster') refresh(); else openAjuRoster(); }
+    catch (z) { toast(z.message, 'err'); busy(e.target, false); }
+  };
+}
+function ajuPilihan(i) {
+  const r = REG[i];
+  sheet(r.mapel, '<div class="small muted" style="margin-bottom:10px">' + esc(r.hari) + ' • ' + esc(r.jam) + ' • ' + esc(r.guruNama) + '</div><div class="mlist">' +
+    '<button class="mitem" onclick="closeSheet();ajuForm(\'ubah\',REG[' + i + '])">' + ic('edit') + ' Ajukan perubahan</button>' +
+    '<button class="mitem" style="color:#b91c1c" onclick="closeSheet();ajuForm(\'hapus\',REG[' + i + '])">' + ic('trash') + ' Ajukan penghapusan</button></div>');
+}
+async function ajuPutus(i, terima, btn) {
+  const x = S.ui.ra.items[i];
+  if (terima) {
+    if (!(await ask('Terima pengajuan ' + (AKSI_LBL[x.aksi] || '').toLowerCase() + ' ' + x.mapel + ' (' + x.kelas + ', ' + x.hari.join(', ') + ')? Roster langsung diperbarui.', 'Terima'))) return;
+    busy(btn, true);
+    try { await rawApi('rosterAju.putuskan', { id: x.id, terima: true }); S.fetchedAt = {}; toast('Pengajuan diterima, roster diperbarui.', 'ok'); refresh(); } catch (e) { toast(e.message, 'err'); busy(btn, false); }
+    return;
+  }
+  const d = sheet('Tolak Pengajuan', '<div class="small muted" style="margin-bottom:10px">' + esc(x.mapel) + ' • ' + esc(x.kelas) + '</div>' + fld('Alasan penolakan', inp('ral', '', 'maxlength="300" placeholder="Mis. guru tidak tersedia di jam tersebut"')) + '<button class="btn red full" id="ralb">Tolak</button>');
+  $('#ralb', d).onclick = async e => {
+    if (!val('ral')) return toast('Isi alasan penolakan.', 'err');
+    busy(e.target, true);
+    try { await rawApi('rosterAju.putuskan', { id: x.id, terima: false, alasan: val('ral') }); closeSheet(); toast('Pengajuan ditolak.', 'ok'); refresh(); } catch (z) { toast(z.message, 'err'); busy(e.target, false); }
+  };
+}
+async function ajuBatal(i) {
+  if (!(await ask('Batalkan pengajuan ini?', 'Batalkan'))) return;
+  try { await rawApi('rosterAju.batal', { id: S.ui.ra.items[i].id }); toast('Pengajuan dibatalkan.', 'ok'); refresh(); } catch (e) { toast(e.message, 'err'); }
 }
 
 /* ---------- mulai ---------- */
