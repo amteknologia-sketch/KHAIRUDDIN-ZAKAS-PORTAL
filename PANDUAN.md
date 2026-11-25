@@ -379,5 +379,82 @@ Menu **Pengaturan → Akses Pengembang** (hanya Pengembang Aplikasi):
 - **Tentang Aplikasi**: nama aplikasi (ponsel/komputer), versi, deskripsi, pemilik, alamat, pembuat, penerbit, tanggal revisi, kontak.
 - **Sebutan Lembaga**: kata "Dayah" diganti di seluruh tampilan, halaman login & PDF (mis. Pesantren). Email/tautan tidak ikut diganti.
 - **Login Khusus Pengembang**: akun di Script Properties (DEV_USER, DEV_PASS, DEV_AKTIF), bukan di sheet Users. 5× salah sandi → dikunci 15 menit.
-- **Alamat Server (URL Web App)**: diganti dari aplikasi tanpa membangun ulang APK. Di halaman login, **ketuk logo 5 kali** untuk membuka pengaturan server. Bila belum ada URL sama sekali, aplikasi langsung menampilkan halaman "Hubungkan ke Server".
+- **Alamat Server (URL Web App)**: diganti dari aplikasi tanpa membangun ulang APK. Di halaman login, **ketuk logo 5 kali** → masukkan username & kata sandi pengembang (zakas, atau akun Pengembang Aplikasi di server) → pengaturan server terbuka. Salah 5 kali → dikunci 5 menit. Bila belum ada URL sama sekali, aplikasi langsung menampilkan halaman "Hubungkan ke Server".
 - APK perlu dibangun ulang (versionCode 15 / 2.10.0) agar alamat server baru juga dipakai notifikasi & sinkron latar belakang.
+
+## Pembaruan v2.11.0 — Halaman Home & Banner dari Aplikasi (Tahap 4)
+Menu **Akses Khusus Admin → Halaman Home & Banner (GitHub)** (Admin & Pengembang):
+- **Banner**: tambah (otomatis dipotong 16:9, 1600×900 JPG), ganti gambar, ubah judul, ubah urutan, hapus. Maks. 8 banner. Daftar banner disimpan di `home/img/banner.json` dan dibaca oleh home.html.
+- **File Home**: jelajahi folder `home/`, unggah / ganti / hapus file (maks. 5 MB), buat file baru, dan ubah isi file teks (html, css, js, json…) langsung dari aplikasi.
+- **Pengaturan GitHub**: repositori, branch, folder, alamat situs, dan token. Token disimpan di **Script Properties** (GH_TOKEN), tidak di Sheet, dan tidak pernah dikirim ke aplikasi.
+- Setiap perubahan = 1 commit di GitHub; workflow `deploy-web.yml` kini juga berjalan saat folder `home/` berubah, sehingga situs terbit ulang ±1–2 menit.
+- Membuat token: GitHub → Settings → Developer settings → Fine-grained tokens → Only select repositories (repo aplikasi) → Contents: **Read and write**.
+
+## Pembaruan v2.12.0
+- **Pemberitahuan santri**: santri tidak lagi melihat "Pemberitahuan Hari Ini" (catatan semua santri). Lonceng santri hanya berisi pemberitahuan miliknya (pelanggaran, izin, like/komentar postingan, dll.).
+- **Room Chat**: ketuk nama di atas percakapan → profil pengguna (grup → info grup). Tombol **⋮** di kanan nama: Lihat profil / Info grup, Arsipkan chat, Hapus chat (hanya dari tampilan sendiri), Blokir / Buka blokir pengguna. Chat yang diarsipkan dikumpulkan di baris **Diarsipkan** pada Room Chat. Admin & Pengembang tidak dapat diblokir. Data di sheet **ChatAtur**.
+- **Santri Guru Khusus**: Admin / Kabag Pendidikan membuka profil santri → **Jadikan Guru Khusus**. Santri tersebut muncul di pilihan "Guru Kelas" pada Roster Pelajaran. Setelah diberi pelajaran, beranda & profilnya menampilkan penanda, mis. **Guru Pelajaran IPA (Kelas 1)**, beserta jadwal mengajar. Mencabut status ini menghapus jadwalnya dari roster (dengan konfirmasi). Kolom baru `guru_khusus` di sheet Users.
+
+## Pembaruan v2.13.0 — Simpan & unggah di latar belakang
+- Semua tombol **Simpan / Hapus** (absen, nilai, iuran, izin, pelanggaran, roster, pengumuman, data pengguna, profil, dll.) langsung selesai di layar tanpa menunggu loading. Perubahan dikirim ke server di latar belakang secara berurutan.
+- **Unggahan** (postingan dengan foto, foto profil, foto galeri, dokumentasi asrama) dan beberapa aksi admin (pengaturan, haris, kabilah, verifikasi layar utama, kunci akun, dll.) juga berjalan di latar belakang.
+- **Ikon awan di header**: panah naik beranimasi = sedang menyimpan/mengunggah (angka = jumlah); tanda centang = semua tersimpan; merah (!) = ada yang gagal. Ketuk ikon untuk membuka **Status Penyimpanan**.
+- Jika postingan baru gagal diunggah, teksnya disimpan sebagai draf dan muncul lagi saat membuat postingan.
+- Yang masih menunggu server: hal yang hasilnya langsung dibutuhkan (login, ganti sandi, kirim file chat, unggah dokumen verifikasi, cetak PDF, pengaturan GitHub, dll.).
+
+## Pembaruan v2.13.1
+- **Input Nilai**: pilihan Mata Pelajaran hanya berisi pelajaran yang **terpilih di Roster** kelas tersebut. Mapel yang tidak ada di roster (walau pernah punya nilai) disembunyikan otomatis, nama mapel kembar (mis. "Fiqih" & "fiqih") digabung, dan pilihan "+ Mapel lain (ketik)" dihapus. Nilai lama tidak dihapus dari sheet dan tetap tampil di raport.
+
+## Nama & logo situs di Google
+- Nama situs di hasil pencarian: **Dayah Al Huda Malikussaleh** (data terstruktur `WebSite` + `og:site_name` di web/index.html).
+- Logo ikon situs (favicon) memakai **logo resmi Dayah**: `web/favicon.ico`, `web/icons/favicon-48/96/192.png`, `web/icons/logo-512.png`.
+- Google memperbarui nama & ikon dalam beberapa hari–minggu. Percepat lewat Search Console → Periksa URL → `https://alhudamalikussaleh.web.id/` → **Minta pengindeksan**.
+
+## Pembaruan v2.14.0 — Kelas Saya (santri)
+- Beranda santri: tombol **Roster Pelajaran** diganti **Kelas Saya** (guru tetap Roster Pelajaran).
+- Kelas Saya berisi: **Roster Kelas** (per hari & sesi, otomatis dari roster), **Kas** (saldo, total pemasukan & pengeluaran, catatan per anggota, riwayat), **Piket** harian, **Postingan Kelas**, **Chat Kelas** (grup otomatis semua santri kelas + wali kelas), **Voting Pengurus**, daftar pengurus & anggota.
+- **Voting**: tiap anggota memilih 1 calon per jabatan (Ketua, Wakil, Sekretaris, Bendahara); suara terbanyak terpilih, satu orang satu jabatan, per tahun ajaran. Wali kelas / Kabag Pendidikan / Admin dapat mengulang voting.
+- Hak: kas dicatat bendahara/ketua kelas; piket diatur ketua/wakil/sekretaris; wali kelas, Kabag Pendidikan & Admin dapat semuanya (menu **Pengaturan → Halaman Kelas**).
+- **Postingan Kelas**: hanya anggota kelas yang melihat; centang/menu **Tampilkan untuk umum** → ikut tampil di Postingan utama. Foto >1 bergeser fade 4 detik & bisa diusap, rasio asli; video langsung berputar (tanpa suara, ketuk untuk suara).
+- Penanda jabatan (mis. "Ketua Kelas Kelas 6 Salafi") & "Petugas Absen" tampil di profil dan beranda.
+- **Petugas Absen**: Admin / Kabag Pendidikan membuka profil santri → **Jadikan Petugas Absen**. Santri tersebut dapat mengabsen kelasnya di semua sesi (Kelas Saya → Absen Kelas / tombol Absen di Roster Kelas hari ini).
+- Sheet baru otomatis: VotingKelas, KasKelas, PiketKelas, PetugasAbsen; kolom `kelas_post`, `umum` di Postingan.
+
+## Pembaruan v2.14.1 — Santri sebagai Admin
+- Santri dapat dijadikan **Admin** hanya oleh **Pengembang Aplikasi**: Pengaturan → Akses Pengembang → **Santri sebagai Admin** (atau tombol di profil santri yang hanya tampil untuk Pengembang).
+- Admin tidak dapat menjadikan santri sebagai admin, dan peran Admin santri tidak hilang saat Admin mengubah data santri tersebut.
+- Santri Admin mendapat semua akses Admin (termasuk Pemberitahuan Hari Ini) dan tetap memiliki menu Kelas Saya; profil & berandanya menampilkan penanda "Admin".
+
+## Pembaruan v2.14.2 — Kop Surat bergambar
+- Menu **Akses Khusus Admin → Kop Surat** (Admin & Pengembang): unggah gambar kop untuk **Yayasan/Salafi** (raport Salafi, laporan iuran, uang tahunan & laporan lain), **PDF Wustha** (raport Wustha), dan **PDF Ulya** (raport Ulya). Tombol **Contoh PDF** untuk memeriksa hasil.
+- Gambar otomatis dikecilkan (lebar maks. 2000 px, latar putih, JPG) dan disimpan di Google Drive; kop tampil selebar halaman, sejajar kiri & kanan; garis bawah sudah termasuk di gambar kop (aplikasi tidak menambah garis); ruang kosong putih di tepi gambar dipotong otomatis saat diunggah.
+- Bila gambar belum diunggah, PDF memakai kop teks seperti sebelumnya.
+- File siap unggah ada di folder `kop-surat/` (kop_salafi.jpg, kop_wustha.jpg, kop_ulya.jpg).
+
+## Pembaruan v2.14.6
+- Tombol di bawah profil (Edit Profil, Jadikan Admin / Petugas Absen / Guru Khusus, Data Verifikasi, Akun Publik/Terbatas, Kelola Akun) kini tersusun rapi 2 kolom; Edit Profil di atas selebar penuh. Tidak ada lagi tombol yang terpotong.
+
+## Pembaruan v2.15.0 — Beberapa pelajaran dalam satu sesi
+- Roster: satu sesi (per kelas & hari) boleh berisi lebih dari satu pelajaran, dengan guru yang sama atau berbeda. Yang ditolak hanya mata pelajaran yang sama dua kali di sesi & hari yang sama.
+- Tampilan: pelajaran dengan guru yang sama disatukan (mis. IPA, Sejarah — Tgk. Khairuddin Zakas); guru berbeda dipisah per guru. Berlaku di Roster Pelajaran dan Kelas Saya → Roster Kelas.
+- Tombol "＋ Tambah pelajaran di sesi ini" di tiap sesi; ikon edit di samping tiap pelajaran.
+- Absen: judul pelajaran otomatis gabungan (guru hanya melihat pelajaran yang ia ajar di sesi itu; Kabag Pendidikan/Admin/petugas absen melihat semuanya).
+
+## Pembaruan v2.15.1
+- Roster: setiap pelajaran dalam satu sesi kini ditampilkan terpisah, walaupun gurunya sama (pilihan ROSTER_SATUKAN = false di Index.html; ubah ke true untuk menyatukan lagi).
+
+## Pembaruan v2.16.0 — Pengajuan Roster oleh pengurus kelas
+- Ketua, wakil, sekretaris & bendahara kelas: Kelas Saya → Roster Kelas → **Ajukan Pelajaran** (sesi, hari, mapel, guru, catatan), atau ketuk pelajaran → **Ajukan perubahan / penghapusan**. Daftar & status di **Pengajuan** (bisa dibatalkan selama menunggu).
+- Kabag Pendidikan & Admin: kartu **Pengajuan Roster** di beranda (dan tautan di halaman Roster Pelajaran) → **Terima** (roster langsung diperbarui) atau **Tolak** (wajib alasan).
+- Pengaju diberi tahu hasilnya lewat chat dari **Sistem Alhuda Mobile**. Sheet baru otomatis: PengajuanRoster.
+
+## v2.17.0 — Tema Gaya Perangkat (iPhone, Samsung, Windows)
+Menu **Pengaturan → Tema Aplikasi** kini punya dua kelompok:
+- **Warna**: Terang, Gelap, Pink, Merah, Putih, Biru (seperti sebelumnya).
+- **Gaya Perangkat**: tampilan, bentuk komponen, dan ikon ikut berubah.
+  - **iPhone Terang / iPhone Gelap**: header putih/hitam transparan (blur), aksen biru iOS, ikon menu berbentuk kotak warna-warni seperti ikon aplikasi iPhone, garis ikon tipis, tab bawah tanpa kapsul (ikon aktif terisi biru).
+  - **Samsung (One UI)**: judul besar, kartu sangat membulat, ikon dalam lingkaran berwarna, garis ikon tebal, menu bawah membulat.
+  - **Windows (Fluent)**: sudut kecil, font Segoe UI, ikon garis bersudut tanpa latar, tab segmen bergaris bawah, penanda biru di menu aktif.
+- Jika pengembang mengunci tema (tema_kunci), semua pengguna tetap memakai tema Terang.
+- Warna khusus pengembang hanya berlaku pada tema Terang (tidak menimpa gaya perangkat).
+- APK v2.17.0: warna ikon status bar (jam/baterai) otomatis gelap pada tema berlatar terang. Di APK lama tema tetap berjalan, hanya ikon status bar tetap putih.

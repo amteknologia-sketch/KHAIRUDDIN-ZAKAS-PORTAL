@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.pm.PackageInfoCompat
+import androidx.core.view.WindowCompat
 import org.json.JSONObject
 import java.io.File
 
@@ -202,6 +203,15 @@ class MainActivity : AppCompatActivity() {
 
         @JavascriptInterface fun setStatusColor(hex: String) {
             main.post { try { window.statusBarColor = Color.parseColor(hex.trim()) } catch (_: Exception) {} }
+        }
+        /** v2.17: warna status bar + ikon gelap (terang = true) untuk tema berlatar terang (iPhone, Samsung, Windows). */
+        @JavascriptInterface fun setStatusBar(hex: String, terang: Boolean) {
+            main.post {
+                try {
+                    window.statusBarColor = Color.parseColor(hex.trim())
+                    WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = terang
+                } catch (_: Exception) {}
+            }
         }
 
         /** v2.8: bagikan gambar (Story Instagram, Status WhatsApp, TikTok, dll.). target: ig_story | wa | tiktok | lainnya */

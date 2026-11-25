@@ -3,7 +3,7 @@
 <head>
 <base target="_top">
 <meta charset="utf-8">
-<meta name="alhuda-app" content="2.16.0">
+<meta name="alhuda-app" content="2.17.0">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>ALHUDA MOBILE</title>
 <style>
@@ -528,6 +528,116 @@ html.desk .login .lmain>.muted:last-child{display:none}
 .pbtns .btn.pfull{grid-column:1/-1}
 .rmp{gap:6px;align-items:center;min-height:30px}.ibtn.sm{width:30px;height:30px}.ibtn.sm .i{width:15px;height:15px}
 .ksgr{padding:2px 0 6px}.ksgr+.ksgr{border-top:1px dashed var(--line);padding-top:6px}
+/* =============================================================
+ *  GAYA TAMPILAN: iPhone (terang/gelap), Samsung One UI, Windows 11
+ *  Mengubah warna, bentuk komponen, dan gaya ikon.
+ * ============================================================= */
+/* ---------- iPhone (iOS) ---------- */
+[data-gaya=ios]{--bg:#f2f2f7;--card:#ffffff;--pri:#007aff;--pri2:#007aff;--soft:#e8f1ff;--line:#e5e5ea;--text:#000000;--sub:#8e8e93;--chip:#e9e9eb;--shadow:none;--statusbar:#f7f7f7;--statusterang:1}
+[data-gaya=ios][data-theme=gelap]{--bg:#000000;--card:#1c1c1e;--pri:#0a84ff;--pri2:#0a84ff;--soft:#0d2742;--line:#38383a;--text:#ffffff;--sub:#8e8e93;--chip:#2c2c2e;--statusbar:#161618;--statusterang:0}
+html[data-gaya=ios],html[data-gaya=ios] body{font-family:-apple-system,"SF Pro Text","SF Pro Display","Helvetica Neue",system-ui,sans-serif;letter-spacing:-.1px}
+[data-gaya=ios] svg.i{stroke-width:1.6}
+[data-gaya=ios] .top{background:rgba(247,247,247,.86);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);color:#000;border-bottom:.5px solid rgba(0,0,0,.18)}
+[data-gaya=ios][data-theme=gelap] .top{background:rgba(22,22,24,.86);color:#fff;border-bottom-color:rgba(255,255,255,.12)}
+[data-gaya=ios] .top .t1{font-weight:600;font-size:17px;letter-spacing:-.3px}[data-gaya=ios] .top .t2{opacity:.6}
+[data-gaya=ios] .ib{background:transparent;color:var(--pri)}
+[data-gaya=ios] .card,[data-gaya=ios] .notif-btn{border-radius:12px;box-shadow:none}
+[data-gaya=ios] .notif-btn{border-left:0}
+[data-gaya=ios] .banner{border-radius:16px;background:linear-gradient(135deg,#0a84ff,#5e5ce6)}
+[data-gaya=ios] .sec h3{font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.2px;color:var(--sub)}
+[data-gaya=ios] .qa{background:transparent;box-shadow:none;font-weight:500;font-size:11px}
+[data-gaya=ios] .qa .ic,[data-gaya=ios] .menu .it .ic{color:#fff;border-radius:13px;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.06)}
+[data-gaya=ios] .qa .ic{width:54px;height:54px;border-radius:14px}[data-gaya=ios] .qa .ic svg.i{width:26px;height:26px}
+[data-gaya=ios] .menu .it .ic{width:30px;height:30px;border-radius:7px}[data-gaya=ios] .menu .it .ic svg.i{width:18px;height:18px}
+[data-gaya=ios] .quick .qa:nth-child(8n+1) .ic,[data-gaya=ios] .menu .it:nth-child(8n+1) .ic{background:#007aff}
+[data-gaya=ios] .quick .qa:nth-child(8n+2) .ic,[data-gaya=ios] .menu .it:nth-child(8n+2) .ic{background:#34c759}
+[data-gaya=ios] .quick .qa:nth-child(8n+3) .ic,[data-gaya=ios] .menu .it:nth-child(8n+3) .ic{background:#ff9500}
+[data-gaya=ios] .quick .qa:nth-child(8n+4) .ic,[data-gaya=ios] .menu .it:nth-child(8n+4) .ic{background:#af52de}
+[data-gaya=ios] .quick .qa:nth-child(8n+5) .ic,[data-gaya=ios] .menu .it:nth-child(8n+5) .ic{background:#ff2d55}
+[data-gaya=ios] .quick .qa:nth-child(8n+6) .ic,[data-gaya=ios] .menu .it:nth-child(8n+6) .ic{background:#5ac8fa}
+[data-gaya=ios] .quick .qa:nth-child(8n+7) .ic,[data-gaya=ios] .menu .it:nth-child(8n+7) .ic{background:#5856d6}
+[data-gaya=ios] .quick .qa:nth-child(8n+8) .ic,[data-gaya=ios] .menu .it:nth-child(8n+8) .ic{background:#8e8e93}
+[data-gaya=ios] .nav{background:rgba(249,249,249,.9);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-top:.5px solid rgba(0,0,0,.18)}
+[data-gaya=ios][data-theme=gelap] .nav{background:rgba(22,22,24,.9);border-top-color:rgba(255,255,255,.12)}
+[data-gaya=ios] .nav button{font-weight:500;font-size:10px;color:#999}
+[data-gaya=ios] .nav button.on{color:var(--pri)}[data-gaya=ios] .nav button.on .pill{background:none}
+[data-gaya=ios] .nav button .pill svg.i{width:24px;height:24px}
+[data-gaya=ios] .nav button.on svg.i{fill:currentColor;fill-opacity:.22;stroke-width:1.9}
+[data-gaya=ios] .btn{border-radius:12px;font-weight:600}[data-gaya=ios] .btn.sm{border-radius:9px}
+[data-gaya=ios] .btn.sec{background:var(--soft);color:var(--pri)}
+[data-gaya=ios] .in{border-radius:10px;border-color:transparent;background:var(--card)}[data-gaya=ios] .sheet .in,[data-gaya=ios] .card .in{background:var(--chip)}
+[data-gaya=ios] .seg{border-radius:9px;padding:2px;background:var(--chip)}[data-gaya=ios] .seg button{border-radius:7px;font-weight:500;padding:6px}
+[data-gaya=ios] .seg button.on{box-shadow:0 3px 8px rgba(0,0,0,.12),0 0 0 .5px rgba(0,0,0,.04)}
+[data-gaya=ios] .list .it{border-bottom:.5px solid var(--line)}
+[data-gaya=ios] .sheet{border-radius:12px 12px 0 0}
+[data-gaya=ios] .fab{border-radius:50%;background:var(--pri)}
+
+/* ---------- Samsung One UI ---------- */
+[data-gaya=samsung]{--bg:#f4f4f4;--card:#fcfcfc;--pri:#3e91ff;--pri2:#2667e0;--soft:#e7f0ff;--line:#ececec;--text:#111111;--sub:#7b7b7b;--chip:#eaeaea;--shadow:none;--statusbar:#f4f4f4;--statusterang:1}
+html[data-gaya=samsung],html[data-gaya=samsung] body{font-family:"SamsungOne","Samsung Sans",Roboto,"Segoe UI",system-ui,sans-serif}
+[data-gaya=samsung] svg.i{stroke-width:2.3}
+[data-gaya=samsung] .top{background:var(--bg);color:#111;min-height:66px;padding-top:14px}
+[data-gaya=samsung] .top .t1{font-size:21px;font-weight:700;letter-spacing:0}[data-gaya=samsung] .top .t2{opacity:.6;font-size:11.5px}
+[data-gaya=samsung] .ib{background:transparent;color:#111;border-radius:50%}
+[data-gaya=samsung] .card,[data-gaya=samsung] .notif-btn{border-radius:26px;box-shadow:none}
+[data-gaya=samsung] .notif-btn{border-left:0}
+[data-gaya=samsung] .banner{border-radius:28px;background:linear-gradient(135deg,#2667e0,#3e91ff)}
+[data-gaya=samsung] .sec h3{font-size:14px;font-weight:700;color:var(--sub)}
+[data-gaya=samsung] .qa{border-radius:26px;box-shadow:none;font-weight:600}
+[data-gaya=samsung] .qa .ic,[data-gaya=samsung] .menu .it .ic{border-radius:50%;color:#fff}
+[data-gaya=samsung] .qa .ic{width:46px;height:46px}
+[data-gaya=samsung] .menu .it .ic{width:38px;height:38px}
+[data-gaya=samsung] .quick .qa:nth-child(6n+1) .ic,[data-gaya=samsung] .menu .it:nth-child(6n+1) .ic{background:#3e91ff}
+[data-gaya=samsung] .quick .qa:nth-child(6n+2) .ic,[data-gaya=samsung] .menu .it:nth-child(6n+2) .ic{background:#20b87a}
+[data-gaya=samsung] .quick .qa:nth-child(6n+3) .ic,[data-gaya=samsung] .menu .it:nth-child(6n+3) .ic{background:#ff7a45}
+[data-gaya=samsung] .quick .qa:nth-child(6n+4) .ic,[data-gaya=samsung] .menu .it:nth-child(6n+4) .ic{background:#8c6cf2}
+[data-gaya=samsung] .quick .qa:nth-child(6n+5) .ic,[data-gaya=samsung] .menu .it:nth-child(6n+5) .ic{background:#f5b423}
+[data-gaya=samsung] .quick .qa:nth-child(6n+6) .ic,[data-gaya=samsung] .menu .it:nth-child(6n+6) .ic{background:#ef5a7a}
+[data-gaya=samsung] .nav{background:var(--card);border-top:0;border-radius:24px 24px 0 0;box-shadow:0 -2px 12px rgba(0,0,0,.05)}
+[data-gaya=samsung] .nav button{font-weight:600;color:#888}
+[data-gaya=samsung] .nav button.on{color:#111}[data-gaya=samsung] .nav button.on .pill{background:#e3e3e3}
+[data-gaya=samsung] .nav button.on svg.i{fill:currentColor;fill-opacity:.12}
+[data-gaya=samsung] .btn{border-radius:26px}[data-gaya=samsung] .btn.sm{border-radius:20px}
+[data-gaya=samsung] .in{border-radius:18px;border-color:#e3e3e3}
+[data-gaya=samsung] .seg{border-radius:24px}[data-gaya=samsung] .seg button{border-radius:20px}
+[data-gaya=samsung] .sheet{border-radius:28px 28px 0 0}
+[data-gaya=samsung] .list .it{border-bottom-color:#f0f0f0}
+
+/* ---------- Windows 11 (Fluent) ---------- */
+[data-gaya=windows]{--bg:#f3f3f3;--card:#fbfbfb;--pri:#0067c0;--pri2:#005fb8;--soft:#e5f1fb;--line:#e5e5e5;--text:#1b1b1b;--sub:#5f5f5f;--chip:#f0f0f0;--shadow:0 0 0 1px #e5e5e5,0 2px 4px rgba(0,0,0,.04);--statusbar:#f3f3f3;--statusterang:1}
+html[data-gaya=windows],html[data-gaya=windows] body{font-family:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif}
+[data-gaya=windows] svg.i{stroke-width:1.5;stroke-linecap:square;stroke-linejoin:miter}
+[data-gaya=windows] .top{background:#f3f3f3;color:#1b1b1b;border-bottom:1px solid #e5e5e5}
+[data-gaya=windows] .top .t1{font-weight:600;font-size:15px;letter-spacing:0}[data-gaya=windows] .top .t2{opacity:.65}
+[data-gaya=windows] .ib{background:transparent;color:#1b1b1b;border-radius:4px}
+[data-gaya=windows] .card,[data-gaya=windows] .notif-btn{border-radius:8px}
+[data-gaya=windows] .notif-btn{border-left:3px solid var(--pri)}
+[data-gaya=windows] .banner{border-radius:8px;background:linear-gradient(120deg,#003e92,#0067c0 60%,#2b88d8)}
+[data-gaya=windows] .banner:after{display:none}
+[data-gaya=windows] .sec h3{font-size:14px;font-weight:600}
+[data-gaya=windows] .qa{border-radius:6px;font-weight:400}
+[data-gaya=windows] .qa .ic,[data-gaya=windows] .menu .it .ic{background:transparent;color:var(--pri2);border-radius:4px}
+[data-gaya=windows] .qa .ic svg.i{width:26px;height:26px}
+[data-gaya=windows] .nav{background:#fbfbfb;border-top:1px solid #e5e5e5}
+[data-gaya=windows] .nav button{font-weight:400;color:#5f5f5f}
+[data-gaya=windows] .nav button .pill{border-radius:4px;position:relative}
+[data-gaya=windows] .nav button.on{color:var(--pri2);font-weight:600}
+[data-gaya=windows] .nav button.on .pill{background:#ececec}
+[data-gaya=windows] .nav button.on .pill:after{content:"";position:absolute;left:50%;bottom:-3px;width:16px;height:3px;margin-left:-8px;border-radius:2px;background:var(--pri)}
+[data-gaya=windows] .btn{border-radius:4px;font-weight:600}[data-gaya=windows] .btn.sm{border-radius:4px}
+[data-gaya=windows] .btn.sec{background:#fbfbfb;color:#1b1b1b;box-shadow:inset 0 0 0 1px #e0e0e0}
+[data-gaya=windows] .in{border-radius:4px;border-color:#e0e0e0;border-bottom:1px solid #8a8a8a}
+[data-gaya=windows] .in:focus{border-bottom:2px solid var(--pri);box-shadow:none}
+[data-gaya=windows] .seg{background:transparent;border-radius:0;padding:0;border-bottom:1px solid #e5e5e5}
+[data-gaya=windows] .seg button{border-radius:0;font-weight:400}
+[data-gaya=windows] .seg button.on{background:transparent;box-shadow:inset 0 -3px 0 var(--pri);font-weight:600}
+[data-gaya=windows] .sheet{border-radius:8px 8px 0 0}
+[data-gaya=windows] .fab{border-radius:6px}
+.gyp{display:flex;gap:5px;justify-content:center;padding:8px 4px;border-radius:10px;margin-bottom:6px;background:#f2f2f7}
+.gyp span{width:24px;height:24px;display:grid;place-items:center;color:#fff}.gyp svg.i{width:14px;height:14px}
+.gyp.gy-ios span{border-radius:6px}.gyp.gy-ios svg.i{stroke-width:1.6}.gyp.gy-gelap{background:#000}
+.gyp.gy-samsung{background:#f4f4f4}.gyp.gy-samsung span{border-radius:50%}.gyp.gy-samsung svg.i{stroke-width:2.4}
+.gyp.gy-windows{background:#f3f3f3;border:1px solid #e5e5e5}.gyp.gy-windows span{color:#005fb8;border-radius:3px}.gyp.gy-windows svg.i{stroke-width:1.5;stroke-linecap:square;width:17px;height:17px}
 </style>
 </head>
 <body>
@@ -1046,12 +1156,23 @@ function busy(btn, on) { if (!btn) return; btn.disabled = on; if (on) { btn.data
 
 /* ---------- theme ---------- */
 const THEMES = [['terang','Terang',['#f1f1f1','#10b981','#0f6e4f']],['gelap','Gelap',['#0e1412','#34d399','#17201d']],['pink','Pink',['#fdeef6','#ec4899','#9d174d']],
-  ['merah','Merah',['#fdecec','#ef4444','#991b1b']],['putih','Putih',['#ffffff','#e5e7eb','#1f2937']],['biru','Biru',['#eaf1fe','#3b82f6','#1e3a8a']]];
+  ['merah','Merah',['#fdecec','#ef4444','#991b1b']],['putih','Putih',['#ffffff','#e5e7eb','#1f2937']],['biru','Biru',['#eaf1fe','#3b82f6','#1e3a8a']],
+  ['ios','iPhone Terang',['#f2f2f7','#007aff','#34c759'],'ios'],['iosgelap','iPhone Gelap',['#000000','#0a84ff','#1c1c1e'],'ios'],
+  ['samsung','Samsung',['#f4f4f4','#3e91ff','#20b87a'],'samsung'],['windows','Windows',['#f3f3f3','#0067c0','#fbfbfb'],'windows']];
+/** Tema bergaya perangkat: [warna dasar, gaya tampilan]. Gaya mengubah bentuk komponen & ikon. */
+const TEMA_GAYA = { ios: ['terang', 'ios'], iosgelap: ['gelap', 'ios'], samsung: ['terang', 'samsung'], windows: ['terang', 'windows'] };
 function applyTheme(t) {
   if (temaKunci()) t = 'terang'; else if (t) store.set('alhuda_theme', t);
-  document.documentElement.setAttribute('data-theme', t || 'terang');
+  const r = document.documentElement, g = TEMA_GAYA[t];
+  r.setAttribute('data-theme', g ? g[0] : (t || 'terang'));
+  if (g) r.setAttribute('data-gaya', g[1]); else r.removeAttribute('data-gaya');
   terapkanTemaApp();
-  try { BR && BR.setStatusColor && BR.setStatusColor(getComputedStyle(document.documentElement).getPropertyValue('--pri2').trim()); } catch (e) {} }
+  try {
+    const cs = getComputedStyle(r), sb = cs.getPropertyValue('--statusbar').trim();
+    if (BR && BR.setStatusBar) BR.setStatusBar(g && sb ? sb : cs.getPropertyValue('--pri2').trim(), !!(g && cs.getPropertyValue('--statusterang').trim() === '1'));
+    else if (BR && BR.setStatusColor) BR.setStatusColor(cs.getPropertyValue('--pri2').trim());   // APK lama: ikon status bar selalu putih
+  } catch (e) {}
+  try { const m = document.querySelector('meta[name=theme-color]'); if (m) m.setAttribute('content', getComputedStyle(r).getPropertyValue(g ? '--statusbar' : '--pri2').trim() || '#0f6e4f'); } catch (e) {} }
 /* Tema bawaan dari Pengembang (berlaku untuk tema "Terang"). */
 const TEMA_PRESET = [['Hijau Al-Huda', '#10b981', '#0f6e4f'], ['Biru Laut', '#0ea5e9', '#075985'], ['Biru Tua', '#3b82f6', '#1e3a8a'], ['Ungu', '#8b5cf6', '#5b21b6'],
   ['Toska', '#14b8a6', '#115e59'], ['Coklat', '#d97706', '#78350f'], ['Emas', '#ca8a04', '#713f12'], ['Merah Marun', '#e11d48', '#881337'],
@@ -1069,7 +1190,7 @@ function temaKunci() { const s = setSumber(); return s && s.hasOwnProperty('tema
 function terapkanTemaApp() {
   const r = document.documentElement, t = temaApp();
   ['--pri', '--pri2', '--soft', '--chip', '--bg'].forEach(v => r.style.removeProperty(v));
-  if (!t || r.getAttribute('data-theme') !== 'terang') return;
+  if (!t || r.getAttribute('data-theme') !== 'terang' || r.getAttribute('data-gaya')) return;
   r.style.setProperty('--pri', t.pri); r.style.setProperty('--pri2', t.pri2);
   r.style.setProperty('--soft', campur(t.pri, '#ffffff', .88)); r.style.setProperty('--chip', campur(t.pri2, '#ffffff', .92));
   if (hexOk(t.bg)) r.style.setProperty('--bg', t.bg);
@@ -2279,7 +2400,7 @@ PAGES.peraturan = async function () {
   let h = '<div class="card row" style="cursor:pointer" onclick="openProfil(\'' + esc(u.username) + '\')">' + avatar(u, 'sm').replace('av sm', 'av sm" style="width:56px;height:56px;font-size:18px') + '<div class="grow"><div class="b" style="font-size:15px">' + esc(u.nama) + vb(u) + '</div><div class="small muted">@' + esc(u.username) + ' • ' + (isSantri() ? 'Santri • ' + esc(u.kelas) : 'Dewan Guru') + '</div>' +
     (!isSantri() && u.kabag ? '<div>' + u.kabag.split(',').map(x => '<span class="pillx">' + esc(x.trim()) + '</span>').join('') + '</div>' : '') + '</div></div>';
   const m = [['user', 'Profil Saya', 'Lihat profil seperti dilihat pengguna lain', 'openProfil(me().username)'],
-    ['shield', 'Verifikasi Data Saya', u.v ? 'Data sudah lengkap & terverifikasi' : (isSantri() ? 'Lengkapi data diri, orang tua & dokumen' : 'Lengkapi data diri & dokumen'), 'openVerif()'], ['edit', 'Biodata Pengguna', 'Ubah foto, data diri, privasi & galeri', 'openBiodata()'], ['palette', 'Tema Aplikasi', temaKunci() ? 'Diatur oleh Pengembang Aplikasi' : 'Terang, gelap, pink, merah, putih, biru', 'openTema()'], ['lock', 'Keamanan & Kata Sandi', 'Ganti kata sandi akun', 'openPassword()']];
+    ['shield', 'Verifikasi Data Saya', u.v ? 'Data sudah lengkap & terverifikasi' : (isSantri() ? 'Lengkapi data diri, orang tua & dokumen' : 'Lengkapi data diri & dokumen'), 'openVerif()'], ['edit', 'Biodata Pengguna', 'Ubah foto, data diri, privasi & galeri', 'openBiodata()'], ['palette', 'Tema Aplikasi', temaKunci() ? 'Diatur oleh Pengembang Aplikasi' : 'Warna & gaya iPhone, Samsung, Windows', 'openTema()'], ['lock', 'Keamanan & Kata Sandi', 'Ganti kata sandi akun', 'openPassword()']];
   if (P().pengumuman) m.push(['mega', 'Kelola Pengumuman', 'Buat & ubah pengumuman', 'openPengumuman()']);
   if (isAdminApp() || P().users || P().settings) m.push(['shield', 'Akses Khusus Admin', 'Keamanan akun, data pengguna, kelas & lembaga, tampilan & pengaturan', 'openAksesAdmin()']);
   if (!isSantri() && (S.B.kelasKelola || []).length) m.push(['users', 'Halaman Kelas', 'Kas, piket, voting pengurus & postingan kelas santri', 'pilihHalamanKelas()']);
@@ -2294,7 +2415,15 @@ PAGES.peraturan = async function () {
 function openTema() {
   if (temaKunci()) return sheet('Tema Aplikasi', '<div class="card hcard small">' + ic('lock') + ' Tema aplikasi dikunci oleh Pengembang Aplikasi' + (temaApp() ? ' (' + esc(temaApp().nama || 'Kustom') + ')' : '') + ', sehingga sama untuk semua pengguna.</div>');
   const cur = store.get('alhuda_theme') || 'terang';
-  sheet('Tema Aplikasi', '<div class="swatch">' + THEMES.map(t => '<div class="sw' + (t[0] === cur ? ' on' : '') + '" onclick="applyTheme(\'' + t[0] + '\');openTema();topBar()"><div class="dots">' + t[2].map(c => '<i style="background:' + c + '"></i>').join('') + '</div>' + t[1] + '</div>').join('') + '</div>');
+  const pilih = t => 'applyTheme(\'' + t[0] + '\');openTema();topBar();refresh()';
+  const warna = THEMES.filter(t => !t[3]), gaya = THEMES.filter(t => t[3]);
+  // pratinjau gaya perangkat: bentuk ikon & warna khas masing-masing
+  const contoh = t => { const ik = ['home', 'chat', 'cal'], wr = { ios: ['#007aff', '#34c759', '#ff9500'], samsung: ['#3e91ff', '#20b87a', '#ff7a45'], windows: ['transparent', 'transparent', 'transparent'] }[t[3]];
+    const gelap = t[0] === 'iosgelap';
+    return '<div class="gyp gy-' + t[3] + (gelap ? ' gy-gelap' : '') + '">' + ik.map((n, i) => '<span style="background:' + wr[i] + '">' + ic(n) + '</span>').join('') + '</div>'; };
+  sheet('Tema Aplikasi', '<div class="small b muted" style="margin:0 2px 8px">Warna</div><div class="swatch">' + warna.map(t => '<div class="sw' + (t[0] === cur ? ' on' : '') + '" onclick="' + pilih(t) + '"><div class="dots">' + t[2].map(c => '<i style="background:' + c + '"></i>').join('') + '</div>' + t[1] + '</div>').join('') + '</div>' +
+    '<div class="small b muted" style="margin:16px 2px 8px">Gaya Perangkat <span style="font-weight:500">— tampilan & ikon ikut berubah</span></div><div class="swatch">' +
+    gaya.map(t => '<div class="sw' + (t[0] === cur ? ' on' : '') + '" onclick="' + pilih(t) + '">' + contoh(t) + t[1] + '</div>').join('') + '</div>');
 }
 function openPassword() {
   const pw = (id, l) => fld(l, '<div class="pw"><input class="in" id="' + id + '" type="password"><button class="eye" type="button" onclick="togglePw(\'' + id + '\',this)">' + ic('eye') + '</button></div>');
